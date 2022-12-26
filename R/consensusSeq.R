@@ -19,6 +19,8 @@ consensusSeq <- function(target="MIDAS1", ...){
 	}
 }
 
+#' consensusSeqMIDAS1
+#' @export
 consensusSeqMIDAS1 <- function(
 	midas_merge_dir,
 	species,
@@ -145,6 +147,9 @@ consensusSeqMIDAS1 <- function(
 	}
 }
 
+
+#' consensusSeqMIDAS2
+#' @export
 consensusSeqMIDAS2 <- function(
 	midas_merge_dir,
 	species,
