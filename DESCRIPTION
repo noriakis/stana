@@ -1,0 +1,7 @@
+Package: stana
+Type: Package
+Title: Downstream analysis toolkit for strain-level metagenomic
+Version: 0.99.0
+Authors@R: person("Noriaki", "Sato", email = "nori@hgc.jp", role = c("cre", "aut"))
+Imports: ComplexHeatmap, GetoptLong
+RoxygenNote: 7.2.2
