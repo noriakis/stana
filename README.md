@@ -8,7 +8,7 @@ Strain-level metagenomic analysis in R. Import and analysize, plot output of the
 - GTDB (in MIDAS2): Contains 258,406 genomes clustered into 45,555 bacterial and 2,339 archaeal species.
 
 ## Example analysis
-The function includes filtering of species based on clinical / environmental variables interested, calling of consensus sequencing, constructing the tree, functional annotations. The below example shows the analysis of the subset of `PRJEB9584`, sequenced by HiSeq 2000.
+The function includes filtering of species based on clinical / environmental variables interested, calling of consensus sequencing, constructing the tree, and functional annotations. The below example shows the analysis of the subset of `PRJEB9584`, sequenced by HiSeq 2000. Packages including `ggtree`, `ComplexHeatmap`, `simplyfyEnrichment`, `phangorn` are used.
 
 <img src="https://github.com/noriakis/software/blob/main/images/stana_example.png?raw=true" width="800px">
 
