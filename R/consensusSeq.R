@@ -37,7 +37,6 @@ consensusSeqMIDAS1 <- function(
     exclude_samples=NULL,
     rand_samples=NULL) {
     ## site-list is currently not supported.
-    ## max-site is currently not supported.
 	files <- c("freq","depth","info","summary")
 	retList <- list()
 	for (sp in species) {
@@ -47,6 +46,8 @@ consensusSeqMIDAS1 <- function(
 			filePath <- paste0(midas_merge_dir,"/",sp,"/snps_",file,".txt")
 			SPECIES[[file]] <- read.table(filePath, sep="\t", header=1)
 		}
+		siteNum <- dim(SPECIES[["freq"]])[1]
+		qqcat("  Site number: @{siteNum}\n")
 		SAMPLES <- list()
         for (i in seq_len(nrow(SPECIES[["summary"]]))) {
         	info <- SPECIES[["summary"]][i,]
@@ -162,7 +163,6 @@ consensusSeqMIDAS2 <- function(
     exclude_samples=NULL,
     rand_samples=NULL) {
     ## site-list is currently not supported.
-    ## max-site is currently not supported.
 	files <- c("freqs","depth","info")
 	retList <- list()
 	for (sp in species) {
@@ -178,6 +178,9 @@ consensusSeqMIDAS2 <- function(
 			SPECIES[[file]] <- read.table(filePathUn, row.names=1, header=1)
 	        unlink(paste0(getwd(),"/",filePathUn))
 		}
+
+		siteNum <- dim(SPECIES[["freqs"]])[1]
+		qqcat("  Site number: @{siteNum}\n")
 
 		filePath <- paste0(midas_merge_dir,"/snps/snps_summary.tsv")
 		snpsSummary <- read.table(filePath, header=1)
