@@ -22,14 +22,16 @@ doAdonisMIDAS2(
 
 \item{cl}{named list of samples}
 
+\item{target}{snps, presabs, or copynum}
+
 \item{taxtbl}{data.frame of 6-digit MIDAS species IDs 
 as row.names, and have `GTDB species` column}
 
 \item{formula}{pass to adonis2, specify distance matrix as d.}
 
-\item{...}{parameters passed to adonis2}
+\item{distMethod}{distance method passed to dist() (default, manhattan)}
 
-\item{distMethods}{distance method passed to dist() (default, manhattan)}
+\item{...}{parameters passed to adonis2}
 }
 \description{
 Perform PERMANOVA on distance matrix based on SNV frequency.

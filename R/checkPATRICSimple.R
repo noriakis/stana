@@ -29,7 +29,7 @@ checkPATRICSimple <- function(genes,
   annotList <- list()
   for (clname in names(genes)){
     qqcat("Checking results on cluster @{clname}\n")
-    annot <- c()
+    annot <- NULL
     for (tmpDf in annotDf){
       greped <- tmpDf[grep(paste(genes[[clname]],collapse="|"),tmpDf$patric_id),]
       annot <- rbind(annot,

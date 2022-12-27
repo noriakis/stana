@@ -6,6 +6,7 @@
 #' @param midas_merge_dir output of midas merge
 #' @param species candidate species
 #' @param cl named list of clusters
+#' @param pointSize scatter point size
 #' @import ggplot2
 #' 
 plotCoverage <- function(midas_merge_dir, species, cl,

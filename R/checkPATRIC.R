@@ -79,7 +79,7 @@ checkPATRIC <- function(genes,
   annotList <- list()
   for (clname in names(genes)){
     qqcat("Checking results on cluster @{clname}\n")
-    annot <- c()
+    annot <- NULL
     for (tmpDf in annotDf){
       greped <- tmpDf[grep(paste(genes[[clname]],collapse="|"),tmpDf$patric_id),]
       annot <- rbind(annot,
@@ -138,7 +138,7 @@ checkPATRIC <- function(genes,
       g <- simplify(g)
       
       annotList[[clname]][["GRAPH"]] <- g
-      cat <- c()
+      cat <- NULL
       for (nm in names(V(g))){
         if (nm %in% annot[ecget][,1]){
           cat <- c(cat, "EC")

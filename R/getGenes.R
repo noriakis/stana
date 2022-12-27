@@ -13,7 +13,7 @@ setClass("midasGenes", slots=list(IDs="character",
 #' @param midas_merge_dir output directory of merge_midas.py
 #' @import GetoptLong
 #' @import ComplexHeatmap
-#' @import methods
+#' @importFrom methods new
 #' @importFrom ComplexHeatmap Heatmap
 #' @export
 getGenes <- function(midas_merge_dir,
@@ -25,7 +25,7 @@ getGenes <- function(midas_merge_dir,
     set.seed(seed)
     mg <- new("midasGenes")
     dirLs <- list.files(midas_merge_dir)
-    specNames <- c()
+    specNames <- NULL
     for (d in dirLs) {
         if (dir.exists(paste0(midas_merge_dir,"/",d))){
             specNames <- c(specNames, d)
@@ -68,7 +68,7 @@ getGenes <- function(midas_merge_dir,
           mg@Heatmap[[sp]] <- hm
           dend <- row_dend(hm)
           rowCl <- row_order(hm)
-          mg@Cluster[[sp]] <- sapply(rowCl,
+          mg@Cluster[[sp]] <- lapply(rowCl,
                                      function(x) row.names(filtDf)[x])
         }
     }

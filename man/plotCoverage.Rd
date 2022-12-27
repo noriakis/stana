@@ -12,6 +12,8 @@ plotCoverage(midas_merge_dir, species, cl, pointSize = 5)
 \item{species}{candidate species}
 
 \item{cl}{named list of clusters}
+
+\item{pointSize}{scatter point size}
 }
 \description{
 plot the scatters of mean coverage across groups

@@ -10,12 +10,15 @@
 #' @param midas_merge_dir output directory of midas2 merge
 #' @param specs species to be examined
 #' @param cl named list of samples
+#' @param target snps, presabs, or copynum
 #' @param taxtbl data.frame of 6-digit MIDAS species IDs 
 #' as row.names, and have `GTDB species` column
 #' @param formula pass to adonis2, specify distance matrix as d.
-#' @param distMethods distance method passed to dist() (default, manhattan)
+#' @param distMethod distance method passed to dist() (default, manhattan)
 #' @param ... parameters passed to adonis2
-#' @import vegan
+#' @importFrom vegan adonis2
+#' @importFrom stats as.formula dist
+#' @importFrom utils read.table
 #' @export
 doAdonisMIDAS2 <- function(midas_merge_dir,
                            specs, cl, target="snps",
