@@ -78,8 +78,8 @@ consensusSeqMIDAS1 <- function(
         retainedSites <- 0
         for (i in seq_len(nrow(SPECIES[["freq"]]))) {
         	if (retainedSites >= max_sites) {break}
-        	keepSamples <- c()
-        	pooledMaf <- c()
+        	keepSamples <- NULL
+        	pooledMaf <- NULL
         	for (sample in names(SAMPLES)) {
         		keep <- sum(SAMPLES[[sample]][["filter"]][["site_depth"]][i],
         		SAMPLES[[sample]][["filter"]][["depth_ratio"]][i],
@@ -95,7 +95,7 @@ consensusSeqMIDAS1 <- function(
         	SITEFILTERS[[as.character(i)]][["pooled_maf"]] <- mean(pooledMaf) >= site_maf
 	        SITEFILTERS[[as.character(i)]][["ref_allele"]] <- SPECIES[["info"]][i,]$ref_allele %in% c("A","T","G","C")
 	        SITEFILTERS[[as.character(i)]][["site_type"]] <- SPECIES[["info"]][i,]$site_type %in% c("1D","2D","3D","4D")
-	        SITEFILTERS[[as.character(i)]][["locus_type"]] <- SPECIES[["info"]][i,]$locus_type %in% c("CDS")
+	        SITEFILTERS[[as.character(i)]][["locus_type"]] <- SPECIES[["info"]][i,]$locus_type %in% "CDS"
 
 	        keepSite <- 
 	        SITEFILTERS[[as.character(i)]][["prevalance"]]+
@@ -219,8 +219,8 @@ consensusSeqMIDAS2 <- function(
         retainedSites <- 0
         for (i in seq_len(nrow(SPECIES[["freqs"]]))) {
         	if (retainedSites >= max_sites) {break}
-        	keepSamples <- c()
-        	pooledMaf <- c()
+        	keepSamples <- NULL
+        	pooledMaf <- NULL
         	for (sample in names(SAMPLES)) {
         		keep <- sum(SAMPLES[[sample]][["filter"]][["site_depth"]][i],
         		SAMPLES[[sample]][["filter"]][["depth_ratio"]][i],
@@ -236,7 +236,7 @@ consensusSeqMIDAS2 <- function(
         	SITEFILTERS[[as.character(i)]][["pooled_maf"]] <- mean(pooledMaf) >= site_maf
 	        # SITEFILTERS[[as.character(i)]][["ref_allele"]] <- SPECIES[["info"]][i,]$ref_allele %in% c("A","T","G","C")
 	        SITEFILTERS[[as.character(i)]][["site_type"]] <- SPECIES[["info"]][i,]$site_type %in% c("1D","2D","3D","4D")
-	        SITEFILTERS[[as.character(i)]][["locus_type"]] <- SPECIES[["info"]][i,]$locus_type %in% c("CDS")
+	        SITEFILTERS[[as.character(i)]][["locus_type"]] <- SPECIES[["info"]][i,]$locus_type %in% "CDS"
 
 	        keepSite <- 
 	        SITEFILTERS[[as.character(i)]][["prevalance"]]+

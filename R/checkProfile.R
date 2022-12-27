@@ -11,18 +11,18 @@
 #' @import GetoptLong
 #' @export
 checkProfile <- function(midas_merge_dir, cl, filtNum=2) {
-  clearSn <- c()
-  clearGn <- c()
+  clearSn <- NULL
+  clearGn <- NULL
 
   dirLs <- list.files(midas_merge_dir)
-  specNames <- c()
+  specNames <- NULL
   for (d in dirLs) {
     if (dir.exists(paste0(midas_merge_dir,"/",d))){
       specNames <- c(specNames, d)
     }
   }
-  freqtblSn <- c()
-  freqtblGn <- c()
+  freqtblSn <- NULL
+  freqtblGn <- NULL
   for (sp in specNames){
     pnum <- c(sp)
     qqcat("@{sp}\n")

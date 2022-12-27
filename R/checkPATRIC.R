@@ -12,6 +12,7 @@
 #' @param lyt ggraph layout (default: nicely)
 #' @param nodeSize 'count' or 'degree'
 #' @import igraph ggraph BiocFileCache RCurl ggplot2
+#' @importFrom data.table fread
 #' @export
 drawPATRIC <- function(genes,
                         whichToCount="ec_description",
@@ -71,7 +72,7 @@ checkPATRIC <- function(genes,
     qqcat("  Obtaining information on @{i}\n")
     url <- paste0("ftp://ftp.patricbrc.org/genomes/",i,"/",i,".PATRIC.pathway.tab")
     path <- bfcrpath(bfc, url)
-    tmp <- data.table::fread(path)
+    tmp <- fread(path)
     tmp <- data.frame(tmp)
     annotDf[[i]] <- tmp    
   }

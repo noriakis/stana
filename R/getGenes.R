@@ -13,6 +13,7 @@ setClass("midasGenes", slots=list(IDs="character",
 #' @param midas_merge_dir output directory of merge_midas.py
 #' @import GetoptLong
 #' @import ComplexHeatmap
+#' @import methods
 #' @importFrom ComplexHeatmap Heatmap
 #' @export
 getGenes <- function(midas_merge_dir,
