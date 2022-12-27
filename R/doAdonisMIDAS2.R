@@ -49,7 +49,7 @@ doAdonisMIDAS2 <- function(midas_merge_dir,
     snps <- read.table(cnd, row.names=1, header=1)
     unlink(paste0(getwd(),"/",cnd))
     d <- dist(t(snps), method=distMethod)
-    gr <- c()
+    gr <- NULL
     for (cn in colnames(snps)){
       for (clm in seq_along(cl)){
         if (cn %in% cl[[clm]]) {
