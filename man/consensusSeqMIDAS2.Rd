@@ -5,7 +5,7 @@
 \title{consensusSeqMIDAS2}
 \usage{
 consensusSeqMIDAS2(
-  midas_merge_dir,
+  stana,
   species,
   mean_depth = 0,
   fract_cov = 0,
@@ -24,7 +24,7 @@ consensusSeqMIDAS2(
 )
 }
 \arguments{
-\item{midas_merge_dir}{merge directory}
+\item{stana}{stana obj}
 
 \item{species}{candidate species vector}
 

@@ -1,29 +1,29 @@
 #'
-#' consensusSeq
+#' consensusSeqRaw
 #'
 #' Output consensus sequences from merged SNV output.
 #' Optionally, return phylogenetic tree inferred by `phangorn`.
 #' If specified cluster of samples, additionally returns plot by `ggtree`.
 #'
 #' @param target MIDAS1 or MIDAS2
-#' @param stana  stana object
+#' @param midas_merge_dir merge directory
 #' @param species species vectors
 #' @param ... filters, passed to corresponding functions
 #' @export
 #'
-consensusSeq <- function(target="MIDAS1", stana,
+consensusSeqRaw <- function(target="MIDAS1", midas_merge_dir,
 	species, ...){
 	if (target=="MIDAS2") {
-		consensusSeqMIDAS2(stana, species, ...)
+		consensusSeqMIDAS2(midas_merge_dir, species, ...)
 	} else if (target=="MIDAS1"){
-		consensusSeqMIDAS1(stana, species, ...)
+		consensusSeqMIDAS1(midas_merge_dir, species, ...)
 	} else {
 		stop("please specify MIDAS1 or MIDAS2.")
 	}
 }
 
-#' consensusSeqMIDAS1
-#' @param stana stana obj
+#' consensusSeqMIDAS1Raw
+#' @param midas_merge_dir merge directory
 #' @param species candidate species vector
 #' @param mean_depth parameter for filtering
 #' @param fract_cov parameter for filtering
@@ -41,10 +41,9 @@ consensusSeq <- function(target="MIDAS1", stana,
 #' @param max_samples currently not implemented
 #' @importFrom phangorn read.phyDat dist.ml NJ
 #' @import ggtree ggplot2
-#' @importFrom phangorn read.phyDat
 #' @export
-consensusSeqMIDAS1 <- function(
-	stana,
+consensusSeqMIDAS1Raw <- function(
+	midas_merge_dir,
 	species,
 	mean_depth=0,
 	fract_cov=0,
@@ -61,12 +60,8 @@ consensusSeqMIDAS1 <- function(
     exclude_samples=NULL,
     rand_samples=NULL) {
     ## site-list is currently not supported.
-    midas_merge_dir <- stana@mergeDir
-	files <- c("depth","info","summary")
+	files <- c("freq","depth","info","summary")
 	retList <- list()
-	if (sum(species %in% names(stana@snps))!=length(species)){
-		stop("Species not included in loaded SNP tables")
-	}
 	for (sp in species) {
 		qqcat("Beginning @{sp}\n")
 		SPECIES <- list()
@@ -74,7 +69,6 @@ consensusSeqMIDAS1 <- function(
 			filePath <- paste0(midas_merge_dir,"/",sp,"/snps_",file,".txt")
 			SPECIES[[file]] <- read.table(filePath, sep="\t", header=1)
 		}
-		SPECIES[["freq"]] <- stana@snps[[sp]]
 		siteNum <- dim(SPECIES[["freq"]])[1]
 		qqcat("  Site number: @{siteNum}\n")
 		SAMPLES <- list()
@@ -149,33 +143,34 @@ consensusSeqMIDAS1 <- function(
         }
         faName <- paste0(sp,"_consensus.fasta")
         qqcat("  Outputting consensus sequence to @{faName}\n")
-        fileConn <- file(faName, open="w")
+        fileConn<-file(faName, open="w")
         for (sample in names(SAMPLES)) {
 			cat(paste0(">",sample), file=fileConn, append=TRUE, sep="\n")
 			cat(SAMPLES[[sample]][["consensus"]], file=fileConn, append=TRUE, sep="\n")
 		}
 		close(fileConn)
-		tre <- read.phyDat(faName, format = "fasta")
-		stana@fastaList[[sp]] <- tre
 		if (tree) {
+			tre <- read.phyDat(faName, format = "fasta")
 			dm <- dist.ml(tre, "F81")
 			tre <- NJ(dm)
-			stana@treeList[[sp]] <- tre
+			retList[["tree"]][[sp]] <- tre
 			if (!is.null(cl)) {
 			    tre <- groupOTU(tre, cl)
 			    tp <- ggtree(tre, aes(color=group),
 		               layout='circular',branch.length = "none") + # Return cladogram by default
 			           geom_tippoint(size=3) + ggtitle(sp)
-			    stana@treePlotList[[sp]] <- tp
+			    retList[["plotTree"]][[sp]] <- tp
 			}
 		}
 	}
-	stana
+	if (tree) {
+		return(retList)
+	}
 }
 
 
-#' consensusSeqMIDAS2
-#' @param stana stana obj
+#' consensusSeqMIDAS2Raw
+#' @param midas_merge_dir merge directory
 #' @param species candidate species vector
 #' @param mean_depth parameter for filtering
 #' @param fract_cov parameter for filtering
@@ -192,8 +187,8 @@ consensusSeqMIDAS1 <- function(
 #' @param tree if perform tree inference
 #' @param max_samples currently not implemented
 #' @export
-consensusSeqMIDAS2 <- function(
-	stana,
+consensusSeqMIDAS2Raw <- function(
+	midas_merge_dir,
 	species,
 	mean_depth=0,
 	fract_cov=0,
@@ -211,7 +206,6 @@ consensusSeqMIDAS2 <- function(
     rand_samples=NULL) {
     ## site-list is currently not supported.
 	files <- c("freqs","depth","info")
-	midas_merge_dir <- stana@mergeDir
 	retList <- list()
 	for (sp in species) {
 		qqcat("Beginning @{sp}\n")

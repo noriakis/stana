@@ -1,10 +1,25 @@
-setClass("midasGenes", slots=list(IDs="character",
-                                  Mat="list",
-                                  Heatmap="list",
-                                  Cluster="list",
-                                  filterUp="numeric",
-                                  filterDown="numeric"))
-
+setClass("stana", slots=list(
+                            mergeDir="character",
+                            ids="character",
+                            snps="list",
+                            genes="list",
+                            clearSnps="vector",
+                            clearGenes="vector",
+                            freqTableSnps="data.frame",
+                            freqTableGenes="data.frame",
+                            fastaList="list",
+                            treeList="list",
+                            treePlotList="list",
+                            samplefilter="character",
+                            sampleFilterVal="numeric",
+                            heatmap="list",
+                            geneCluster="list",
+                            paFilterUp="numeric",
+                            paFilterDown="numeric"))
+setMethod("show", signature(object="stana"),
+  function(object) {
+    qqcat("Species: @{length(object@IDs)}\n")
+  })
 #' getGenes
 #' 
 #' Obtain gene matrix from midas merge directory from MIDAS.
@@ -30,7 +45,7 @@ getGenes <- function(midas_merge_dir,
                      heatmap=FALSE,
                      seed=1) {
     set.seed(seed)
-    mg <- new("midasGenes")
+    mg <- new("stana")
     dirLs <- list.files(midas_merge_dir)
     specNames <- NULL
     for (d in dirLs) {
@@ -40,8 +55,8 @@ getGenes <- function(midas_merge_dir,
     }
     # qqcat("@{specNames}\n")
     mg@IDs <- specNames
-    mg@filterUp <- filUp
-    mg@filterDown <- filDown
+    mg@paFilterUp <- filUp
+    mg@paFilterDown <- filDown
     if (candidate=="all") {
       candSps <- specNames
     } else {
@@ -75,7 +90,7 @@ getGenes <- function(midas_merge_dir,
           mg@Heatmap[[sp]] <- hm
           dend <- row_dend(hm)
           rowCl <- row_order(hm)
-          mg@Cluster[[sp]] <- lapply(rowCl,
+          mg@geneCluster[[sp]] <- lapply(rowCl,
                                      function(x) row.names(filtDf)[x])
         }
     }

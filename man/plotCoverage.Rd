@@ -17,4 +17,5 @@ plotCoverage(midas_merge_dir, species, cl, pointSize = 5)
 }
 \description{
 plot the scatters of mean coverage across groups
+for MIDAS1
 }
