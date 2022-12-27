@@ -2,6 +2,7 @@
 #' plotCoverage
 #' 
 #' plot the scatters of mean coverage across groups
+#' for MIDAS1
 #' 
 #' @param midas_merge_dir output of midas merge
 #' @param species candidate species
