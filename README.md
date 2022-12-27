@@ -2,7 +2,7 @@
                                            
 [![R-CMD-check](https://github.com/noriakis/stana/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/noriakis/stana/actions/workflows/R-CMD-check.yaml) [![CodeFactor](https://www.codefactor.io/repository/github/noriakis/stana/badge)](https://www.codefactor.io/repository/github/noriakis/stana)
 
-Strain-level metagenomic analysis in R. Import and analysize, plot output of the software like [MIDAS](https://github.com/snayfach/MIDAS), [MIDAS2](https://github.com/czbiohub/MIDAS2), metaSNV v1 and metaSNV v2. Will grow into the complete package.
+Strain-level metagenomic analysis in R. Import and analyse, plot output of the software like [MIDAS](https://github.com/snayfach/MIDAS), [MIDAS2](https://github.com/czbiohub/MIDAS2), metaSNV v1 and metaSNV v2. Will grow into the complete package.
 
 ## Databases
 - [midas_db_v1.2](https://github.com/snayfach/MIDAS/blob/master/docs/ref_db.md): Contains 31,007 bacterial reference genomes clustered into 5,952 species groups.
@@ -10,7 +10,7 @@ Strain-level metagenomic analysis in R. Import and analysize, plot output of the
 - GTDB (in MIDAS2): Contains 258,406 genomes clustered into 45,555 bacterial and 2,339 archaeal species.
 
 ## Example analysis
-The function includes filtering of species based on clinical / environmental variables interested, calling of consensus sequencing, constructing the tree, and functional annotations. The below example shows the analysis of the subset of `PRJEB9584`, sequenced by HiSeq 2000. Packages including [`ggtree`](https://github.com/YuLab-SMU/ggtree), [`ComplexHeatmap`](https://github.com/jokergoo/ComplexHeatmap), [`simplyfyEnrichment`](https://github.com/jokergoo/simplifyEnrichment), [`phangorn`](https://github.com/KlausVigo/phangorn) are used.
+The function includes filtering of species based on clinical / environmental variables interested, calling of consensus sequencing, constructing the tree, plotting the results based on groups, and functional annotations. The below example shows the analysis of the subset of `PRJEB9584`, sequenced by HiSeq 2000. Packages including [`ggtree`](https://github.com/YuLab-SMU/ggtree), [`ComplexHeatmap`](https://github.com/jokergoo/ComplexHeatmap), [`simplyfyEnrichment`](https://github.com/jokergoo/simplifyEnrichment), [`phangorn`](https://github.com/KlausVigo/phangorn) and [`ggraph`](https://github.com/thomasp85/ggraph) are used.
 
 <img src="https://github.com/noriakis/software/blob/main/images/stana_example.png?raw=true" width="800px">
 
