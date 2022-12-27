@@ -30,7 +30,7 @@ getGenes <- function(midas_merge_dir,
             specNames <- c(specNames, d)
         }
     }
-    qqcat("@{specNames}\n")
+    # qqcat("@{specNames}\n")
     mg@IDs <- specNames
     mg@filterUp <- filUp
     mg@filterDown <- filDown

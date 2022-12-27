@@ -1,3 +1,36 @@
+#' drawPATRIC
+#' 
+#' draw graph of ec and kegg pathway name
+#' using checkPATRIC().
+#' 
+#' @param genes named list of genes
+#' @param whichToCount ec_description, ec_number, pathway_name, pathway_id
+#' @param delSize functions with count above this threshold is included
+#' @param showSubset in graph, show this number of text ordered by frequency (default: 5)
+#' @param colText how to color text (default: cat, EC and KEGG)
+#' @param rel use relative frequency
+#' @param lyt ggraph layout (default: nicely)
+#' @param nodeSize 'count' or 'degree'
+#' @import igraph ggraph BiocFileCache RCurl ggplot2
+#' @export
+drawPATRIC <- function(genes,
+                        whichToCount="ec_description",
+                        delSize=0,
+                        showSubset=5,
+                        colText="cat",
+                        rel=FALSE,
+                        lyt="nicely",
+                        nodeSize="count") {
+  checkPATRIC(genes=genes,
+    whichToCount=whichToCount,
+    delSize=delSize,
+    showSubset=showSubset,
+    colText=colText,
+    rel=rel,lyt=lyt,nodeSize=nodeSize,
+    skipGraph=FALSE)
+}
+
+
 #' checkPATRIC
 #'
 #' Obtain gene information from PATRIC server.
@@ -25,7 +58,7 @@ checkPATRIC <- function(genes,
                         rel=FALSE,
                         lyt="nicely",
                         nodeSize="count",
-                        skipGraph=FALSE) {
+                        skipGraph=TRUE) {
   allGenes <- unlist(genes)
   patricIDs <- unique(paste0(data.frame(strsplit(allGenes,"\\."))[1,],
                              ".",

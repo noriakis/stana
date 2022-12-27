@@ -20,6 +20,7 @@ consensusSeq <- function(target="MIDAS1", ...){
 }
 
 #' consensusSeqMIDAS1
+#' @import phangorn ggtree ggplot2
 #' @export
 consensusSeqMIDAS1 <- function(
 	midas_merge_dir,
