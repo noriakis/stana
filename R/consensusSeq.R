@@ -75,9 +75,9 @@ consensusSeqMIDAS1 <- function(
         for (i in seq_len(nrow(SPECIES[["summary"]]))) {
         	info <- SPECIES[["summary"]][i,]
         	if (info$fraction_covered < fract_cov) {
-        		continue
+        		next
         	} else if (info$mean_coverage < mean_depth) {
-        		continue
+        		next
         	} else {
 	        	SAMPLES[[info$sample_id]] <- list(mean_depth=info$mean_coverage,
 	        		fract_cov=info$fraction_covered)
@@ -232,9 +232,9 @@ consensusSeqMIDAS2 <- function(
         for (i in seq_len(nrow(SPECIES[["summary"]]))) {
         	info <- SPECIES[["summary"]][i,]
         	if (info$fraction_covered < fract_cov) {
-        		continue
+        		next
         	} else if (info$mean_coverage < mean_depth) {
-        		continue
+        		next
         	} else {
 	        	SAMPLES[[info$sample_name]] <- list(mean_depth=info$mean_coverage,
 	        		fract_cov=info$fraction_covered)
