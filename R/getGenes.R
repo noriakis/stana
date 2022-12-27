@@ -1,10 +1,14 @@
 setClass("stana", slots=list(
+                            type="character",
                             mergeDir="character",
                             ids="character",
                             snps="list",
+                            geneType="character",
                             genes="list",
                             clearSnps="vector",
                             clearGenes="vector",
+                            clearSnpsSpecies="vector",
+                            clearGenesSpecies="vector",
                             freqTableSnps="data.frame",
                             freqTableGenes="data.frame",
                             fastaList="list",
@@ -16,9 +20,13 @@ setClass("stana", slots=list(
                             geneCluster="list",
                             paFilterUp="numeric",
                             paFilterDown="numeric"))
-setMethod("show", signature(object="stana"),
+setMethod("show",
+  signature(object="stana"),
   function(object) {
-    qqcat("Species: @{length(object@IDs)}\n")
+    qqcat("Type: @{object@type}\n")
+    qqcat("Species: @{length(object@ids)}\n")
+    qqcat("Loaded SNV table: @{length(object@snps)}\n")
+    qqcat("Loaded gene table (@{object@geneType}): @{length(object@genes)}\n")
   })
 #' getGenes
 #' 

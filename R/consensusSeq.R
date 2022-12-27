@@ -210,7 +210,7 @@ consensusSeqMIDAS2 <- function(
     exclude_samples=NULL,
     rand_samples=NULL) {
     ## site-list is currently not supported.
-	files <- c("freqs","depth","info")
+	files <- c("depth","info")
 	midas_merge_dir <- stana@mergeDir
 	retList <- list()
 	for (sp in species) {
@@ -226,7 +226,7 @@ consensusSeqMIDAS2 <- function(
 			SPECIES[[file]] <- read.table(filePathUn, row.names=1, header=1)
 	        unlink(paste0(getwd(),"/",filePathUn))
 		}
-
+		SPECIES[["freqs"]] <- stana@snps[[sp]]
 		siteNum <- dim(SPECIES[["freqs"]])[1]
 		qqcat("  Site number: @{siteNum}\n")
 
@@ -305,27 +305,28 @@ consensusSeqMIDAS2 <- function(
         }
         faName <- paste0(sp,"_consensus.fasta")
         qqcat("  Outputting consensus sequence to @{faName}\n")
+        
         fileConn<-file(faName, open="w")
         for (sample in names(SAMPLES)) {
 			cat(paste0(">",sample), file=fileConn, append=TRUE, sep="\n")
 			cat(SAMPLES[[sample]][["consensus"]], file=fileConn, append=TRUE, sep="\n")
 		}
 		close(fileConn)
+
+		tre <- read.phyDat(faName, format = "fasta")
+		stana@fastaList[[sp]] <- tre
 		if (tree) {
-			tre <- read.phyDat(faName, format = "fasta")
 			dm <- dist.ml(tre, "F81")
 			tre <- NJ(dm)
-			retList[["tree"]][[sp]] <- tre
+			stana@treeList[[sp]] <- tre
 			if (!is.null(cl)) {
 			    tre <- groupOTU(tre, cl)
 			    tp <- ggtree(tre, aes(color=group),
 		               layout='circular',branch.length = "none") + # Return cladogram by default
 			           geom_tippoint(size=3) + ggtitle(sp)
-			    retList[["plotTree"]][[sp]] <- tp
+			    stana@treePlotList[[sp]] <- tp
 			}
 		}
 	}
-	if (tree) {
-		return(retList)
-	}
+	stana
 }

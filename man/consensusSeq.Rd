@@ -9,11 +9,11 @@ consensusSeq(target = "MIDAS1", stana, species, ...)
 \arguments{
 \item{target}{MIDAS1 or MIDAS2}
 
+\item{stana}{stana object}
+
 \item{species}{species vectors}
 
 \item{...}{filters, passed to corresponding functions}
-
-\item{midas_merge_dir}{merge directory}
 }
 \description{
 Output consensus sequences from merged SNV output.
