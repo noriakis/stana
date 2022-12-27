@@ -88,7 +88,17 @@ loadMIDAS <- function(midas_merge_dir, cl, filtType="group",
   stana@freqTableGenes <- freqtblGn
   stana@snps <- snpList
   stana@genes <- geneList
+  
+  stana <- initializeStana(stana)
 
+  qqcat("Overall, @{length(clearSn)} species met criteria in SNPs\n")
+  qqcat("Overall, @{length(clearGn)} species met criteria in genes\n")
+  stana
+}
+
+#' initializeStana
+#' @noRd
+initializeStana <- function(stana) {
   faList <- vector("list", length(stana@ids))
   names(faList) <- stana@ids
   stana@fastaList <- faList
@@ -97,13 +107,12 @@ loadMIDAS <- function(midas_merge_dir, cl, filtType="group",
   stana@treeList <- treeList
   treePlotList <- vector("list", length(stana@ids))
   names(treePlotList) <- stana@ids
-  stana@treePlotList <- treePlotList  
-  qqcat("Overall, @{length(clearSn)} species met criteria in SNPs\n")
-  qqcat("Overall, @{length(clearGn)} species met criteria in genes\n")
+  stana@treePlotList <- treePlotList
+  adonisList <- vector("list", length(stana@ids))
+  names(adonisList) <- stana@ids
+  stana@adonisList <- adonisList
   stana
 }
-
-
 
 #' loadMIDAS2
 #' 
@@ -216,6 +225,7 @@ loadMIDAS2 <- function(midas_merge_dir,
   stana@snps <- snpList
   stana@genes <- geneList
   stana@ids <- union(names(geneList),names(snpList))
+  stana <- initializeStana(stana)
   if (!is.null(taxtbl)){
     stana@clearSnpsSpecies <- clearSnSp
     stana@clearGenesSpecies <- clearGnSp

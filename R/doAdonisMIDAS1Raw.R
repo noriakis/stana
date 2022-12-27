@@ -1,12 +1,12 @@
 #'
-#' doAdonisMIDAS1
+#' doAdonisMIDAS1Raw
 #' 
 #' Perform PERMANOVA on distance matrix based on SNV frequency.
 #' Named list of samples are to be provided.
 #' Note that this function performs comparison using one category.
 #' for complex design, one should do it manually.
 #' 
-#' @param stana stana object
+#' @param midas_merge_dir output directory of midas2 merge
 #' @param specs species to be examined
 #' @param cl named list of samples
 #' @param target snps, presabs, or copynum
@@ -17,15 +17,22 @@
 #' @importFrom stats as.formula dist
 #' @importFrom utils read.table
 #' @export
-doAdonisMIDAS1 <- function(stana, specs, cl,
-    target="snps", formula=NULL, distMethod="manhattan",
-    ...) {
+doAdonisMIDAS1Raw <- function(midas_merge_dir, specs, cl,
+    target="snps", formula=NULL, distMethod="manhattan", ...) {
+      res <- list()
       for (sp in specs){
         qqcat("Performing adonis in @{sp}\n")
         if (target=="snps") {
-            snps <- stana@snps[[sp]]
+            snps <- read.table(paste0(midas_merge_dir,"/",sp,"/snps_freq.txt"),
+                               sep="\t",header=1,row.names=1)
+        } else if (target=="presabs") {
+            snps <- read.table(paste0(midas_merge_dir,"/",sp,"/genes_presabs.txt"),
+                         sep="\t", row.names=1, header=1)
+        } else if (target=="copynum") {
+            snps <- read.table(paste0(midas_merge_dir,"/",sp,"/genes_copynum.txt"),
+                         sep="\t", row.names=1, header=1)
         } else {
-            genes <- stana@genes[[sp]]
+            stop("please specify one of snps, presabs or copynum")
         }
 
         d <- dist(t(snps), method=distMethod)
@@ -51,7 +58,7 @@ doAdonisMIDAS1 <- function(stana, specs, cl,
             r2 <- adores$R2[1]
             qqcat("  R2: @{r2}, Pr: @{pr}\n")
         }
-        stana@adonisList[[sp]] <- adores
+        res[[sp]][["adonis"]] <- adores
       }
-      stana
+      res
 }
