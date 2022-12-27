@@ -23,6 +23,39 @@ consensusSeqMIDAS1(
   rand_samples = NULL
 )
 }
+\arguments{
+\item{midas_merge_dir}{merge directory}
+
+\item{species}{candidate species vector}
+
+\item{mean_depth}{parameter for filtering}
+
+\item{fract_cov}{parameter for filtering}
+
+\item{site_depth}{parameter for filtering}
+
+\item{site_ratio}{parameter for filtering}
+
+\item{site_maf}{parameter for filtering}
+
+\item{allele_support}{parameter for filtering}
+
+\item{site_prev}{parameter for filtering}
+
+\item{cl}{cluster, if plot cladogram}
+
+\item{max_sites}{currently not implemented}
+
+\item{tree}{if perform tree inference}
+
+\item{max_samples}{currently not implemented}
+
+\item{keep_samples}{currently not implemented}
+
+\item{exclude_samples}{currently not implemented}
+
+\item{rand_samples}{currently not implemented}
+}
 \description{
 consensusSeqMIDAS1
 }

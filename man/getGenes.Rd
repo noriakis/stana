@@ -17,6 +17,20 @@ getGenes(
 }
 \arguments{
 \item{midas_merge_dir}{output directory of merge_midas.py}
+
+\item{candidate}{candidate species, default to all}
+
+\item{pa}{"presabs" or "copynum"}
+
+\item{km}{kmeans number if perform heatmap clustering}
+
+\item{filUp}{filter parameter for upper limit}
+
+\item{filDown}{filter parameter for lower limit}
+
+\item{heatmap}{whether to draw heatmap}
+
+\item{seed}{heatmap seed}
 }
 \description{
 Obtain gene matrix from midas merge directory from MIDAS.

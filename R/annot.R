@@ -1,4 +1,4 @@
-#' annot_PATRIC_keywords
+#' anno_PATRIC_keywords
 #'
 #' Annotate the heatmap using functional terms derived from PATRIC.
 #' The function is derived and modified from the example of 
@@ -13,9 +13,10 @@
 #' @param removeHigh remove frequent words
 #' @param removeAdditional remove these words
 #'        passed to anno_word_cloud
+#' @param ... will be passed to anno_word_cloud
 #' @importFrom simplifyEnrichment anno_word_cloud
 #' @export
-anno_PATRIC_keywords = function(split, genes, fnc="pathway_name",
+anno_PATRIC_keywords <- function(split, genes, fnc="pathway_name",
   removeHigh=TRUE, removeAdditional=NULL, ...) {
 
   gene_list <- split(genes, split)

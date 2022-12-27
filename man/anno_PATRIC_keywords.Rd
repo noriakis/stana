@@ -2,7 +2,7 @@
 % Please edit documentation in R/annot.R
 \name{anno_PATRIC_keywords}
 \alias{anno_PATRIC_keywords}
-\title{annot_PATRIC_keywords}
+\title{anno_PATRIC_keywords}
 \usage{
 anno_PATRIC_keywords(
   split,
@@ -24,6 +24,8 @@ anno_PATRIC_keywords(
 
 \item{removeAdditional}{remove these words
 passed to anno_word_cloud}
+
+\item{...}{will be passed to anno_word_cloud}
 }
 \description{
 Annotate the heatmap using functional terms derived from PATRIC.

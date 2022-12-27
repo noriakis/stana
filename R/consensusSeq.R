@@ -5,22 +5,42 @@
 #' Optionally, return phylogenetic tree inferred by `phangorn`.
 #' If specified cluster of samples, additionally returns plot by `ggtree`.
 #'
+#' @param target MIDAS1 or MIDAS2
 #' @param midas_merge_dir merge directory
 #' @param species species vectors
+#' @param ... filters, passed to corresponding functions
 #' @export
 #'
-consensusSeq <- function(target="MIDAS1", ...){
+consensusSeq <- function(target="MIDAS1", midas_merge_dir,
+	species, ...){
 	if (target=="MIDAS2") {
-		consensusSeqMIDAS2(...)
+		consensusSeqMIDAS2(midas_merge_dir, species, ...)
 	} else if (target=="MIDAS1"){
-		consensusSeqMIDAS1(...)
+		consensusSeqMIDAS1(midas_merge_dir, species, ...)
 	} else {
 		stop("please specify MIDAS1 or MIDAS2.")
 	}
 }
 
 #' consensusSeqMIDAS1
-#' @import phangorn ggtree ggplot2
+#' @param midas_merge_dir merge directory
+#' @param species candidate species vector
+#' @param mean_depth parameter for filtering
+#' @param fract_cov parameter for filtering
+#' @param site_depth parameter for filtering
+#' @param site_ratio parameter for filtering
+#' @param site_maf parameter for filtering
+#' @param allele_support parameter for filtering
+#' @param site_prev parameter for filtering
+#' @param cl cluster, if plot cladogram
+#' @param max_sites currently not implemented
+#' @param keep_samples currently not implemented
+#' @param exclude_samples currently not implemented
+#' @param rand_samples currently not implemented
+#' @param tree if perform tree inference
+#' @param max_samples currently not implemented
+#' @importFrom phangorn read.phyDat dist.ml NJ
+#' @import ggtree ggplot2
 #' @export
 consensusSeqMIDAS1 <- function(
 	midas_merge_dir,
@@ -150,6 +170,22 @@ consensusSeqMIDAS1 <- function(
 
 
 #' consensusSeqMIDAS2
+#' @param midas_merge_dir merge directory
+#' @param species candidate species vector
+#' @param mean_depth parameter for filtering
+#' @param fract_cov parameter for filtering
+#' @param site_depth parameter for filtering
+#' @param site_ratio parameter for filtering
+#' @param site_maf parameter for filtering
+#' @param allele_support parameter for filtering
+#' @param site_prev parameter for filtering
+#' @param cl cluster, if plot cladogram
+#' @param max_sites default to Inf
+#' @param keep_samples currently not implemented
+#' @param exclude_samples currently not implemented
+#' @param rand_samples currently not implemented
+#' @param tree if perform tree inference
+#' @param max_samples currently not implemented
 #' @export
 consensusSeqMIDAS2 <- function(
 	midas_merge_dir,

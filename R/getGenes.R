@@ -11,6 +11,13 @@ setClass("midasGenes", slots=list(IDs="character",
 #' Additionally, heatmap can be stored with clustering information.
 #' 
 #' @param midas_merge_dir output directory of merge_midas.py
+#' @param candidate candidate species, default to all
+#' @param pa "presabs" or "copynum"
+#' @param km kmeans number if perform heatmap clustering
+#' @param filUp filter parameter for upper limit
+#' @param filDown filter parameter for lower limit
+#' @param heatmap whether to draw heatmap
+#' @param seed heatmap seed
 #' @import GetoptLong
 #' @import ComplexHeatmap
 #' @importFrom methods new

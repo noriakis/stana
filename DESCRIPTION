@@ -5,5 +5,5 @@ Version: 0.99.0
 License: GPL-3
 Description: strain-level metagenomic analysis in R
 Authors@R: person("Noriaki", "Sato", email = "nori@hgc.jp", role = c("cre", "aut"))
-Imports: ComplexHeatmap, GetoptLong, BiocFileCache, RCurl, ggplot2, ggraph, igraph, simplifyEnrichment, vegan, methods
+Imports: ComplexHeatmap, GetoptLong, BiocFileCache, RCurl, ggplot2, ggraph, igraph, simplifyEnrichment, vegan, methods, data.table, ggtree, phangorn
 RoxygenNote: 7.2.2

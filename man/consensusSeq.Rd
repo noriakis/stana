@@ -4,12 +4,16 @@
 \alias{consensusSeq}
 \title{consensusSeq}
 \usage{
-consensusSeq(target = "MIDAS1", ...)
+consensusSeq(target = "MIDAS1", midas_merge_dir, species, ...)
 }
 \arguments{
+\item{target}{MIDAS1 or MIDAS2}
+
 \item{midas_merge_dir}{merge directory}
 
 \item{species}{species vectors}
+
+\item{...}{filters, passed to corresponding functions}
 }
 \description{
 Output consensus sequences from merged SNV output.
