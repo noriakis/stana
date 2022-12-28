@@ -12,6 +12,7 @@
 #' @param target snps, presabs, or copynum
 #' @param formula pass to adonis2, specify distance matrix as d.
 #' @param distMethod distance method passed to dist() (default, manhattan)
+#' @param maj major allele distance
 #' @param ... parameters passed to adonis2
 #' @importFrom vegan adonis2
 #' @importFrom stats as.formula dist
@@ -19,14 +20,38 @@
 #' @export
 doAdonisMIDAS1 <- function(stana, specs, cl,
     target="snps", formula=NULL, distMethod="manhattan",
+    maj=FALSE,
     ...) {
       for (sp in specs){
         qqcat("Performing adonis in @{sp}\n")
         if (target=="snps") {
             snps <- stana@snps[[sp]]
         } else {
-            genes <- stana@genes[[sp]]
+            snps <- stana@genes[[sp]]
         }
+        if (maj & target=="snps") {
+            chk <- read.table(paste0(stana@mergeDir,
+              "/",sp,"/snps_info.txt"),
+            header=1)
+            qqcat("  before filtering: @{dim(chk)[1]}\n")
+            calcDif <- function(x){
+              if (x[14]=="bi") {
+                  maj <- paste0("count_",tolower(x[5]))
+                  min <- paste0("count_",tolower(x[6]))
+                  fre <- as.numeric(x[8:11]) / sum(as.numeric(x[8:11]))
+                  names(fre) <- names(x[8:11])
+                  fre[maj]-fre[min] > 0.6
+              } else {
+                FALSE
+              }
+            }
+          filtIDs <- chk[apply(chk, 1, function(x) calcDif(x)),]$site_id
+          qqcat("  after filtering: @{length(filtIDs)}\n")
+
+          inc <- intersect(filtIDs, row.names(snps))
+          snps <- snps[inc,]
+        }
+
 
         d <- dist(t(snps), method=distMethod)
         gr <- NULL

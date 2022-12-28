@@ -9,15 +9,20 @@
 #' @param filtType "whole" or "group"
 #' @param filtNum The species with number above this threshold
 #'                for each category is returned
+#' @param filtPer filter by percentage
 #' @param geneType "presabs" or "copynum"
 #' @import GetoptLong
 #' @export
-loadMIDAS <- function(midas_merge_dir, cl, filtType="group",
-  filtNum=2, geneType="copynum") {
+loadMIDAS <- function(midas_merge_dir,
+  cl, filtType="group",
+  filtNum=2, filtPer=0.8,
+  geneType="copynum") {
   stana <- new("stana")
   stana@type <- "MIDAS1"
   stana@mergeDir <- midas_merge_dir
-
+  stana@sampleFilter <- filtType
+  stana@sampleFilterVal <- filtNum
+  stana@sampleFilterPer <- filtPer
   dirLs <- list.files(midas_merge_dir)
   specNames <- NULL
   for (d in dirLs) {
@@ -46,7 +51,7 @@ loadMIDAS <- function(midas_merge_dir, cl, filtType="group",
       for (nm in names(cl)){
         grProfile <- length(intersect(cl[[nm]],colnames(snps)))
         qqcat("    @{nm} @{grProfile}\n")
-        grBoolSn[[nm]] <- grProfile > filtNum
+        grBoolSn[[nm]] <- grProfile > filtNum | grProfile > length(cl[[nm]])*filtPer
         pnum <- c(pnum, grProfile)
       }
       if (sum(unlist(grBoolSn))==length(cl)){
@@ -66,7 +71,7 @@ loadMIDAS <- function(midas_merge_dir, cl, filtType="group",
       for (nm in names(cl)){
         grProfile <- length(intersect(cl[[nm]],colnames(genes)))
         qqcat("    @{nm} @{grProfile}\n")
-        grBoolGn[[nm]] <- grProfile > filtNum
+        grBoolGn[[nm]] <- grProfile > filtNum | grProfile > length(cl[[nm]])*filtPer
         pnum <- c(pnum, grProfile)
       }
       if (sum(unlist(grBoolGn))==length(cl)){
@@ -123,12 +128,14 @@ initializeStana <- function(stana) {
 #' @param midas_merge_dir path to merged directory
 #' @param cl named list of category for samples
 #' @param filtNum the species with the samples above this number will be returned
+#' @param filtPer filter by percentage
 #' @param taxtbl tax table, row.names: 6-digits MIDAS2 ID and `GTDB species` column.
 #' @export
 #' 
 loadMIDAS2 <- function(midas_merge_dir,
                         cl,
                         filtNum=2,
+                        filtPer=0.8,
                         taxtbl=NULL,
                         filtType="group",
                         geneType="copynum") {
@@ -167,7 +174,7 @@ loadMIDAS2 <- function(midas_merge_dir,
           for (clName in names(cl)){
               int <- intersect(colnames(df), cl[[clName]])
               qqcat("      Number of samples in @{clName}: @{length(int)}\n")
-              checkPass <- c(checkPass, length(int)>filtNum)
+              checkPass <- c(checkPass, length(int)>filtNum | length(int)>length(cl[[clName]])*filtPer)
           }
           if (sum(checkPass)==length(names(cl))){
               qqcat("      Passed the filter\n")
@@ -206,7 +213,7 @@ loadMIDAS2 <- function(midas_merge_dir,
           for (clName in names(cl)){
               int <- intersect(colnames(df), cl[[clName]])
               qqcat("      Number of samples in @{clName}: @{length(int)}\n")
-              checkPass <- c(checkPass, length(int)>filtNum)
+              checkPass <- c(checkPass, length(int)>filtNum | length(int)>length(cl[[clName]])*filtPer)
           }
           if (sum(checkPass)==length(names(cl))){
               qqcat("      Passed the filter\n")

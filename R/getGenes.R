@@ -17,6 +17,7 @@ setClass("stana", slots=list(
                             treePlotList="list",
                             sampleFilter="character",
                             sampleFilterVal="numeric",
+                            sampleFilterPer="numeric",
                             heatmap="list",
                             geneCluster="list",
                             paFilterUp="numeric",
@@ -26,8 +27,11 @@ setMethod("show",
   function(object) {
     qqcat("Type: @{object@type}\n")
     qqcat("Species: @{length(object@ids)}\n")
+    qqcat("Filter type: @{object@sampleFilter}, number: @{object@sampleFilterVal}, proportion: @{object@sampleFilterPer}\n")
     qqcat("Loaded SNV table: @{length(object@snps)}\n")
+    qqcat("  Species cleared SNV filter: @{length(object@clearSnps)}\n")
     qqcat("Loaded gene table (@{object@geneType}): @{length(object@genes)}\n")
+    qqcat("  Species cleared gene filter: @{length(object@clearGenes)}\n")
   })
 #' getGenes
 #' 

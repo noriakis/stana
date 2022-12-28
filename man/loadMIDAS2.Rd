@@ -8,6 +8,7 @@ loadMIDAS2(
   midas_merge_dir,
   cl,
   filtNum = 2,
+  filtPer = 0.8,
   taxtbl = NULL,
   filtType = "group",
   geneType = "copynum"
@@ -19,6 +20,8 @@ loadMIDAS2(
 \item{cl}{named list of category for samples}
 
 \item{filtNum}{the species with the samples above this number will be returned}
+
+\item{filtPer}{filter by percentage}
 
 \item{taxtbl}{tax table, row.names: 6-digits MIDAS2 ID and `GTDB species` column.}
 }

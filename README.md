@@ -2,7 +2,7 @@
                                            
 [![R-CMD-check](https://github.com/noriakis/stana/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/noriakis/stana/actions/workflows/R-CMD-check.yaml) [![CodeFactor](https://www.codefactor.io/repository/github/noriakis/stana/badge)](https://www.codefactor.io/repository/github/noriakis/stana)
 
-Strain-level metagenomic analysis in R. Import and analyse, plot output of the software like [MIDAS](https://github.com/snayfach/MIDAS), [MIDAS2](https://github.com/czbiohub/MIDAS2), metaSNV v1 and metaSNV v2. Will grow into the complete package.
+Strain-level metagenomic analysis in R. Import and analyse, plot output of the software like [MIDAS](https://github.com/snayfach/MIDAS), [MIDAS2](https://github.com/czbiohub/MIDAS2), metaSNV v1, metaSNV v2 and [inStrain](https://github.com/MrOlm/inStrain). Will grow into the complete package.
 
 ## Installation
 ```r

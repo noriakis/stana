@@ -9,6 +9,7 @@ loadMIDAS(
   cl,
   filtType = "group",
   filtNum = 2,
+  filtPer = 0.8,
   geneType = "copynum"
 )
 }
@@ -21,6 +22,8 @@ loadMIDAS(
 
 \item{filtNum}{The species with number above this threshold
 for each category is returned}
+
+\item{filtPer}{filter by percentage}
 
 \item{geneType}{"presabs" or "copynum"}
 }

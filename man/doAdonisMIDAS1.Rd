@@ -11,6 +11,7 @@ doAdonisMIDAS1(
   target = "snps",
   formula = NULL,
   distMethod = "manhattan",
+  maj = FALSE,
   ...
 )
 }
@@ -26,6 +27,8 @@ doAdonisMIDAS1(
 \item{formula}{pass to adonis2, specify distance matrix as d.}
 
 \item{distMethod}{distance method passed to dist() (default, manhattan)}
+
+\item{maj}{major allele distance}
 
 \item{...}{parameters passed to adonis2}
 }
