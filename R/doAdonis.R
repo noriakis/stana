@@ -1,9 +1,11 @@
 #'
-#' doAdonisMIDAS1
+#' doAdonis
 #' 
-#' Perform PERMANOVA on distance matrix based on SNV frequency.
+#' Perform PERMANOVA on distance matrix based 
+#' on SNV frequency or gene matrix.
 #' Named list of samples are to be provided.
-#' Note that this function performs comparison using one category.
+#' Note that this function currently performs 
+#' comparison using one category.
 #' for complex design, one should do it manually.
 #' 
 #' @param stana stana object
@@ -18,8 +20,9 @@
 #' @importFrom stats as.formula dist
 #' @importFrom utils read.table
 #' @export
-doAdonisMIDAS1 <- function(stana, specs, cl,
-    target="snps", formula=NULL, distMethod="manhattan",
+doAdonis <- function(stana, specs, cl,
+    target="snps", formula=NULL,
+    distMethod="manhattan",
     maj=FALSE,
     ...) {
       for (sp in specs){
@@ -29,7 +32,7 @@ doAdonisMIDAS1 <- function(stana, specs, cl,
         } else {
             snps <- stana@genes[[sp]]
         }
-        if (maj & target=="snps") {
+        if (maj & target=="snps" & stana@type=="MIDAS1") {
             chk <- read.table(paste0(stana@mergeDir,
               "/",sp,"/snps_info.txt"),
             header=1)

@@ -81,7 +81,9 @@ checkPATRIC <- function(genes,
     qqcat("Checking results on cluster @{clname}\n")
     annot <- NULL
     for (tmpDf in annotDf){
-      greped <- tmpDf[grep(paste(genes[[clname]],collapse="|"),tmpDf$patric_id),]
+      patid <- unlist(lapply(strsplit(tmpDf$patric_id, "\\|"), "[",2))
+      greped <- tmpDf[ patid %in% genes[[clname]],]
+      # greped <- tmpDf[grep(paste(genes[[clname]],collapse="|"),tmpDf$patric_id),]
       annot <- rbind(annot,
                      greped[,c("patric_id",
                                "ec_number",

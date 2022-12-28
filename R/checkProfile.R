@@ -64,7 +64,7 @@ loadMIDAS <- function(midas_merge_dir,
     pnum <- c(sp)
     if (paste0("genes_",geneType,".txt") %in% cont) {
       qqcat("  Genes\n")
-      genes <- read.table(paste0(midas_merge_dir,"/",sp,"/genes_presabs.txt"),
+      genes <- read.table(paste0(midas_merge_dir,"/",sp,"/genes_",geneType,".txt"),
                          sep="\t",header=1,row.names=1)
       geneList[[sp]] <- genes
       grBoolGn <- list()
@@ -143,6 +143,9 @@ loadMIDAS2 <- function(midas_merge_dir,
   stana@type <- "MIDAS2"
   stana@mergeDir <- midas_merge_dir
   stana@geneType <- geneType
+  stana@sampleFilter <- filtType
+  stana@sampleFilterVal <- filtNum
+  stana@sampleFilterPer <- filtPer
   snpList <- list()
   geneList <- list()
   clearGn <- NULL

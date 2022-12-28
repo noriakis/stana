@@ -1,5 +1,5 @@
 #'
-#' doAdonisMIDAS2
+#' doAdonisMIDAS2Raw
 #' 
 #' Perform PERMANOVA on distance matrix based on SNV frequency.
 #' Named list of samples are to be provided.
@@ -20,7 +20,7 @@
 #' @importFrom stats as.formula dist
 #' @importFrom utils read.table
 #' @export
-doAdonisMIDAS2 <- function(midas_merge_dir,
+doAdonisMIDAS2Raw <- function(midas_merge_dir,
                            specs, cl, target="snps",
                            taxtbl=NULL, formula=NULL,
                            distMethod="manhattan", ...) {
