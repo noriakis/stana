@@ -4,7 +4,14 @@
 \alias{doBoruta}
 \title{doBoruta}
 \usage{
-doBoruta(stana, cand, cl, target = "snps", mat = NULL)
+doBoruta(
+  stana,
+  cand,
+  cl,
+  target = "snps",
+  mat = NULL,
+  whichToCount = "ec_description"
+)
 }
 \arguments{
 \item{stana}{stana object}
@@ -17,6 +24,8 @@ doBoruta(stana, cand, cl, target = "snps", mat = NULL)
 
 \item{mat}{if target is not snps, provide preprocessed gene matrix
 otherwise the raw gene matrix is used.}
+
+\item{whichToCount}{which to show on box plots}
 }
 \description{
 feature selection of classification between category

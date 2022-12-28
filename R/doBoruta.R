@@ -9,9 +9,10 @@
 #' @param target default to snps
 #' @param mat if target is not snps, provide preprocessed gene matrix
 #' otherwise the raw gene matrix is used.
+#' @param whichToCount which to show on box plots
 #' @import Boruta
 doBoruta <- function(stana, cand, cl,
-  target="snps", mat=NULL) {
+  target="snps", mat=NULL, whichToCount="ec_description") {
   ret <- list()
   if (target!="snps" & is.null(mat)){
     qqcat("If needed, please provide preprocessed matrix of genes\n")
@@ -60,7 +61,7 @@ doBoruta <- function(stana, cand, cl,
     
     if (stana@type=="MIDAS1"){
       pat <- checkPATRIC(list(important=whichGene),
-                         whichToCount="ec_description")
+                         whichToCount=whichToCount)
       patnm <- unlist(lapply(strsplit(pat$important$DF$patric_id,"\\|"),"[",2))
       desc <- list()
       for (i in colnames(pl)) {
