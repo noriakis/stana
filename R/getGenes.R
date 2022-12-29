@@ -3,6 +3,7 @@ setClass("stana", slots=list(
                             mergeDir="character",
                             ids="character",
                             snps="list",
+                            relab="data.frame",
                             geneType="character",
                             genes="list",
                             clearSnps="vector",
@@ -26,12 +27,14 @@ setMethod("show",
   signature(object="stana"),
   function(object) {
     qqcat("Type: @{object@type}\n")
+    qqcat("Directory: @{object@mergeDir}\n")
     qqcat("Species: @{length(object@ids)}\n")
     qqcat("Filter type: @{object@sampleFilter}, number: @{object@sampleFilterVal}, proportion: @{object@sampleFilterPer}\n")
     qqcat("Loaded SNV table: @{length(object@snps)}\n")
     qqcat("  Species cleared SNV filter: @{length(object@clearSnps)}\n")
     qqcat("Loaded gene table (@{object@geneType}): @{length(object@genes)}\n")
     qqcat("  Species cleared gene filter: @{length(object@clearGenes)}\n")
+    print(object.size(object), units="auto")
   })
 #' getGenes
 #' 
