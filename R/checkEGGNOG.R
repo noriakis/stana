@@ -1,3 +1,64 @@
+
+#' drawEGGNOG
+#' 
+#' draw the graph representing the eggNOG annotation
+#' 
+#' @param annot_file annotation file
+#' @param geneIDs geneIDs
+#' @param candPlot vector consisting of 
+#' "cog","ec","ko","kegg","module","reaction"
+#' @export
+#' 
+drawEGGNOG <- function(annot_file, geneIDs, candPlot) {
+  retList <- list()
+  egng <- checkEGGNOG(annot_file,"all", geneIDs)
+  # delete map* entry
+  egng <- egng[!grepl("map",egng[,3]),]
+  ap <- NULL
+  for (i in geneIDs) {
+    tmp <- egng[egng[,1] %in% i,]
+    tmp <- tmp[ tmp[,2] %in% candPlot,]
+    for (cnd in candPlot) {
+      remCnd <- candPlot[ !candPlot %in% cnd ]
+      if (dim(tmp[ tmp[,2] %in% cnd, ])[1]!=0) {
+        for (no in tmp[ tmp[,2] %in% cnd, ][,3]) {
+          for (no2 in tmp[ tmp[,2] %in% remCnd,][,3]){
+            ap <- rbind(ap, c(no, no2))
+          }
+        }
+      }
+    }  
+  }
+  counter <- table(egng[,3])
+  g <- graph_from_data_frame( ap, directed=FALSE)
+  category <- NULL
+  for (nn in names(V(g))) {
+    category <- c(category,
+      unique(as.character(egng[egng[,3]==nn,][,2])))
+  }
+  V(g)$category <- category
+  V(g)$size <- counter[names(V(g))]
+  retList[["graph"]] <- g
+  plt <- ggraph(g, layout="nicely")+
+            geom_edge_diagonal()+
+            geom_node_point(aes(fill=category, size=size),shape=21)+
+            geom_node_text(aes(label=name, color=category),
+                           check_overlap=TRUE, repel=TRUE,
+                           bg.color = "white", segment.color="black",
+                           bg.r = .15)+
+            scale_size(range=c(3,6))+
+            scale_color_manual(values=c("tomato","steelblue","gold"),
+                              name="Category")+
+            scale_fill_manual(values=c("tomato","steelblue","gold"),
+                              name="Category")+
+            theme_graph()
+  retList[["plot"]] <- plt
+  retList
+}
+
+
+
+
 #' checkEGGNOG
 #' 
 #' When the interesting genes (e.g. differentially abundant between category) are found,
