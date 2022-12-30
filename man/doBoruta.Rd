@@ -25,7 +25,8 @@ doBoruta(
 \item{mat}{if target is not snps, provide preprocessed gene matrix
 otherwise the raw gene matrix is used.}
 
-\item{whichToCount}{which to show on box plots}
+\item{whichToCount}{which to show on box plots,
+pass to checkPATRIC() (in MIDAS1)}
 }
 \description{
 feature selection of classification between category

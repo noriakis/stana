@@ -5,20 +5,19 @@
 #' Optionally, return phylogenetic tree inferred by `phangorn`.
 #' If specified cluster of samples, additionally returns plot by `ggtree`.
 #'
-#' @param target MIDAS1 or MIDAS2
 #' @param stana  stana object
 #' @param species species vectors
 #' @param ... filters, passed to corresponding functions
 #' @export
 #'
-consensusSeq <- function(target="MIDAS1", stana,
+consensusSeq <- function(stana,
 	species, ...){
-	if (target=="MIDAS2") {
+	if (stana@type=="MIDAS2") {
 		consensusSeqMIDAS2(stana, species, ...)
-	} else if (target=="MIDAS1"){
+	} else if (stana@type=="MIDAS1"){
 		consensusSeqMIDAS1(stana, species, ...)
 	} else {
-		stop("please specify MIDAS1 or MIDAS2.")
+		stop("currently not supported for this type")
 	}
 }
 

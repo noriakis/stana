@@ -169,7 +169,7 @@ loadMIDAS2 <- function(midas_merge_dir,
                   stdout=FALSE, stderr=FALSE)
           df <- read.table(cnd, row.names=1, header=1)
           snpList[[i]] <- df
-          qqcat("    Number of genes: @{dim(df)[1]}\n")
+          qqcat("    Number of snps: @{dim(df)[1]}\n")
           qqcat("    Number of samples: @{dim(df)[2]}\n")
           # snpList[[i]] <- df
           

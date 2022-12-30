@@ -9,8 +9,11 @@
 #' @param target default to snps
 #' @param mat if target is not snps, provide preprocessed gene matrix
 #' otherwise the raw gene matrix is used.
-#' @param whichToCount which to show on box plots
+#' @param whichToCount which to show on box plots,
+#' pass to checkPATRIC() (in MIDAS1)
 #' @import Boruta
+#' @import ggplot2
+#' @export
 doBoruta <- function(stana, cand, cl,
   target="snps", mat=NULL, whichToCount="ec_description") {
   ret <- list()
@@ -21,6 +24,7 @@ doBoruta <- function(stana, cand, cl,
   if (target=="snps"){
     filtDf <- stana@snps[[sp]]
   } else {
+    qqcat("Proceeding with provided matrix\n")
     filtDf <- mat
   }
   transDf <- data.frame(t(filtDf),

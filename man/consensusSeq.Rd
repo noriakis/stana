@@ -4,11 +4,9 @@
 \alias{consensusSeq}
 \title{consensusSeq}
 \usage{
-consensusSeq(target = "MIDAS1", stana, species, ...)
+consensusSeq(stana, species, ...)
 }
 \arguments{
-\item{target}{MIDAS1 or MIDAS2}
-
 \item{stana}{stana object}
 
 \item{species}{species vectors}

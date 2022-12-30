@@ -4,12 +4,14 @@
 \alias{checkEGGNOG}
 \title{checkEGGNOG}
 \usage{
-checkEGGNOG(annot_file, ret = "all")
+checkEGGNOG(annot_file, ret = "alldf", checkIDs = NULL)
 }
 \arguments{
 \item{annot_file}{path to eggnog-mapper annotation}
 
-\item{ret}{default to all}
+\item{ret}{default to alldf}
+
+\item{checkIDs}{only return functions related to IDs}
 }
 \description{
 When the interesting genes (e.g. differentially abundant between category) are found,
