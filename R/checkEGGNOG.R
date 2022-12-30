@@ -23,18 +23,38 @@ checkEGGNOG <- function(annot_file, ret="all", checkIDs=NULL) {
     }
     if (!grepl("#", line)){
       tmp <- unlist(strsplit(line, "\t"))
-      if (ret=="all") {
-        if (grepl("COG",tmp[5])){annotMap[[tmp[1]]][["cog"]]<-tmp[5]}
-        if (tmp[11]!="-"){annotMap[[tmp[1]]][["ec"]]<-tmp[11]}
-        if (tmp[12]!="-"){annotMap[[tmp[1]]][["ko"]]<-tmp[12]}
-        if (tmp[13]!="-"){annotMap[[tmp[1]]][["kegg"]]<-tmp[13]}
-        if (tmp[14]!="-"){annotMap[[tmp[1]]][["module"]]<-tmp[14]}
-        if (tmp[15]!="-"){annotMap[[tmp[1]]][["reaction"]]<-tmp[15]}
-      } else if (ret=="cog") {
-        if (grepl("COG",tmp[5])){annotMap[[tmp[1]]][["cog"]]<-tmp[5]}
+      if (!is.null(checkIDs)) {
+        if (tmp[1] %in% checkIDs) {
+          if (ret=="all") {
+            if (grepl("COG",tmp[5])){annotMap[[tmp[1]]][["cog"]]<-tmp[5]}
+            if (tmp[11]!="-"){annotMap[[tmp[1]]][["ec"]]<-tmp[11]}
+            if (tmp[12]!="-"){annotMap[[tmp[1]]][["ko"]]<-tmp[12]}
+            if (tmp[13]!="-"){annotMap[[tmp[1]]][["kegg"]]<-tmp[13]}
+            if (tmp[14]!="-"){annotMap[[tmp[1]]][["module"]]<-tmp[14]}
+            if (tmp[15]!="-"){annotMap[[tmp[1]]][["reaction"]]<-tmp[15]}
+          } else if (ret=="cog") {
+            if (grepl("COG",tmp[5])){annotMap[[tmp[1]]][["cog"]]<-tmp[5]}
+          } else {
+            cn = as.numeric(subset(cnmap, cnmap$fnc==ret)$cn)
+            if (tmp[cn]!="-"){annotMap[[tmp[1]]][[ret]]<-tmp[cn]}
+          }
+        } else {
+          next
+        }
       } else {
-        cn = as.numeric(subset(cnmap, cnmap$fnc==ret)$cn)
-        if (tmp[cn]!="-"){annotMap[[tmp[1]]][[ret]]<-tmp[cn]}
+        if (ret=="all") {
+          if (grepl("COG",tmp[5])){annotMap[[tmp[1]]][["cog"]]<-tmp[5]}
+          if (tmp[11]!="-"){annotMap[[tmp[1]]][["ec"]]<-tmp[11]}
+          if (tmp[12]!="-"){annotMap[[tmp[1]]][["ko"]]<-tmp[12]}
+          if (tmp[13]!="-"){annotMap[[tmp[1]]][["kegg"]]<-tmp[13]}
+          if (tmp[14]!="-"){annotMap[[tmp[1]]][["module"]]<-tmp[14]}
+          if (tmp[15]!="-"){annotMap[[tmp[1]]][["reaction"]]<-tmp[15]}
+        } else if (ret=="cog") {
+          if (grepl("COG",tmp[5])){annotMap[[tmp[1]]][["cog"]]<-tmp[5]}
+        } else {
+          cn = as.numeric(subset(cnmap, cnmap$fnc==ret)$cn)
+          if (tmp[cn]!="-"){annotMap[[tmp[1]]][[ret]]<-tmp[cn]}
+        }
       }
     }
   }
@@ -73,4 +93,3 @@ checkEGGNOG <- function(annot_file, ret="all", checkIDs=NULL) {
     colnames(annotDf) <- c("id","function","functionID")
     return(annotDf)
   }
-}

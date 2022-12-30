@@ -4,12 +4,12 @@
 \alias{checkEGGNOG}
 \title{checkEGGNOG}
 \usage{
-checkEGGNOG(annot_file, ret = "alldf", checkIDs = NULL)
+checkEGGNOG(annot_file, ret = "all", checkIDs = NULL)
 }
 \arguments{
 \item{annot_file}{path to eggnog-mapper annotation}
 
-\item{ret}{default to alldf}
+\item{ret}{default to all}
 
 \item{checkIDs}{only return functions related to IDs}
 }
