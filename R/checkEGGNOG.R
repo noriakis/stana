@@ -47,10 +47,6 @@ drawEGGNOG <- function(annot_file, geneIDs, candPlot) {
                            bg.color = "white", segment.color="black",
                            bg.r = .15)+
             scale_size(range=c(3,6))+
-            scale_color_manual(values=c("tomato","steelblue","gold"),
-                              name="Category")+
-            scale_fill_manual(values=c("tomato","steelblue","gold"),
-                              name="Category")+
             theme_graph()
   retList[["plot"]] <- plt
   retList
