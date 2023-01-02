@@ -1,3 +1,33 @@
+#' loadmetaSNV
+#' 
+#' Assess and store profile for species and return filtered species 
+#' based on the number of samples for each category or whole population.
+#' For metaSNV only.
+#'
+#' @param metasnv_out_dir output directory of merge_midas.py
+#' @param cl named list of sample IDs
+#' @import GetoptLong
+#' @export
+loadmetaSNV <- function(metasnv_out_dir, cl=NULL) {
+  stana <- new("stana")
+  stana@type <- "metaSNV"
+  stana@mergeDir <- metasnv_out_dir
+  dirLs <- list.files(metasnv_out_dir)
+  if ("filtered" %in% dirLs) {
+    if (dir.exists(paste0(metasnv_out_dir,"/filtered/pop"))){
+      freqList <- list.files(paste0(metasnv_out_dir,"/filtered/pop"))
+      spList <- unlist(lapply(strsplit(freqList, ".filtered"),"[",1))
+      stana@ids <- spList
+      for (freq in freqList) {
+        df <- read.table(paste0(metasnv_out_dir,"/filtered/pop/",freq,
+          header=1, row.names=1))
+      }
+    }
+  }
+  stana
+}
+
+
 #' loadMIDAS
 #' 
 #' Assess and store profile for species and return filtered species 
