@@ -11,6 +11,7 @@
 loadmetaSNV <- function(metasnv_out_dir, cl=NULL) {
   stana <- new("stana")
   stana@type <- "metaSNV"
+  snpList <- list()
   stana@mergeDir <- metasnv_out_dir
   dirLs <- list.files(metasnv_out_dir)
   if ("filtered" %in% dirLs) {
@@ -18,12 +19,14 @@ loadmetaSNV <- function(metasnv_out_dir, cl=NULL) {
       freqList <- list.files(paste0(metasnv_out_dir,"/filtered/pop"))
       spList <- unlist(lapply(strsplit(freqList, ".filtered"),"[",1))
       stana@ids <- spList
-      for (freq in freqList) {
-        df <- read.table(paste0(metasnv_out_dir,"/filtered/pop/",freq,
-          header=1, row.names=1))
+      for (sp in spList) {
+        df <- read.table(paste0(metasnv_out_dir,"/filtered/pop/",sp,".filtered.freq"),
+          header=1, row.names=1)
+        snpList[[sp]] <- df
       }
     }
   }
+  stana@snps <- snpList
   stana
 }
 
