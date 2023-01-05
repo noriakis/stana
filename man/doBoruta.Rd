@@ -10,7 +10,8 @@ doBoruta(
   cl,
   target = "snps",
   mat = NULL,
-  whichToCount = "ec_description"
+  whichToCount = "ec_description",
+  ...
 )
 }
 \arguments{
@@ -27,6 +28,8 @@ otherwise the raw gene matrix is used.}
 
 \item{whichToCount}{which to show on box plots,
 pass to checkPATRIC() (in MIDAS1)}
+
+\item{...}{passed to Boruta()}
 }
 \description{
 feature selection of classification between category

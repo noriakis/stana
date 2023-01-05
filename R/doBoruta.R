@@ -11,11 +11,12 @@
 #' otherwise the raw gene matrix is used.
 #' @param whichToCount which to show on box plots,
 #' pass to checkPATRIC() (in MIDAS1)
+#' @param ... passed to Boruta()
 #' @import Boruta
 #' @import ggplot2
 #' @export
 doBoruta <- function(stana, cand, cl,
-  target="snps", mat=NULL, whichToCount="ec_description") {
+  target="snps", mat=NULL, whichToCount="ec_description", ...) {
   ret <- list()
   if (target!="snps" & is.null(mat)){
     qqcat("If needed, please provide preprocessed matrix of genes\n")
@@ -40,7 +41,7 @@ doBoruta <- function(stana, cand, cl,
   
   transDf$group <- as.factor(gr)
   qqcat("Performing Boruta ...\n")
-  rf <- Boruta(group ~ ., transDf, maxRuns=1000)
+  rf <- Boruta(group ~ ., transDf, ...)
   bor <- TentativeRoughFix(rf)
   ret[["boruta"]] <- bor
   
