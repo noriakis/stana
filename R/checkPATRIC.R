@@ -159,7 +159,7 @@ checkPATRIC <- function(genes,
       # V(g)$name <- stringr::str_wrap(V(g)$name,10)
       if (colText!="cat"){
         gp <- ggraph(g, layout=lyt)+
-          geom_edge_diagonal()+
+          geom_edge_link()+
           geom_node_point(aes(size=size,fill=category),shape=21)+
           geom_node_text(aes(filter=size > delSize & showText,
                              label=name,size=size,color=size),
@@ -175,7 +175,7 @@ checkPATRIC <- function(genes,
         catcol <- c("tomato","steelblue")
         names(catcol) <- c("EC","KEGG")
         gp <- ggraph(g, layout=lyt)+
-          geom_edge_diagonal()+
+          geom_edge_link()+
           geom_node_point(aes(size=size,fill=category),shape=21)+
           geom_node_text(aes(filter=size > delSize & showText,
                              label=name,
