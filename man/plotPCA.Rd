@@ -11,6 +11,7 @@ plotPCA(
   target = "snps",
   pointSize = 5,
   cols = palette(),
+  ltype = 2,
   useBlend = FALSE
 )
 }
@@ -20,6 +21,12 @@ plotPCA(
 \item{cl}{named list of clusters}
 
 \item{pointSize}{scatter point size}
+
+\item{cols}{colors to point}
+
+\item{ltype}{line type for ellipse}
+
+\item{useBlend}{use ggblend for point}
 
 \item{staba}{output of midas merge}
 }

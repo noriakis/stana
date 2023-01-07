@@ -7,12 +7,15 @@
 #' @param species candidate species
 #' @param cl named list of clusters
 #' @param pointSize scatter point size
+#' @param cols colors to point
+#' @param ltype line type for ellipse
+#' @param useBlend use ggblend for point
 #' @import ggplot2
 #' @import ggblend
 #' @export
 #' 
 plotPCA <- function(stana, species, cl, target="snps",
-	pointSize=5, cols=palette(), useBlend=FALSE) {
+	pointSize=5, cols=palette(), ltype=2, useBlend=FALSE) {
 	pcaList <- list()
 	for (sp in species) {
 		if (target=="snps") {
@@ -41,7 +44,7 @@ plotPCA <- function(stana, species, cl, target="snps",
 		    geom_point(size=pointSize)|> ggblend::blend("darken")+
 			scale_color_manual(values=cols)+
 			scale_fill_manual(values=cols)+
-			stat_ellipse(lty=1)+
+			stat_ellipse(lty=ltype)+
 		    theme_minimal()
 		} else {
 		    p <- pcdf |>
@@ -50,7 +53,7 @@ plotPCA <- function(stana, species, cl, target="snps",
 		    geom_point(size=pointSize)+
 			scale_color_manual(values=cols)+
 			scale_fill_manual(values=cols)+
-			stat_ellipse(lty=1)+
+			stat_ellipse(lty=ltype)+
 		    theme_minimal()
 		}
 		pcaList[[sp]] <- p
