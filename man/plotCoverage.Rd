@@ -4,10 +4,10 @@
 \alias{plotCoverage}
 \title{plotCoverage}
 \usage{
-plotCoverage(midas_merge_dir, species, cl, pointSize = 5)
+plotCoverage(stana, species, cl, pointSize = 5)
 }
 \arguments{
-\item{midas_merge_dir}{output of midas merge}
+\item{stana}{stana object}
 
 \item{species}{candidate species}
 

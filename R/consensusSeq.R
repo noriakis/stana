@@ -164,7 +164,7 @@ consensusSeqMIDAS1 <- function(
 			    tre <- groupOTU(tre, cl)
 			    tp <- ggtree(tre, aes(color=group),
 		               layout='circular',branch.length = "none") + # Return cladogram by default
-			           geom_tippoint(size=3) + ggtitle(sp)
+			           geom_tippoint(size=3) + ggtitle(sp)+scale_color_manual(values=stana@colors)
 			    stana@treePlotList[[sp]] <- tp
 			}
 		}
@@ -322,7 +322,7 @@ consensusSeqMIDAS2 <- function(
 			    tre <- groupOTU(tre, cl)
 			    tp <- ggtree(tre, aes(color=group),
 		               layout='circular',branch.length = "none") + # Return cladogram by default
-			           geom_tippoint(size=3) + ggtitle(sp)
+			           geom_tippoint(size=3) + ggtitle(sp)+scale_color_manual(values=stana@colors)
 			    stana@treePlotList[[sp]] <- tp
 			}
 		}

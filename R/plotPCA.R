@@ -15,7 +15,8 @@
 #' @export
 #' 
 plotPCA <- function(stana, species, cl, target="snps",
-	pointSize=5, cols=palette(), ltype=2, useBlend=FALSE) {
+	pointSize=5, ltype=2, useBlend=FALSE) {
+	cols <- stana@colors
 	pcaList <- list()
 	for (sp in species) {
 		if (target=="snps") {
@@ -23,6 +24,10 @@ plotPCA <- function(stana, species, cl, target="snps",
 		} else {
 			df <- stana@genes[[sp]]
 		}
+
+		df <- df[,intersect(colnames(df),
+			as.character(unlist(cl)))]
+
 		if (!is.null(cl)) {
 			ids <- colnames(df)
 			for (nm in names(cl)){

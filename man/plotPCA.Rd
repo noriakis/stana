@@ -10,7 +10,6 @@ plotPCA(
   cl,
   target = "snps",
   pointSize = 5,
-  cols = palette(),
   ltype = 2,
   useBlend = FALSE
 )
@@ -22,13 +21,13 @@ plotPCA(
 
 \item{pointSize}{scatter point size}
 
-\item{cols}{colors to point}
-
 \item{ltype}{line type for ellipse}
 
 \item{useBlend}{use ggblend for point}
 
 \item{staba}{output of midas merge}
+
+\item{cols}{colors to point}
 }
 \description{
 plot the PCA results from snp or gene table

@@ -54,9 +54,9 @@ doAdonis <- function(stana, specs, cl,
           inc <- intersect(filtIDs, row.names(snps))
           snps <- snps[inc,]
         }
-
-
+        snps <- snps[,intersect(colnames(snps),as.character(unlist(cl)))]
         d <- dist(t(snps), method=distMethod)
+
         gr <- NULL
         for (cn in colnames(snps)){
           for (clm in seq_along(cl)){
@@ -65,6 +65,7 @@ doAdonis <- function(stana, specs, cl,
             }
           }
         }
+
         if (is.null(formula)){
             formulaPass <- as.formula("d ~ gr")
             pr <- TRUE

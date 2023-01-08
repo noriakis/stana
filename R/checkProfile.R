@@ -127,16 +127,25 @@ loadMIDAS <- function(midas_merge_dir,
   stana@snps <- snpList
   stana@genes <- geneList
   
-  stana <- initializeStana(stana)
+  stana <- initializeStana(stana,cl)
 
   qqcat("Overall, @{length(clearSn)} species met criteria in SNPs\n")
   qqcat("Overall, @{length(clearGn)} species met criteria in genes\n")
   stana
 }
 
+#' getColors
+#' @import RColorBrewer
+#' @noRd
+getColors <- function(cl){
+  numgr <- length(names(cl))
+  cols <- brewer.pal(numgr, "PuOr") 
+}
+
 #' initializeStana
 #' @noRd
-initializeStana <- function(stana) {
+initializeStana <- function(stana,cl) {
+  stana@colors <- getColors(cl)
   faList <- vector("list", length(stana@ids))
   names(faList) <- stana@ids
   stana@fastaList <- faList
@@ -268,7 +277,7 @@ loadMIDAS2 <- function(midas_merge_dir,
   stana@snps <- snpList
   stana@genes <- geneList
   stana@ids <- union(names(geneList),names(snpList))
-  stana <- initializeStana(stana)
+  stana <- initializeStana(stana,cl)
   if (!is.null(taxtbl)){
     stana@clearSnpsSpecies <- clearSnSp
     stana@clearGenesSpecies <- clearGnSp

@@ -20,6 +20,7 @@ setClass("stana", slots=list(
                             sampleFilterVal="numeric",
                             sampleFilterPer="numeric",
                             heatmap="list",
+                            colors="vector",
                             geneCluster="list",
                             paFilterUp="numeric",
                             paFilterDown="numeric"))

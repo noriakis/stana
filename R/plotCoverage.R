@@ -4,14 +4,16 @@
 #' plot the scatters of mean coverage across groups
 #' for MIDAS1
 #' 
-#' @param midas_merge_dir output of midas merge
+#' @param stana stana object
 #' @param species candidate species
 #' @param cl named list of clusters
 #' @param pointSize scatter point size
 #' @import ggplot2
 #' 
-plotCoverage <- function(midas_merge_dir, species, cl,
+plotCoverage <- function(stana, species, cl,
 	pointSize=5) {
+	if(stana@type!="MIDAS1"){stop("currently MIDAS1 only")}
+	midas_merge_dir <- stana@mergeDir
 	snps <- read.table(paste0(midas_merge_dir,"/",species,"/snps_summary.txt"),
                          sep="\t",header=1,row.names=1)
 	ids <- row.names(snps)
@@ -23,6 +25,7 @@ plotCoverage <- function(midas_merge_dir, species, cl,
 	ggplot(snps, aes(x=group, y=mean_coverage,
 		fill=group)) +
 	geom_jitter(shape=21, size=pointSize)+
+	scale_fill_manual(values=stana@colors)+
 	theme_minimal()
 }
 
