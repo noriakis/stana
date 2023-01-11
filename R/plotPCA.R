@@ -50,16 +50,17 @@ plotPCA <- function(stana, species, cl, target="snps",
 			scale_color_manual(values=cols)+
 			scale_fill_manual(values=cols)+
 			stat_ellipse(lty=ltype)+
-		    theme_minimal()
+		    theme_minimal()+ggtitle(sp)
 		} else {
 		    p <- pcdf |>
 		    ggplot(aes(x=PC1, y=PC2,
 		    	color=Group, fill=Group))+
-		    geom_point(size=pointSize)+
+		    geom_point(size=pointSize,
+		    	alpha=0.7)+
 			scale_color_manual(values=cols)+
 			scale_fill_manual(values=cols)+
 			stat_ellipse(lty=ltype)+
-		    theme_minimal()
+		    theme_minimal()+ggtitle(sp)
 		}
 		pcaList[[sp]] <- p
 	}
