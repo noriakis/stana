@@ -130,6 +130,7 @@ checkEGGNOG <- function(annot_file, ret="all", checkIDs=NULL) {
       }
     }
     annotDf <- data.frame(annotDf)
+    if (dim(annotDf)[1]==0) {return(NULL)}
     colnames(annotDf) <- c("id","function","functionID")
     return(annotDf)
   } else {
@@ -147,6 +148,7 @@ checkEGGNOG <- function(annot_file, ret="all", checkIDs=NULL) {
         }
     }
     annotDf <- data.frame(annotDf)
+    if (dim(annotDf)[1]==0) {return(NULL)}
     colnames(annotDf) <- c("id","function","functionID")
     return(annotDf)
   }
