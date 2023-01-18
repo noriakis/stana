@@ -4,7 +4,13 @@
 \alias{loadmetaSNV}
 \title{loadmetaSNV}
 \usage{
-loadmetaSNV(metasnv_out_dir, cl = NULL)
+loadmetaSNV(
+  metasnv_out_dir,
+  cl = NULL,
+  filtType = "group",
+  filtNum = 2,
+  filtPer = 0.8
+)
 }
 \arguments{
 \item{metasnv_out_dir}{output directory of merge_midas.py}

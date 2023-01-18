@@ -8,7 +8,9 @@
 #' @param cl named list of sample IDs
 #' @import GetoptLong
 #' @export
-loadmetaSNV <- function(metasnv_out_dir, cl=NULL) {
+loadmetaSNV <- function(metasnv_out_dir, cl=NULL,
+                        filtType="group",
+                        filtNum=2, filtPer=0.8) {
   stana <- new("stana")
   stana@type <- "metaSNV"
   snpList <- list()
@@ -71,6 +73,16 @@ loadMIDAS <- function(midas_merge_dir,
   freqtblGn <- NULL
   snpList <- list()
   geneList <- list()
+
+  if (filtType=="whole") {
+    checkCl <- list("whole"=as.character(unlist(cl)))
+  } else if (filtType=="group") {
+    checkCl <- cl
+  } else {
+    stop("Please specify whole or group")
+  }
+  stana@sampleFilter=filtType
+
   for (sp in specNames){
     pnum <- c(sp)
     qqcat("@{sp}\n")
@@ -81,13 +93,13 @@ loadMIDAS <- function(midas_merge_dir,
                          sep="\t",header=1,row.names=1)
       snpList[[sp]] <- snps
       grBoolSn <- list()
-      for (nm in names(cl)){
-        grProfile <- length(intersect(cl[[nm]],colnames(snps)))
+      for (nm in names(checkCl)){
+        grProfile <- length(intersect(checkCl[[nm]],colnames(snps)))
         qqcat("    @{nm} @{grProfile}\n")
-        grBoolSn[[nm]] <- grProfile > filtNum | grProfile > length(cl[[nm]])*filtPer
+        grBoolSn[[nm]] <- grProfile > filtNum | grProfile > length(checkCl[[nm]])*filtPer
         pnum <- c(pnum, grProfile)
       }
-      if (sum(unlist(grBoolSn))==length(cl)){
+      if (sum(unlist(grBoolSn))==length(checkCl)){
         qqcat("    @{sp} cleared filtering threshold in SNV\n")
         clearSn <- c(clearSn, sp)
       }
@@ -101,13 +113,13 @@ loadMIDAS <- function(midas_merge_dir,
                          sep="\t",header=1,row.names=1)
       geneList[[sp]] <- genes
       grBoolGn <- list()
-      for (nm in names(cl)){
-        grProfile <- length(intersect(cl[[nm]],colnames(genes)))
+      for (nm in names(checkCl)){
+        grProfile <- length(intersect(checkCl[[nm]],colnames(genes)))
         qqcat("    @{nm} @{grProfile}\n")
-        grBoolGn[[nm]] <- grProfile > filtNum | grProfile > length(cl[[nm]])*filtPer
+        grBoolGn[[nm]] <- grProfile > filtNum | grProfile > length(checkCl[[nm]])*filtPer
         pnum <- c(pnum, grProfile)
       }
-      if (sum(unlist(grBoolGn))==length(cl)){
+      if (sum(unlist(grBoolGn))==length(checkCl)){
         qqcat("    @{sp} cleared filtering threshold in genes\n")
         clearGn <- c(clearGn, sp)
       }
@@ -116,8 +128,8 @@ loadMIDAS <- function(midas_merge_dir,
   }
   freqtblSn <- data.frame(freqtblSn)
   freqtblGn <- data.frame(freqtblGn)
-  colnames(freqtblSn) <- c("species",names(cl))
-  colnames(freqtblGn) <- c("species",names(cl))
+  colnames(freqtblSn) <- c("species",names(checkCl))
+  colnames(freqtblGn) <- c("species",names(checkCl))
   row.names(freqtblSn) <- seq_len(nrow(freqtblSn))
   row.names(freqtblGn) <- seq_len(nrow(freqtblGn))
   stana@clearSnps <- clearSn
@@ -195,6 +207,15 @@ loadMIDAS2 <- function(midas_merge_dir,
   clearSn <- NULL
   clearSnSp <- NULL
 
+  if (filtType=="whole") {
+    checkCl <- list("whole"=as.character(unlist(cl)))
+  } else if (filtType=="group") {
+    checkCl <- cl
+  } else {
+    stop("Please specify whole or group")
+  }
+  stana@sampleFilter=filtType
+
   qqcat("SNPS\v")
   for (i in list.files(paste0(midas_merge_dir,"/snps"))){
       if (!is.na(as.numeric(i))) {
@@ -216,12 +237,12 @@ loadMIDAS2 <- function(midas_merge_dir,
           # snpList[[i]] <- df
           
           checkPass <- NULL
-          for (clName in names(cl)){
-              int <- intersect(colnames(df), cl[[clName]])
+          for (clName in names(checkCl)){
+              int <- intersect(colnames(df), checkCl[[clName]])
               qqcat("      Number of samples in @{clName}: @{length(int)}\n")
               checkPass <- c(checkPass, length(int)>filtNum | length(int)>length(cl[[clName]])*filtPer)
           }
-          if (sum(checkPass)==length(names(cl))){
+          if (sum(checkPass)==length(names(checkCl))){
               qqcat("      Passed the filter\n")
               clearSn <- c(clearSn, i)
               if (!is.null(taxtbl)){
@@ -255,12 +276,12 @@ loadMIDAS2 <- function(midas_merge_dir,
           geneList[[i]] <- df
           
           checkPass <- NULL
-          for (clName in names(cl)){
-              int <- intersect(colnames(df), cl[[clName]])
+          for (clName in names(checkCl)){
+              int <- intersect(colnames(df), checkCl[[clName]])
               qqcat("      Number of samples in @{clName}: @{length(int)}\n")
               checkPass <- c(checkPass, length(int)>filtNum | length(int)>length(cl[[clName]])*filtPer)
           }
-          if (sum(checkPass)==length(names(cl))){
+          if (sum(checkPass)==length(names(checkCl))){
               qqcat("      Passed the filter\n")
               clearGn <- c(clearGn, i)
               if (!is.null(taxtbl)){
@@ -289,7 +310,7 @@ loadMIDAS2 <- function(midas_merge_dir,
 #' 
 #' Assess profile for species and return filtered species 
 #' based on the number of samples for each category.
-#' For MIDAS only.
+#' For MIDAS only. Deprecated, use load* functions instead.
 #'
 #' @param midas_merge_dir output directory of merge_midas.py
 #' @param cl named list of sample IDs

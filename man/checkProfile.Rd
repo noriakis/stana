@@ -17,5 +17,5 @@ for each category is returned}
 \description{
 Assess profile for species and return filtered species 
 based on the number of samples for each category.
-For MIDAS only.
+For MIDAS only. Deprecated, use load* functions instead.
 }
