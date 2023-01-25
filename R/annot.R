@@ -13,11 +13,11 @@
 #' @param removeHigh remove frequent words
 #' @param removeAdditional remove these words
 #'        passed to anno_word_cloud
-#' @param ... will be passed to anno_word_cloud
+#' @param argList will be passed to anno_word_cloud
 #' @importFrom simplifyEnrichment anno_word_cloud
 #' @export
 anno_PATRIC_keywords <- function(split, genes, fnc="pathway_name",
-  removeHigh=TRUE, removeAdditional=NULL, ...) {
+  removeHigh=TRUE, removeAdditional=NULL, argList=list()) {
 
   gene_list <- split(genes, split)
   gene_list <- lapply(gene_list, function(x) {
@@ -33,7 +33,8 @@ anno_PATRIC_keywords <- function(split, genes, fnc="pathway_name",
   } else {
     highTerms <- NULL
   }
-
-  anno_word_cloud(split, lt, exclude_words=c(highTerms,removeAdditional),
-    ...)
+  argList[["align_to"]] <- split
+  argList[["term"]] <- lt
+  argList[["exclude_words"]] <- c(highTerms,removeAdditional)
+  do.call("anno_word_cloud", argList)
 }

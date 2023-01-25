@@ -4,14 +4,14 @@
 \alias{consensusSeq}
 \title{consensusSeq}
 \usage{
-consensusSeq(stana, species, ...)
+consensusSeq(stana, species, argList = list())
 }
 \arguments{
 \item{stana}{stana object}
 
 \item{species}{species vectors}
 
-\item{...}{filters, passed to corresponding functions}
+\item{argList}{parameters, passed to corresponding functions}
 }
 \description{
 Output consensus sequences from merged SNV output.

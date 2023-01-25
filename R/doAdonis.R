@@ -15,7 +15,7 @@
 #' @param formula pass to adonis2, specify distance matrix as d.
 #' @param distMethod distance method passed to dist() (default, manhattan)
 #' @param maj major allele distance
-#' @param ... parameters passed to adonis2
+#' @param argList parameters passed to adonis2
 #' @importFrom vegan adonis2
 #' @importFrom stats as.formula dist
 #' @importFrom utils read.table
@@ -24,7 +24,7 @@ doAdonis <- function(stana, specs, cl,
     target="snps", formula=NULL,
     distMethod="manhattan",
     maj=FALSE,
-    ...) {
+    argList=list()) {
       for (sp in specs){
         qqcat("Performing adonis in @{sp}\n")
         if (target=="snps") {
@@ -73,7 +73,10 @@ doAdonis <- function(stana, specs, cl,
             formulaPass <- as.formula(formula)
             pr <- FALSE
         }
-        adores <- adonis2(formulaPass, ...)
+
+        argList[["formula"]] <- formulaPass
+        adores <- do.call("adonis2", argList)
+        
         if (pr) {
             pr <- adores$`Pr(>F)`
             pr <- pr[!is.na(pr)]

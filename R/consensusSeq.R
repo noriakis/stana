@@ -7,15 +7,17 @@
 #'
 #' @param stana  stana object
 #' @param species species vectors
-#' @param ... filters, passed to corresponding functions
+#' @param argList parameters, passed to corresponding functions
 #' @export
 #'
 consensusSeq <- function(stana,
-	species, ...){
+	species, argList=list()){
+	argList[["stana"]] <- stana
+	argList[["species"]] <- species
 	if (stana@type=="MIDAS2") {
-		consensusSeqMIDAS2(stana, species, ...)
+		do.call("consensusSeqMIDAS2", argList)
 	} else if (stana@type=="MIDAS1"){
-		consensusSeqMIDAS1(stana, species, ...)
+		do.call("consensusSeqMIDAS1", argList)
 	} else {
 		stop("currently not supported for this type")
 	}

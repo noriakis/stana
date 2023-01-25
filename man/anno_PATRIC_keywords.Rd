@@ -10,7 +10,7 @@ anno_PATRIC_keywords(
   fnc = "pathway_name",
   removeHigh = TRUE,
   removeAdditional = NULL,
-  ...
+  argList = list()
 )
 }
 \arguments{
@@ -25,7 +25,7 @@ anno_PATRIC_keywords(
 \item{removeAdditional}{remove these words
 passed to anno_word_cloud}
 
-\item{...}{will be passed to anno_word_cloud}
+\item{argList}{will be passed to anno_word_cloud}
 }
 \description{
 Annotate the heatmap using functional terms derived from PATRIC.

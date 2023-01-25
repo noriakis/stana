@@ -12,7 +12,7 @@ doAdonis(
   formula = NULL,
   distMethod = "manhattan",
   maj = FALSE,
-  ...
+  argList = list()
 )
 }
 \arguments{
@@ -30,7 +30,7 @@ doAdonis(
 
 \item{maj}{major allele distance}
 
-\item{...}{parameters passed to adonis2}
+\item{argList}{parameters passed to adonis2}
 }
 \description{
 Perform PERMANOVA on distance matrix based 
