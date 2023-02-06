@@ -16,6 +16,7 @@
 #' @param distMethod distance method passed to dist() (default, manhattan)
 #' @param maj major allele distance
 #' @param argList parameters passed to adonis2
+#' @param deleteZeroDepth delete zero depth snvs
 #' @importFrom vegan adonis2
 #' @importFrom stats as.formula dist
 #' @importFrom utils read.table
@@ -23,12 +24,15 @@
 doAdonis <- function(stana, specs, cl,
     target="snps", formula=NULL,
     distMethod="manhattan",
-    maj=FALSE,
+    maj=FALSE, deleteZeroDepth=FALSE,
     argList=list()) {
       for (sp in specs){
         qqcat("Performing adonis in @{sp}\n")
         if (target=="snps") {
             snps <- stana@snps[[sp]]
+            if (deleteZeroDepth) {
+              snps <- snps[rowSums(snps==-1)==0,]
+            }
         } else {
             snps <- stana@genes[[sp]]
         }

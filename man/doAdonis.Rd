@@ -12,6 +12,7 @@ doAdonis(
   formula = NULL,
   distMethod = "manhattan",
   maj = FALSE,
+  deleteZeroDepth = FALSE,
   argList = list()
 )
 }
@@ -29,6 +30,8 @@ doAdonis(
 \item{distMethod}{distance method passed to dist() (default, manhattan)}
 
 \item{maj}{major allele distance}
+
+\item{deleteZeroDepth}{delete zero depth snvs}
 
 \item{argList}{parameters passed to adonis2}
 }
