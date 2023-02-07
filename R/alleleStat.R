@@ -9,6 +9,7 @@
 #' @param cl named list of clusters of samples
 #' @param base "maj","ref", or "majref"
 #' @param deleteZeroDepth delete snvs with zero depth
+#' @export
 #' 
 
 alleleStat <- function(stana, sp, cl, base="maj",
