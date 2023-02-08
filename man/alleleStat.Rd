@@ -18,5 +18,6 @@ alleleStat(stana, sp, cl, base = "maj", deleteZeroDepth = FALSE)
 \item{deleteZeroDepth}{delete snvs with zero depth}
 }
 \description{
-Output statistics of MAF
+Output statistics of MAF, using site-by-sample 
+minor allele frequency table output by MIDAS1 and MIDAS2.
 }

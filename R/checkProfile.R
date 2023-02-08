@@ -1,3 +1,77 @@
+
+#' loadInStrain
+#' 
+#' For InStrain, you should provide `compare` output
+#' with --bams options implmented from version 1.6.
+#' It computes MAF of biallelic position.
+#' Filters of popSNV or conSNV will be added.
+#' 
+#' @param compare_out_dir output directory of compare.
+#' need `output` in the directory
+#' @param sample_threshold SNVs with at least this number of samples are included
+#' @param candidate_species candidate species ID, e.g. `GUT_GENOME000024`
+#' @param just_species if TRUE, returns the vector of species IDs
+#' 
+#' @export
+loadInStrain <- function(compare_out_dir, sample_threshold, candidate_species, just_species=FALSE) {
+    output_list <- list.files(paste0(compare_out_dir,"/output"))
+    stana <- new("stana")
+    stana@type <- "InStrain"
+    stana@mergeDir <- compare_out_dir
+    snps <- list()
+    if (sum(grepl("pooled_SNV_data",output_list))!=0) {
+        path <- paste0(compare_out_dir,"/output/",output_list[grepl("pooled_SNV_data.tsv.gz",output_list)])
+        tbl <- data.table::fread(path)
+        keys_path <- paste0(compare_out_dir,"/output/",output_list[grepl("pooled_SNV_data_keys.tsv",output_list)])
+        keys <- data.table::fread(keys_path)
+        info_path <- paste0(compare_out_dir,"/output/",output_list[grepl("pooled_SNV_info.tsv.gz",output_list)])
+        info <- data.table::fread(info_path)
+        sps <- unique(paste0(sapply(strsplit(keys$scaffold, "_"),"[",1),"_",sapply(strsplit(keys$scaffold, "_"),"[",2)))
+        if (just_species) {
+            return(sps)
+        }
+        stana@ids <- sps
+        qqcat("Candidate species: @{candidate_species}\n")
+        candKeys <- keys[grepl(candidate_species,keys$scaffold),]$key
+        qqcat("  Candidate key numbers: @{length(candKeys)}\n")
+        ret <- function(x) {
+            smp <- keys[keys$key==x[1],"sample"]$sample
+            scaff <- keys[keys$key==x[2],"scaffold"]$scaffold
+            det <- c(smp, paste0(scaff,"|",x[3]))
+            majmin <- x[4:7][x[4:7]!=0][1:2]
+            if (length(unique(majmin)!=1)) {
+                major <- names(majmin)[which.max(majmin)]
+                minor <- names(majmin)[which.min(majmin)]
+                det <- c(det, major, minor,
+                         as.numeric((x[4:7] / sum(x[4:7]))[minor]))
+            } else {
+                ## Alphabetical order
+                m <- sort(names(majmin))
+                det <- c(det, m[1], m[2],
+                         as.numeric((x[4:7] / sum(x[4:7]))[m[2]]))
+            }
+            det
+        }
+        mafs <- NULL
+
+        sdt <- tbl[tbl$scaffold %in% candKeys,]
+        qqcat("  Dimension of pooled SNV table for species: @{dim(sdt)[1]}")
+        # Only bi-allelic position
+        sdt <- sdt[apply(sdt[,4:7],1,function(x)sum(x==0))==2,]
+        maf <- apply(sdt, 1, function(x) ret(x))
+        maf <- data.frame(t(maf))
+
+        maf <- maf |> `colnames<-`(c("id","scaffold_position","major_allele","minor_allele","maf"))
+        maf$scaffold_position <- paste0(maf$scaffold_position,"|",maf$major_allele,">",maf$minor_allele)
+        sample_snv <- tidyr::pivot_wider(maf, id_cols=id, names_from = scaffold_position, values_from = maf)
+        thresh <- apply(sample_snv[2:ncol(sample_snv)], 2, function(x) sum(!is.na(x))) > sample_threshold
+        snps[[candidate_species]] <- sample_snv[,c("id",names(thresh[thresh]))]
+        stana@snps <- snps
+    }
+    return(stana)
+}
+
+
 #' loadmetaSNV
 #' 
 #' Assess and store profile for species and return filtered species 
