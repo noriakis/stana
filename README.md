@@ -16,7 +16,7 @@ devtools::install_github("noriakis/stana")
 - proGenomes2, proGenomes3
 
 ## Example analysis
-The function includes filtering of species based on clinical / environmental variables interested, calling of consensus sequencing, constructing the tree, plotting the results based on groups, and functional annotations. The below example shows the analysis of the subset of `PRJEB9584`, sequenced by HiSeq 2000. Packages including [`ggtree`](https://github.com/YuLab-SMU/ggtree), [`ComplexHeatmap`](https://github.com/jokergoo/ComplexHeatmap), [`simplyfyEnrichment`](https://github.com/jokergoo/simplifyEnrichment), [`phangorn`](https://github.com/KlausVigo/phangorn), [circlize](https://github.com/jokergoo/circlize), and [`ggraph`](https://github.com/thomasp85/ggraph) are used.
+The function includes filtering of species based on clinical / environmental variables interested, calling of consensus sequencing, constructing the tree, plotting the results based on groups, and functional annotations. The below example shows the analysis of the subset of `PRJEB9584`, sequenced by HiSeq 2000. Packages including [`ggtree`](https://github.com/YuLab-SMU/ggtree), [`ComplexHeatmap`](https://github.com/jokergoo/ComplexHeatmap), [`simplyfyEnrichment`](https://github.com/jokergoo/simplifyEnrichment), [`phangorn`](https://github.com/KlausVigo/phangorn), [`circlize`](https://github.com/jokergoo/circlize), and [`ggraph`](https://github.com/thomasp85/ggraph) are used.
 
 <img src="https://github.com/noriakis/software/blob/main/images/stana_example.png?raw=true" width="800px">
 
