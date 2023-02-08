@@ -10,6 +10,7 @@ loadMIDAS2(
   filtNum = 2,
   filtPer = 0.8,
   taxtbl = NULL,
+  candSp = NULL,
   filtType = "group",
   geneType = "copynum"
 )
@@ -24,6 +25,8 @@ loadMIDAS2(
 \item{filtPer}{filter by percentage}
 
 \item{taxtbl}{tax table, row.names: 6-digits MIDAS2 ID and `GTDB species` column.}
+
+\item{candSp}{candidate species ID}
 }
 \description{
 load the MIDAS2 merge output.

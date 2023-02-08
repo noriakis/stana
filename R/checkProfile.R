@@ -119,11 +119,12 @@ loadmetaSNV <- function(metasnv_out_dir, cl=NULL,
 #' @param filtNum The species with number above this threshold
 #'                for each category is returned
 #' @param filtPer filter by percentage
+#' @param candSp candidate species ID
 #' @param geneType "presabs" or "copynum"
 #' @import GetoptLong
 #' @export
 loadMIDAS <- function(midas_merge_dir,
-  cl, filtType="group",
+  cl, filtType="group", candSp=NULL,
   filtNum=2, filtPer=0.8,
   geneType="copynum") {
   stana <- new("stana")
@@ -157,6 +158,7 @@ loadMIDAS <- function(midas_merge_dir,
   }
   stana@sampleFilter=filtType
 
+  if (!is.null(candSp)) {specNames <- candSp}
   for (sp in specNames){
     pnum <- c(sp)
     qqcat("@{sp}\n")
@@ -257,6 +259,7 @@ initializeStana <- function(stana,cl) {
 #' @param cl named list of category for samples
 #' @param filtNum the species with the samples above this number will be returned
 #' @param filtPer filter by percentage
+#' @param candSp candidate species ID
 #' @param taxtbl tax table, row.names: 6-digits MIDAS2 ID and `GTDB species` column.
 #' @export
 #' 
@@ -265,6 +268,7 @@ loadMIDAS2 <- function(midas_merge_dir,
                         filtNum=2,
                         filtPer=0.8,
                         taxtbl=NULL,
+                        candSp=NULL,
                         filtType="group",
                         geneType="copynum") {
   stana <- new("stana")
@@ -291,7 +295,10 @@ loadMIDAS2 <- function(midas_merge_dir,
   stana@sampleFilter=filtType
 
   qqcat("SNPS\v")
-  for (i in list.files(paste0(midas_merge_dir,"/snps"))){
+  if (!is.null(candSp)) {specNames <- candSp} else {
+    specNames <- list.files(paste0(midas_merge_dir,"/snps"))
+  }
+  for (i in specNames){
       if (!is.na(as.numeric(i))) {
           qqcat("  @{i}\n")
           if (!is.null(taxtbl)){
@@ -330,7 +337,10 @@ loadMIDAS2 <- function(midas_merge_dir,
       }
   }
   qqcat("Genes\n")
-  for (i in list.files(paste0(midas_merge_dir,"/genes"))){
+  if (!is.null(candSp)) {specNames <- candSp} else {
+    specNames <- list.files(paste0(midas_merge_dir,"/genes"))
+  }
+  for (i in specNames){
       if (!is.na(as.numeric(i))) {
           qqcat("  @{i}\n")
           if (!is.null(taxtbl)){

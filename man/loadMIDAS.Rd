@@ -8,6 +8,7 @@ loadMIDAS(
   midas_merge_dir,
   cl,
   filtType = "group",
+  candSp = NULL,
   filtNum = 2,
   filtPer = 0.8,
   geneType = "copynum"
@@ -19,6 +20,8 @@ loadMIDAS(
 \item{cl}{named list of sample IDs}
 
 \item{filtType}{"whole" or "group"}
+
+\item{candSp}{candidate species ID}
 
 \item{filtNum}{The species with number above this threshold
 for each category is returned}
