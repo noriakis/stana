@@ -3,6 +3,7 @@ setClass("stana", slots=list(
                             mergeDir="character",
                             ids="character",
                             snps="list",
+                            snpsInfo="list",
                             relab="data.frame",
                             geneType="character",
                             genes="list",

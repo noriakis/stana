@@ -3,7 +3,7 @@
 #' 
 #' For InStrain, you should provide `compare` output
 #' with --bams options implmented from version 1.6.
-#' It computes MAF of biallelic position.
+#' It computes MAF of var_base per position and return the frequency matrix.
 #' Filters of popSNV or conSNV will be added.
 #' 
 #' @param compare_out_dir output directory of compare.
@@ -13,7 +13,11 @@
 #' @param just_species if TRUE, returns the vector of species IDs
 #' 
 #' @export
-loadInStrain <- function(compare_out_dir, sample_threshold, candidate_species, just_species=FALSE) {
+loadInStrain <- function(compare_out_dir,
+                         sample_threshold,
+                         candidate_species,
+                         just_species=FALSE) {
+    
     output_list <- list.files(paste0(compare_out_dir,"/output"))
     stana <- new("stana")
     stana@type <- "InStrain"
@@ -26,6 +30,13 @@ loadInStrain <- function(compare_out_dir, sample_threshold, candidate_species, j
         keys <- data.table::fread(keys_path)
         info_path <- paste0(compare_out_dir,"/output/",output_list[grepl("pooled_SNV_info.tsv.gz",output_list)])
         info <- data.table::fread(info_path)
+        info$scaffold_position <- paste0(info$scaffold,"|",info$position)
+        
+        varBase <- info$var_base
+        names(varBase) <- info$scaffold_position
+        conBase <- info$con_base
+        names(conBase) <- info$scaffold_position
+        
         sps <- unique(paste0(sapply(strsplit(keys$scaffold, "_"),"[",1),"_",sapply(strsplit(keys$scaffold, "_"),"[",2)))
         if (just_species) {
             return(sps)
@@ -35,38 +46,53 @@ loadInStrain <- function(compare_out_dir, sample_threshold, candidate_species, j
         candKeys <- keys[grepl(candidate_species,keys$scaffold),]$key
         qqcat("  Candidate key numbers: @{length(candKeys)}\n")
         ret <- function(x) {
-            smp <- keys[keys$key==x[1],"sample"]$sample
-            scaff <- keys[keys$key==x[2],"scaffold"]$scaffold
-            det <- c(smp, paste0(scaff,"|",x[3]))
-            majmin <- x[4:7][x[4:7]!=0][1:2]
-            if (length(unique(majmin)!=1)) {
-                major <- names(majmin)[which.max(majmin)]
-                minor <- names(majmin)[which.min(majmin)]
-                det <- c(det, major, minor,
-                         as.numeric((x[4:7] / sum(x[4:7]))[minor]))
-            } else {
-                ## Alphabetical order
-                m <- sort(names(majmin))
-                det <- c(det, m[1], m[2],
-                         as.numeric((x[4:7] / sum(x[4:7]))[m[2]]))
-            }
+            smp <- x[1]
+            scaff <- x[2]
+            scp <- paste0(scaff,"|",as.numeric(x[3]))
+            det <- c(smp, scp)
+            cb <- x[8]
+            vb <- x[9]
+            
+            read_num <- as.numeric(x[4:7])
+            names(read_num) <- names(x[4:7])
+            
+            det <- c(det, cb, vb,
+                     as.numeric((read_num / sum(read_num))[vb]))
             det
         }
         mafs <- NULL
-
+        
         sdt <- tbl[tbl$scaffold %in% candKeys,]
         qqcat("  Dimension of pooled SNV table for species: @{dim(sdt)[1]}")
+        
         # Only bi-allelic position
-        sdt <- sdt[apply(sdt[,4:7],1,function(x)sum(x==0))==2,]
+        # sdt <- sdt[apply(sdt[,4:7],1,function(x)sum(x==0))==2,]
+        
+        nm_sample <- keys$sample
+        names(nm_sample) <- keys$key
+        nm_sample <- nm_sample[nm_sample!=""]
+        nm_scaffold <- keys$scaffold
+        names(nm_scaffold) <- keys$key
+        nm_scaffold <- nm_scaffold[nm_scaffold!=""]
+        
+        sdt$sample <- nm_sample[as.character(sdt$sample)]
+        sdt$scaffold <- nm_scaffold[as.character(sdt$scaffold)]
+        sdt$conBase <- conBase[paste0(sdt$scaffold,"|",sdt$position)]
+        sdt$varBase <- varBase[paste0(sdt$scaffold,"|",sdt$position)]
+        
         maf <- apply(sdt, 1, function(x) ret(x))
         maf <- data.frame(t(maf))
-
+        
         maf <- maf |> `colnames<-`(c("id","scaffold_position","major_allele","minor_allele","maf"))
+        maf$maf <- as.numeric(maf$maf)
+        
         maf$scaffold_position <- paste0(maf$scaffold_position,"|",maf$major_allele,">",maf$minor_allele)
         sample_snv <- tidyr::pivot_wider(maf, id_cols=id, names_from = scaffold_position, values_from = maf)
         thresh <- apply(sample_snv[2:ncol(sample_snv)], 2, function(x) sum(!is.na(x))) > sample_threshold
         snps[[candidate_species]] <- sample_snv[,c("id",names(thresh[thresh]))]
         stana@snps <- snps
+    } else {
+        qqcat("No pooled results present\n")
     }
     return(stana)
 }
@@ -279,6 +305,7 @@ loadMIDAS2 <- function(midas_merge_dir,
   stana@sampleFilterVal <- filtNum
   stana@sampleFilterPer <- filtPer
   snpList <- list()
+  snpInfoList <- list()
   geneList <- list()
   clearGn <- NULL
   clearGnSp <- NULL
@@ -315,8 +342,17 @@ loadMIDAS2 <- function(midas_merge_dir,
           snpList[[i]] <- df
           qqcat("    Number of snps: @{dim(df)[1]}\n")
           qqcat("    Number of samples: @{dim(df)[2]}\n")
-          # snpList[[i]] <- df
-          
+
+          ## Info
+          cnc <- paste0(midas_merge_dir,"/snps/",i,"/",i,".snps_info.tsv.lz4")
+          cnd <- gsub(".lz4","",cnc)
+          system2("lz4", args=c("-d","-f",
+                                paste0(getwd(),"/",cnc),
+                                paste0(getwd(),"/",cnd)),
+                  stdout=FALSE, stderr=FALSE)
+          info <- read.table(cnd, row.names=1, header=1)
+          snpInfoList[[i]] <- info
+
           checkPass <- NULL
           for (clName in names(checkCl)){
               int <- intersect(colnames(df), checkCl[[clName]])
@@ -380,6 +416,7 @@ loadMIDAS2 <- function(midas_merge_dir,
   stana@clearSnps <- clearSn
   stana@clearGenes <- clearGn
   stana@snps <- snpList
+  stana@snpsInfo <- snpInfoList
   stana@genes <- geneList
   stana@ids <- union(names(geneList),names(snpList))
   stana <- initializeStana(stana,cl)

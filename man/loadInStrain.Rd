@@ -24,6 +24,6 @@ need `output` in the directory}
 \description{
 For InStrain, you should provide `compare` output
 with --bams options implmented from version 1.6.
-It computes MAF of biallelic position.
+It computes MAF of var_base per position and return the frequency matrix.
 Filters of popSNV or conSNV will be added.
 }
