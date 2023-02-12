@@ -23,6 +23,7 @@ loadInStrain <- function(compare_out_dir,
     stana@type <- "InStrain"
     stana@mergeDir <- compare_out_dir
     snps <- list()
+    snpsInfoList <- list()
     if (sum(grepl("pooled_SNV_data",output_list))!=0) {
         path <- paste0(compare_out_dir,"/output/",output_list[grepl("pooled_SNV_data.tsv.gz",output_list)])
         tbl <- data.table::fread(path)
@@ -30,8 +31,10 @@ loadInStrain <- function(compare_out_dir,
         keys <- data.table::fread(keys_path)
         info_path <- paste0(compare_out_dir,"/output/",output_list[grepl("pooled_SNV_info.tsv.gz",output_list)])
         info <- data.table::fread(info_path)
+
         info$scaffold_position <- paste0(info$scaffold,"|",info$position)
-        
+
+
         varBase <- info$var_base
         names(varBase) <- info$scaffold_position
         conBase <- info$con_base
@@ -41,6 +44,8 @@ loadInStrain <- function(compare_out_dir,
         if (just_species) {
             return(sps)
         }
+
+        snpsInfoList[[candidate_species]] <- info[grepl(candidate_species, info$scaffold),]
         stana@ids <- sps
         qqcat("Candidate species: @{candidate_species}\n")
         candKeys <- keys[grepl(candidate_species,keys$scaffold),]$key
@@ -91,6 +96,7 @@ loadInStrain <- function(compare_out_dir,
         thresh <- apply(sample_snv[2:ncol(sample_snv)], 2, function(x) sum(!is.na(x))) > sample_threshold
         snps[[candidate_species]] <- sample_snv[,c("id",names(thresh[thresh]))]
         stana@snps <- snps
+        stana@snpsInfo <- snpsInfoList
     } else {
         qqcat("No pooled results present\n")
     }
