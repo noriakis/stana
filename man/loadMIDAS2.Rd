@@ -27,6 +27,10 @@ loadMIDAS2(
 \item{taxtbl}{tax table, row.names: 6-digits MIDAS2 ID and `GTDB species` column.}
 
 \item{candSp}{candidate species ID}
+
+\item{filtType}{"whole" or "group"}
+
+\item{geneType}{"presabs" or "copynum"}
 }
 \description{
 load the MIDAS2 merge output.

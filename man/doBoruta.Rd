@@ -6,7 +6,7 @@
 \usage{
 doBoruta(
   stana,
-  cand,
+  sp,
   cl,
   target = "snps",
   mat = NULL,
@@ -17,7 +17,7 @@ doBoruta(
 \arguments{
 \item{stana}{stana object}
 
-\item{cand}{candidate species}
+\item{sp}{candidate species ID}
 
 \item{cl}{named list of category}
 
@@ -30,6 +30,9 @@ otherwise the raw gene matrix is used.}
 pass to checkPATRIC() (in MIDAS1)}
 
 \item{argList}{passed to Boruta()}
+}
+\value{
+Boruta object
 }
 \description{
 feature selection of classification between category

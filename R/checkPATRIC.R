@@ -160,9 +160,10 @@ checkPATRIC <- function(genes,
       if (colText!="cat"){
         gp <- ggraph(g, layout=lyt)+
           geom_edge_link()+
-          geom_node_point(aes(size=size,fill=category),shape=21)+
-          geom_node_text(aes(filter=size > delSize & showText,
-                             label=name,size=size,color=size),
+          geom_node_point(aes(size=.data$size,
+            fill=.data$category),shape=21)+
+          geom_node_text(aes(filter=.data$size > delSize & .data$showText,
+                             label=.data$name,size=.data$size,color=.data$size),
                          check_overlap=TRUE, repel=TRUE,
                          bg.color = "white", segment.color="black",
                          bg.r = .15)+
@@ -176,11 +177,11 @@ checkPATRIC <- function(genes,
         names(catcol) <- c("EC","KEGG")
         gp <- ggraph(g, layout=lyt)+
           geom_edge_link()+
-          geom_node_point(aes(size=size,fill=category),shape=21)+
-          geom_node_text(aes(filter=size > delSize & showText,
-                             label=name,
-                             size=size,
-                             color=category),
+          geom_node_point(aes(size=.data$size,fill=.data$category),shape=21)+
+          geom_node_text(aes(filter=.data$size > delSize & .data$showText,
+                             label=.data$name,
+                             size=.data$size,
+                             color=.data$category),
                          check_overlap=TRUE, repel=TRUE,
                          bg.color = "white", segment.color="black",
                          bg.r = .15)+

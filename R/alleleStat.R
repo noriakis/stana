@@ -63,7 +63,7 @@ alleleStat <- function(stana, sp, cl, base="maj",
 	  freqs <- cbind(freqs, meanTrans[ord,])
 	}
 	freqs <- data.frame(freqs) |>
-	  `colnames<-`(names(clall)) |>
+	  `colnames<-`(names(cl)) |>
 	  `row.names<-`(ord)
     statList[["meanMafPerGroup"]] <- freqs
 	return(statList)

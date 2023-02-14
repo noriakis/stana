@@ -6,6 +6,7 @@
 \usage{
 plotCirclize(
   stana,
+  candSp,
   genome_id,
   thresh_snp_gene = 5,
   type = "point",
@@ -19,6 +20,8 @@ plotCirclize(
 }
 \arguments{
 \item{stana}{stana object}
+
+\item{candSp}{candidate species ID}
 
 \item{genome_id}{genome ID to plot}
 
@@ -37,6 +40,9 @@ plotCirclize(
 \item{textCex}{text size}
 
 \item{bar_width}{on circos.barplot}
+}
+\value{
+draw circlize plot
 }
 \description{
 Using `circlize` package, make a circular visualization of 

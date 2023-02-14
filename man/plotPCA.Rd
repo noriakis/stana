@@ -15,19 +15,19 @@ plotPCA(
 )
 }
 \arguments{
+\item{stana}{output of midas merge}
+
 \item{species}{candidate species}
 
 \item{cl}{named list of clusters}
+
+\item{target}{snps, genes}
 
 \item{pointSize}{scatter point size}
 
 \item{ltype}{line type for ellipse}
 
 \item{useBlend}{use ggblend for point}
-
-\item{staba}{output of midas merge}
-
-\item{cols}{colors to point}
 }
 \description{
 plot the PCA results from snp or gene table

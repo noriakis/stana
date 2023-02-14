@@ -14,7 +14,6 @@
 #' @param removeAdditional remove these words
 #'        passed to anno_word_cloud
 #' @param argList will be passed to anno_word_cloud
-#' @importFrom simplifyEnrichment anno_word_cloud
 #' @export
 anno_PATRIC_keywords <- function(split, genes, fnc="pathway_name",
   removeHigh=TRUE, removeAdditional=NULL, argList=list()) {

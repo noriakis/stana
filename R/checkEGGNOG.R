@@ -41,8 +41,8 @@ drawEGGNOG <- function(annot_file, geneIDs, candPlot) {
   retList[["graph"]] <- g
   plt <- ggraph(g, layout="nicely")+
             geom_edge_diagonal()+
-            geom_node_point(aes(fill=category, size=size),shape=21)+
-            geom_node_text(aes(label=name, color=category),
+            geom_node_point(aes(fill=.data$category, size=.data$size),shape=21)+
+            geom_node_text(aes(label=.data$name, color=.data$category),
                            check_overlap=TRUE, repel=TRUE,
                            bg.color = "white", segment.color="black",
                            bg.r = .15)+

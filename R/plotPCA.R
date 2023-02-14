@@ -3,15 +3,15 @@
 #' 
 #' plot the PCA results from snp or gene table
 #' 
-#' @param staba output of midas merge
+#' @param stana output of midas merge
+#' @param target snps, genes
 #' @param species candidate species
 #' @param cl named list of clusters
 #' @param pointSize scatter point size
-#' @param cols colors to point
 #' @param ltype line type for ellipse
 #' @param useBlend use ggblend for point
 #' @import ggplot2
-#' @import ggblend
+#' @importFrom stats prcomp
 #' @export
 #' 
 plotPCA <- function(stana, species, cl, target="snps",

@@ -3,6 +3,7 @@
 #' Using `circlize` package, make a circular visualization of 
 #' the relationship between genes and corresponding SNVs in genes.
 #' @param stana stana object
+#' @param candSp candidate species ID
 #' @param genome_id genome ID to plot
 #' @param thresh_snp_gene include only genes with at least this number of SNVs
 #' @param type one of `point`, `bar`, or `rect` each corresponding to circos functions
@@ -12,9 +13,11 @@
 #' @param cex point size
 #' @param textCex text size
 #' @param bar_width on circos.barplot
+#' @import circlize
+#' @return draw circlize plot
 #' @export
 #' 
-plotCirclize <- function(stana, genome_id, thresh_snp_gene=5, type="point", featList=list(),
+plotCirclize <- function(stana, candSp, genome_id, thresh_snp_gene=5, type="point", featList=list(),
                          cols=c("steelblue","tomato","gold","seagreen"),
                          featThresh=0, cex=0.3, textCex=0.5,bar_width=10) {
     qqcat("Type is @{stana@type}\n")
@@ -56,9 +59,9 @@ plotCirclize <- function(stana, genome_id, thresh_snp_gene=5, type="point", feat
     }
 
     ## Sector will be gene_id
-    circ_plot <- subset(circ_plot, gene_id!="None")
+    circ_plot <- subset(circ_plot, circ_plot$gene_id!="None")
     gene_num <- table(circ_plot$gene_id)
-    circ_plot <- subset(circ_plot, !gene_id %in% names(gene_num[gene_num<thresh_snp_gene]))
+    circ_plot <- subset(circ_plot, !circ_plot$gene_id %in% names(gene_num[gene_num<thresh_snp_gene]))
     
     qqcat("Included position: @{dim(circ_plot)[1]}\n")
 

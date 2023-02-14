@@ -4,7 +4,7 @@
 #' using snv frequency and gene matrix
 #' 
 #' @param stana stana object
-#' @param cand candidate species
+#' @param sp candidate species ID
 #' @param cl named list of category
 #' @param target default to snps
 #' @param mat if target is not snps, provide preprocessed gene matrix
@@ -12,10 +12,10 @@
 #' @param whichToCount which to show on box plots,
 #' pass to checkPATRIC() (in MIDAS1)
 #' @param argList passed to Boruta()
-#' @import Boruta
+#' @return Boruta object
 #' @import ggplot2
 #' @export
-doBoruta <- function(stana, cand, cl,
+doBoruta <- function(stana, sp, cl,
   target="snps", mat=NULL, whichToCount="ec_description", argList=list()) {
   ret <- list()
   if (target!="snps" & is.null(mat)){
@@ -44,14 +44,14 @@ doBoruta <- function(stana, cand, cl,
   argList[["formula"]] <- group ~ .
   argList[["data"]] <- transDf
   rf <- do.call("Boruta", argList)
-  bor <- TentativeRoughFix(rf)
+  bor <- Boruta::TentativeRoughFix(rf)
   ret[["boruta"]] <- bor
   
   dec <- bor$finalDecision
   confirmedIDs <- names(dec[dec=="Confirmed"])
   if (length(confirmedIDs)==0) {stop("No feature selected")}
   if (target=="snps" & stana@type=="MIDAS1") {
-    info <- read.table(paste0(midas_merge_dir,"/",cand,"/snps_info.txt"),
+    info <- read.table(paste0(stana@mergeDir,"/",cand,"/snps_info.txt"),
                        sep="\t", header=1)
     whichGene <- info[ info$site_id %in% confirmedIDs, ]$gene_id
     whichGene <- whichGene[ !is.na(whichGene) ]
@@ -92,15 +92,15 @@ doBoruta <- function(stana, cand, cl,
       }
       pll$newname <- newname
       pllna <- pll[!is.na(pll$newname),]
-      box<-ggplot(pllna, aes(x=group, y=value,
-                             fill=group, color=group))+
+      box<-ggplot(pllna, aes(x=.data$group, y=.data$value,
+                             fill=.data$group, color=.data$group))+
         geom_jitter()+geom_boxplot(alpha=0.2)+
         facet_wrap(.~newname, nrow=1)+
         theme_minimal()
       ret[["plot"]] <- box
     } else {
-      box<-ggplot(pll, aes(x=group, y=value,
-                           fill=group, color=group))+
+      box<-ggplot(pll, aes(x=.data$group, y=.data$value,
+                           fill=.data$group, color=.data$group))+
         geom_jitter()+geom_boxplot(alpha=0.2)+
         facet_wrap(.~name)+
         theme_minimal()

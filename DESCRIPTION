@@ -5,6 +5,6 @@ Version: 0.99.0
 License: GPL-3
 Description: Downstream analysis toolkit for strain-level metagenomics.
 Authors@R: person("Noriaki", "Sato", email = "nori@hgc.jp", role = c("cre", "aut"))
-Imports: ComplexHeatmap, GetoptLong, BiocFileCache, RCurl, ggplot2, ggraph, igraph, simplifyEnrichment, vegan, methods, data.table, ggtree, phangorn
-Suggests: circlize
+Imports: GetoptLong, BiocFileCache, RCurl, ggplot2, ggraph, igraph, vegan, methods, data.table, ggtree, phangorn, RColorBrewer, circlize
+Suggests: ComplexHeatmap, simplifyEnrichment, ggblend, stringr, tidyr, Boruta
 RoxygenNote: 7.2.3

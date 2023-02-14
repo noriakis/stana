@@ -92,7 +92,8 @@ loadInStrain <- function(compare_out_dir,
         maf$maf <- as.numeric(maf$maf)
         
         maf$scaffold_position <- paste0(maf$scaffold_position,"|",maf$major_allele,">",maf$minor_allele)
-        sample_snv <- tidyr::pivot_wider(maf, id_cols=id, names_from = scaffold_position, values_from = maf)
+        sample_snv <- tidyr::pivot_wider(maf, id_cols=maf$id,
+          names_from = maf$scaffold_position, values_from = maf$maf)
         thresh <- apply(sample_snv[2:ncol(sample_snv)], 2, function(x) sum(!is.na(x))) > sample_threshold
         snps[[candidate_species]] <- sample_snv[,c("id",names(thresh[thresh]))]
         stana@snps <- snps
@@ -112,10 +113,14 @@ loadInStrain <- function(compare_out_dir,
 #'
 #' @param metasnv_out_dir output directory of merge_midas.py
 #' @param cl named list of sample IDs
+#' @param filtNum the species with the samples above this number will be returned
+#' @param filtPer filter by percentage
+#' @param filtType "whole" or "group"
+#' @param candSp candidate species ID
 #' @import GetoptLong
 #' @export
 loadmetaSNV <- function(metasnv_out_dir, cl=NULL,
-                        filtType="group",
+                        filtType="group", candSp=NULL,
                         filtNum=2, filtPer=0.8) {
   stana <- new("stana")
   stana@type <- "metaSNV"
@@ -148,11 +153,11 @@ loadmetaSNV <- function(metasnv_out_dir, cl=NULL,
 #' @param midas_merge_dir output directory of merge_midas.py
 #' @param cl named list of sample IDs
 #' @param filtType "whole" or "group"
+#' @param geneType "presabs" or "copynum"
 #' @param filtNum The species with number above this threshold
 #'                for each category is returned
 #' @param filtPer filter by percentage
 #' @param candSp candidate species ID
-#' @param geneType "presabs" or "copynum"
 #' @import GetoptLong
 #' @export
 loadMIDAS <- function(midas_merge_dir,
@@ -293,6 +298,8 @@ initializeStana <- function(stana,cl) {
 #' @param filtPer filter by percentage
 #' @param candSp candidate species ID
 #' @param taxtbl tax table, row.names: 6-digits MIDAS2 ID and `GTDB species` column.
+#' @param filtType "whole" or "group"
+#' @param geneType "presabs" or "copynum"
 #' @export
 #' 
 loadMIDAS2 <- function(midas_merge_dir,

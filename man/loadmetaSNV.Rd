@@ -8,6 +8,7 @@ loadmetaSNV(
   metasnv_out_dir,
   cl = NULL,
   filtType = "group",
+  candSp = NULL,
   filtNum = 2,
   filtPer = 0.8
 )
@@ -16,6 +17,14 @@ loadmetaSNV(
 \item{metasnv_out_dir}{output directory of merge_midas.py}
 
 \item{cl}{named list of sample IDs}
+
+\item{filtType}{"whole" or "group"}
+
+\item{candSp}{candidate species ID}
+
+\item{filtNum}{the species with the samples above this number will be returned}
+
+\item{filtPer}{filter by percentage}
 }
 \description{
 Assess and store profile for species and return filtered species 
