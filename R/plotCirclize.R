@@ -4,22 +4,28 @@
 #' the relationship between genes and corresponding SNVs in genes.
 #' @param stana stana object
 #' @param candSp candidate species ID
-#' @param genome_id genome ID to plot
+#' @param genomeId genome ID to plot
 #' @param thresh_snp_gene include only genes with at least this number of SNVs
-#' @param type one of `point`, `bar`, or `rect` each corresponding to circos functions
 #' @param featList features to plot
 #' @param cols color of each feature
+#' @param controlColor control (not reaching `featThresh`) color in points and barplot
 #' @param featThresh for numeric features, the values above this value will be colored , default to zero.
 #' @param cex point size
 #' @param textCex text size
 #' @param bar_width on circos.barplot
-#' @import circlize
+#' @param contPalette palette for continuous scale
+#' @param discPalette palette for discrete scale
+#' @param featCircos which type of circos to use in the corresponding feature
+#' @importFrom circlize CELL_META circos.clear circos.par circos.initialize circos.rect circos.barplot circos.track circos.text circos.points
 #' @return draw circlize plot
 #' @export
 #' 
-plotCirclize <- function(stana, candSp, genome_id, thresh_snp_gene=5, type="point", featList=list(),
-                         cols=c("steelblue","tomato","gold","seagreen"),
-                         featThresh=0, cex=0.3, textCex=0.5,bar_width=10) {
+plotCirclize <- function(stana, candSp, genomeId, thresh_snp_gene=5, featList=list(),
+                         cols=c("tomato","steelblue","gold","seagreen"),
+                         controlColor="steelblue",
+                         featCircos=list(),
+                         featThresh=0, cex=0.3, textCex=0.5,bar_width=10,
+                         contPalette=c("blue","red"), discPalette="Dark2") {
     qqcat("Type is @{stana@type}\n")
     info <- stana@snpsInfo[[candSp]]
 
@@ -32,6 +38,7 @@ plotCirclize <- function(stana, candSp, genome_id, thresh_snp_gene=5, type="poin
         }
         names(sample_counts) <- row.names(info)
         featList[["sample_counts"]] <- sample_counts
+        featCircos[["sample_counts"]] <- "bar"
     } else {
       qqcat("Number of features: @{length(featList)}\n")
     }
@@ -49,10 +56,10 @@ plotCirclize <- function(stana, candSp, genome_id, thresh_snp_gene=5, type="poin
       qqcat("  @{i}: @{min(tmp_info$position)} - @{max(tmp_info$position)}, number of position: @{nrow(tmp_info)}\n")
     }
     
-    qqcat("Genome ID: @{genome_id}\n")
+    qqcat("Genome ID: @{genomeId}\n")
 
     ## Deleting "None" and gene ids with only one position
-    circ_plot <- subset(info, info$genome_id==genome_id)
+    circ_plot <- subset(info, info$genome_id==genomeId)
     for (nm in names(featList)) {
         circ_plot[[nm]] <- featList[[nm]][row.names(circ_plot)]
         circ_plot <- circ_plot[!is.na(circ_plot[[nm]]),]
@@ -65,18 +72,25 @@ plotCirclize <- function(stana, candSp, genome_id, thresh_snp_gene=5, type="poin
     
     qqcat("Included position: @{dim(circ_plot)[1]}\n")
 
-
     circos.clear() ## If have one
     circos.par(cell.padding=c(0.02,0,0.02,0), gap.degree=0.5)
     circos.initialize(factors = circ_plot$gene_id,
                       x=as.numeric(circ_plot$position))
     for (i in seq_along(names(featList))) {
-      
         nm <- names(featList)[i]
-        colfunc<-colorRampPalette(c("blue","red"))
-        circ_plot$interval <- findInterval(circ_plot[[nm]], sort(circ_plot[[nm]]))
-        # circ_plot$sq_position <- 1:nrow(circ_plot)
-        circ_plot$color <- colfunc(nrow(circ_plot))[circ_plot$interval]
+        type <- featCircos[[nm]]
+        if (is.numeric(featList[[nm]])) {
+          colfunc<-colorRampPalette(c(contPalette[1],contPalette[2]))
+          circ_plot$interval <- findInterval(circ_plot[[nm]], sort(circ_plot[[nm]]))
+          # circ_plot$sq_position <- 1:nrow(circ_plot)
+          circ_plot$color <- colfunc(nrow(circ_plot))[circ_plot$interval]
+        } else {
+          colfunc<-colorRampPalette(brewer.pal(length(unique(circ_plot[[nm]])), discPalette))
+          discColors <- colfunc(length(unique(circ_plot[[nm]])))
+          names(discColors) <- unique(circ_plot[[nm]])
+          circ_plot$color <- sapply(circ_plot[[nm]], function(x) discColors[x])
+        }
+
         
         if (i==1) {
           ## Plot text bending inside
@@ -95,7 +109,7 @@ plotCirclize <- function(stana, candSp, genome_id, thresh_snp_gene=5, type="poin
                             cex=textCex)
                 circos.points(x, y, pch=19, cex=cex,
                               # col = col)
-                              col = ifelse(y > featThresh, cols[i], "black"))
+                              col = ifelse(y > featThresh, cols[i], controlColor))
                 
                 
               })
@@ -137,8 +151,8 @@ plotCirclize <- function(stana, candSp, genome_id, thresh_snp_gene=5, type="poin
                             cex=textCex)
                 
                 circos.barplot(value=y, pos=x, bar_width = bar_width,
-                               border=ifelse(y > featThresh, cols[i], "black"),
-                               col = ifelse(y > featThresh, cols[i], "black"))
+                               border=ifelse(y > featThresh, cols[i], controlColor),
+                               col = ifelse(y > featThresh, cols[i], controlColor))
               })            
           }
         } else {
@@ -153,7 +167,7 @@ plotCirclize <- function(stana, candSp, genome_id, thresh_snp_gene=5, type="poin
                        panel.fun = function(x, y) {
                          circos.points(x, y, pch=19, cex=cex,
                                          # col = col)
-                                         col = ifelse(y > featThresh, cols[i], "black"))
+                                         col = ifelse(y > featThresh, cols[i], controlColor))
                            
                            
                        })
@@ -182,8 +196,8 @@ plotCirclize <- function(stana, candSp, genome_id, thresh_snp_gene=5, type="poin
                   y=as.numeric(circ_plot[[nm]]),
                   panel.fun = function(x, y) {
                       circos.barplot(value=y, pos=x, bar_width = bar_width,
-                                     border=ifelse(y > featThresh, cols[i], "black"),
-                                    col = ifelse(y > featThresh, cols[i], "black"))
+                                     border=ifelse(y > featThresh, cols[i], controlColor),
+                                    col = ifelse(y > featThresh, cols[i], controlColor))
                   })            
           }
         }

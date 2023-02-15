@@ -7,15 +7,18 @@
 plotCirclize(
   stana,
   candSp,
-  genome_id,
+  genomeId,
   thresh_snp_gene = 5,
-  type = "point",
   featList = list(),
-  cols = c("steelblue", "tomato", "gold", "seagreen"),
+  cols = c("tomato", "steelblue", "gold", "seagreen"),
+  controlColor = "steelblue",
+  featCircos = list(),
   featThresh = 0,
   cex = 0.3,
   textCex = 0.5,
-  bar_width = 10
+  bar_width = 10,
+  contPalette = c("blue", "red"),
+  discPalette = "Dark2"
 )
 }
 \arguments{
@@ -23,15 +26,17 @@ plotCirclize(
 
 \item{candSp}{candidate species ID}
 
-\item{genome_id}{genome ID to plot}
+\item{genomeId}{genome ID to plot}
 
 \item{thresh_snp_gene}{include only genes with at least this number of SNVs}
-
-\item{type}{one of `point`, `bar`, or `rect` each corresponding to circos functions}
 
 \item{featList}{features to plot}
 
 \item{cols}{color of each feature}
+
+\item{controlColor}{control (not reaching `featThresh`) color in points and barplot}
+
+\item{featCircos}{which type of circos to use in the corresponding feature}
 
 \item{featThresh}{for numeric features, the values above this value will be colored , default to zero.}
 
@@ -40,6 +45,10 @@ plotCirclize(
 \item{textCex}{text size}
 
 \item{bar_width}{on circos.barplot}
+
+\item{contPalette}{palette for continuous scale}
+
+\item{discPalette}{palette for discrete scale}
 }
 \value{
 draw circlize plot
