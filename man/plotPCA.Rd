@@ -9,6 +9,7 @@ plotPCA(
   species,
   cl,
   target = "snps",
+  ignore = FALSE,
   pointSize = 5,
   ltype = 2,
   useBlend = FALSE
@@ -22,6 +23,8 @@ plotPCA(
 \item{cl}{named list of clusters}
 
 \item{target}{snps, genes}
+
+\item{ignore}{ignore the SNVs containing -1}
 
 \item{pointSize}{scatter point size}
 

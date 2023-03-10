@@ -370,7 +370,7 @@ loadMIDAS2 <- function(midas_merge_dir,
           for (clName in names(checkCl)){
               int <- intersect(colnames(df), checkCl[[clName]])
               qqcat("      Number of samples in @{clName}: @{length(int)}\n")
-              checkPass <- c(checkPass, length(int)>filtNum | length(int)>length(cl[[clName]])*filtPer)
+              checkPass <- c(checkPass, length(int)>filtNum | length(int)>length(checkCl[[clName]])*filtPer)
           }
           if (sum(checkPass)==length(names(checkCl))){
               qqcat("      Passed the filter\n")
@@ -412,7 +412,7 @@ loadMIDAS2 <- function(midas_merge_dir,
           for (clName in names(checkCl)){
               int <- intersect(colnames(df), checkCl[[clName]])
               qqcat("      Number of samples in @{clName}: @{length(int)}\n")
-              checkPass <- c(checkPass, length(int)>filtNum | length(int)>length(cl[[clName]])*filtPer)
+              checkPass <- c(checkPass, length(int)>filtNum | length(int)>length(checkCl[[clName]])*filtPer)
           }
           if (sum(checkPass)==length(names(checkCl))){
               qqcat("      Passed the filter\n")

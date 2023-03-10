@@ -10,23 +10,32 @@
 #' @param pointSize scatter point size
 #' @param ltype line type for ellipse
 #' @param useBlend use ggblend for point
+#' @param ignore ignore the SNVs containing -1
 #' @import ggplot2
 #' @importFrom stats prcomp
 #' @export
 #' 
 plotPCA <- function(stana, species, cl, target="snps",
+	ignore=FALSE,
 	pointSize=5, ltype=2, useBlend=FALSE) {
 	cols <- stana@colors
 	pcaList <- list()
 	for (sp in species) {
 		if (target=="snps") {
 			df <- stana@snps[[sp]]
-		} else {
+		} else if (target=="genes") {
 			df <- stana@genes[[sp]]
+		} else {
+			stop("please specify snps or genes")
 		}
 
 		df <- df[,intersect(colnames(df),
 			as.character(unlist(cl)))]
+
+		if (ignore) {
+			df <- df[rowSums(df==-1)==0,]
+			qqcat("After filtering: @{dim(df)[1]} SNVs\n")
+		}
 
 		if (!is.null(cl)) {
 			ids <- colnames(df)
