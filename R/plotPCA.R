@@ -11,12 +11,13 @@
 #' @param ltype line type for ellipse
 #' @param useBlend use ggblend for point
 #' @param ignore ignore the SNVs containing -1
+#' @param replaceZero replace the SNVs -1 (zero depth) with zero
 #' @import ggplot2
 #' @importFrom stats prcomp
 #' @export
 #' 
 plotPCA <- function(stana, species, cl, target="snps",
-	ignore=FALSE,
+	ignore=FALSE, replace=FALSE,
 	pointSize=5, ltype=2, useBlend=FALSE) {
 	cols <- stana@colors
 	pcaList <- list()
@@ -31,7 +32,9 @@ plotPCA <- function(stana, species, cl, target="snps",
 
 		df <- df[,intersect(colnames(df),
 			as.character(unlist(cl)))]
-
+		if (replace) {
+			df[df==-1] <- 0
+		}
 		if (ignore) {
 			df <- df[rowSums(df==-1)==0,]
 			qqcat("After filtering: @{dim(df)[1]} SNVs\n")

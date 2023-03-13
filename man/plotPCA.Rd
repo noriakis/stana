@@ -10,6 +10,7 @@ plotPCA(
   cl,
   target = "snps",
   ignore = FALSE,
+  replace = FALSE,
   pointSize = 5,
   ltype = 2,
   useBlend = FALSE
@@ -31,6 +32,8 @@ plotPCA(
 \item{ltype}{line type for ellipse}
 
 \item{useBlend}{use ggblend for point}
+
+\item{replaceZero}{replace the SNVs -1 (zero depth) with zero}
 }
 \description{
 plot the PCA results from snp or gene table
