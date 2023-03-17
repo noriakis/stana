@@ -355,7 +355,7 @@ loadMIDAS2 <- function(midas_merge_dir,
           snpList[[i]] <- df
           qqcat("    Number of snps: @{dim(df)[1]}\n")
           qqcat("    Number of samples: @{dim(df)[2]}\n")
-
+          unlink(paste0(getwd(),"/",cnd))
           ## Info
           cnc <- paste0(midas_merge_dir,"/snps/",i,"/",i,".snps_info.tsv.lz4")
           cnd <- gsub(".lz4","",cnc)
