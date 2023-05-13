@@ -324,6 +324,8 @@ loadMIDAS2 <- function(midas_merge_dir,
   clearGnSp <- NULL
   clearSn <- NULL
   clearSnSp <- NULL
+  snpStat <- NULL
+  geneStat <- NULL
 
   if (filtType=="whole") {
     checkCl <- list("whole"=as.character(unlist(cl)))
@@ -332,7 +334,7 @@ loadMIDAS2 <- function(midas_merge_dir,
   } else {
     stop("Please specify whole or group")
   }
-  stana@sampleFilter=filtType
+  stana@sampleFilter <- filtType
 
   qqcat("SNPS\v")
   if (!is.null(candSp)) {specNames <- candSp} else {
@@ -367,8 +369,10 @@ loadMIDAS2 <- function(midas_merge_dir,
           snpInfoList[[i]] <- info
 
           checkPass <- NULL
+          spStat <- c(i)
           for (clName in names(checkCl)){
               int <- intersect(colnames(df), checkCl[[clName]])
+              spStat <- c(spStat, int |> length())
               qqcat("      Number of samples in @{clName}: @{length(int)}\n")
               checkPass <- c(checkPass, length(int)>filtNum | length(int)>length(checkCl[[clName]])*filtPer)
           }
@@ -381,7 +385,7 @@ loadMIDAS2 <- function(midas_merge_dir,
           } else {
               qqcat("      Not passed the filter\n")            
           }
-          
+          snpStat <- rbind(snpStat, spStat)
           unlink(paste0(getwd(),"/",cnd))
       }
   }
@@ -409,8 +413,10 @@ loadMIDAS2 <- function(midas_merge_dir,
           geneList[[i]] <- df
           
           checkPass <- NULL
+          spStat <- c(i)
           for (clName in names(checkCl)){
               int <- intersect(colnames(df), checkCl[[clName]])
+              spStat <- c(spStat, int |> length())
               qqcat("      Number of samples in @{clName}: @{length(int)}\n")
               checkPass <- c(checkPass, length(int)>filtNum | length(int)>length(checkCl[[clName]])*filtPer)
           }
@@ -423,9 +429,12 @@ loadMIDAS2 <- function(midas_merge_dir,
           } else {
               qqcat("      Not passed the filter\n")            
           }
+          geneStat <- rbind(geneStat, spStat)
           unlink(paste0(getwd(),"/",cnd))
       }
   }
+  stana@freqTableSnps <- snpStat |> data.frame() |> `colnames<-`(c("species",names(checkCl)))
+  stana@freqTableGenes <- geneStat |> data.frame() |> `colnames<-`(c("species",names(checkCl)))
   stana@clearSnps <- clearSn
   stana@clearGenes <- clearGn
   stana@snps <- snpList
