@@ -2,7 +2,7 @@
 #' doAdonis
 #' 
 #' Perform PERMANOVA on distance matrix based 
-#' on SNV frequency or gene matrix.
+#' on SNV frequency or gene matrix using `adonis2`.
 #' Named list of samples are to be provided.
 #' Note that this function currently performs 
 #' comparison using one category.

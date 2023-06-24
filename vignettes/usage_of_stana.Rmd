@@ -1,0 +1,32 @@
+---
+title: "stana"
+author: "Noriaki Sato"
+output:
+  BiocStyle::html_document:
+    toc: true
+    toc_float: true
+vignette: >
+  %\VignetteIndexEntry{stana}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      fig.width=12,
+                      fig.height=6,
+                      warning=FALSE,
+                      message=FALSE)
+```
+
+# stana
+
+`stana` is a library for strain-level analysis of metagenomic dataset using single nucleotide variants profile and gene contents.
+Multiple softwares are described, such as `MIDAS2`, `metaSNV`, and `InStrain`.
+The library load the profile to `stana` class object and perform various analysis like marker gene detection and visualization of trees based on metadata.
+Here, we compiled the sample dataset with 26 metagenome samples processed with `MIDAS2`, and random grouping from `PRJEB9584`. The data was loaded with `loadMIDAS2` function.
+
+```{r load, eval=FALSE}
+## Specify the output of `merge` command with grouping
+stana <- loadMIDAS2("merge_midas2_sample")
+```

@@ -4,6 +4,7 @@
 setClass("stana", slots=list(
                             type="character",
                             mergeDir="character",
+                            db="character",
                             ids="character",
                             snps="list",
                             snpsInfo="list",

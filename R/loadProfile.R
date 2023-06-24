@@ -288,16 +288,19 @@ initializeStana <- function(stana,cl) {
 
 #' loadMIDAS2
 #' 
-#' load the MIDAS2 merge output.
+#' load the MIDAS2 merge command output.
 #' The location to lz4 binary must be added to PATH.
-#' Tax table can be loaded from downloaded MIDAS2 db directory (metadata.tsv).
+#' Taxonomy table can be loaded from downloaded MIDAS2 db directory (metadata.tsv).
 #' If provided, additionally show tax names.
+#' 
 #' @param midas_merge_dir path to merged directory
 #' @param cl named list of category for samples
 #' @param filtNum the species with the samples above this number will be returned
 #' @param filtPer filter by percentage
+#' @param db data base that was used to profile, default to gtdb.
 #' @param candSp candidate species ID
-#' @param taxtbl tax table, row.names: 6-digits MIDAS2 ID and `GTDB species` column.
+#' @param taxtbl tax table, row.names: 6-digits MIDAS2 ID and `GTDB species` (gtdb)
+#' or `Lineage` column.
 #' @param filtType "whole" or "group"
 #' @param geneType "presabs" or "copynum"
 #' @export
@@ -305,6 +308,7 @@ initializeStana <- function(stana,cl) {
 loadMIDAS2 <- function(midas_merge_dir,
                         cl,
                         filtNum=2,
+                        db="gtdb",
                         filtPer=0.8,
                         taxtbl=NULL,
                         candSp=NULL,
@@ -312,6 +316,14 @@ loadMIDAS2 <- function(midas_merge_dir,
                         geneType="copynum") {
   stana <- new("stana")
   stana@type <- "MIDAS2"
+  stana@db <- db
+  if (db=="gtdb") {
+    tblCol <- "GTDB species"
+  } else if (db=="uhgg") {
+    tblCol <- "Lineage"
+  } else {
+    stop("Please provide gtdb or uhgg to `db`")
+  }
   stana@mergeDir <- midas_merge_dir
   stana@geneType <- geneType
   stana@sampleFilter <- filtType
@@ -336,7 +348,7 @@ loadMIDAS2 <- function(midas_merge_dir,
   }
   stana@sampleFilter <- filtType
 
-  qqcat("SNPS\v")
+  qqcat("SNPS\n")
   if (!is.null(candSp)) {specNames <- candSp} else {
     specNames <- list.files(paste0(midas_merge_dir,"/snps"))
   }
@@ -344,7 +356,7 @@ loadMIDAS2 <- function(midas_merge_dir,
       if (!is.na(as.numeric(i))) {
           qqcat("  @{i}\n")
           if (!is.null(taxtbl)){
-              spnm <- taxtbl[i,]$`GTDB species`
+              spnm <- taxtbl[i,][[tblCol]]
               qqcat("  @{spnm}\n")
           }
           cnc <- paste0(midas_merge_dir,"/snps/",i,"/",i,".snps_freqs.tsv.lz4")
@@ -397,7 +409,7 @@ loadMIDAS2 <- function(midas_merge_dir,
       if (!is.na(as.numeric(i))) {
           qqcat("  @{i}\n")
           if (!is.null(taxtbl)){
-              spnm <- taxtbl[i,]$`GTDB species`
+              spnm <- taxtbl[i,][[tblCol]]
               qqcat("  @{spnm}\n")
           }
           cnc <- paste0(midas_merge_dir,
@@ -433,8 +445,19 @@ loadMIDAS2 <- function(midas_merge_dir,
           unlink(paste0(getwd(),"/",cnd))
       }
   }
-  stana@freqTableSnps <- snpStat |> data.frame() |> `colnames<-`(c("species",names(checkCl)))
-  stana@freqTableGenes <- geneStat |> data.frame() |> `colnames<-`(c("species",names(checkCl)))
+  snpStat <- snpStat |> data.frame() |> `colnames<-`(c("species",names(checkCl)))
+  row.names(snpStat) <- snpStat$species
+  for (i in names(checkCl)) {
+    snpStat[[i]] <- as.numeric(snpStat[[i]])
+  }
+  geneStat <- geneStat |> data.frame() |> `colnames<-`(c("species",names(checkCl)))
+  row.names(geneStat) <- geneStat$species
+  for (i in names(checkCl)) {
+    geneStat[[i]] <- as.numeric(geneStat[[i]])
+  }
+
+  stana@freqTableSnps <- snpStat
+  stana@freqTableGenes <- geneStat
   stana@clearSnps <- clearSn
   stana@clearGenes <- clearGn
   stana@snps <- snpList
