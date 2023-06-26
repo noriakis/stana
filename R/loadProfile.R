@@ -304,6 +304,8 @@ initializeStana <- function(stana,cl) {
 #' @param filtType "whole" or "group"
 #' @param geneType "presabs" or "copynum"
 #' @param loadSummary default to FALSE, load summary information.
+#' @param loadInfo default to FALSE, load info information.
+#' @param loadDepth default to FALSE, load depth information.
 #' @export
 #' 
 loadMIDAS2 <- function(midas_merge_dir,
@@ -315,7 +317,9 @@ loadMIDAS2 <- function(midas_merge_dir,
                         candSp=NULL,
                         filtType="group",
                         geneType="copynum",
-                        loadSummary=FALSE) {
+                        loadSummary=FALSE,
+                        loadInfo=FALSE,
+                        loadDepth=FALSE) {
   stana <- new("stana")
   stana@type <- "MIDAS2"
   stana@db <- db
@@ -339,6 +343,7 @@ loadMIDAS2 <- function(midas_merge_dir,
   stana@sampleFilterPer <- filtPer
   snpList <- list()
   snpInfoList <- list()
+  snpDepthList <- list()
   geneList <- list()
   clearGn <- NULL
   clearGnSp <- NULL
@@ -379,15 +384,28 @@ loadMIDAS2 <- function(midas_merge_dir,
           qqcat("    Number of samples: @{dim(df)[2]}\n")
           unlink(paste0(getwd(),"/",cnd))
           ## Info
-          cnc <- paste0(midas_merge_dir,"/snps/",i,"/",i,".snps_info.tsv.lz4")
-          cnd <- gsub(".lz4","",cnc)
-          system2("lz4", args=c("-d","-f",
-                                paste0(getwd(),"/",cnc),
-                                paste0(getwd(),"/",cnd)),
-                  stdout=FALSE, stderr=FALSE)
-          info <- read.table(cnd, row.names=1, header=1)
-          snpInfoList[[i]] <- info
-
+          if (loadInfo) {
+            cnc <- paste0(midas_merge_dir,"/snps/",i,"/",i,".snps_info.tsv.lz4")
+            cnd <- gsub(".lz4","",cnc)
+            system2("lz4", args=c("-d","-f",
+                                  paste0(getwd(),"/",cnc),
+                                  paste0(getwd(),"/",cnd)),
+                    stdout=FALSE, stderr=FALSE)
+            info <- read.table(cnd, row.names=1, header=1)
+            snpInfoList[[i]] <- info
+            unlink(paste0(getwd(),"/",cnd))        
+          }
+          if (loadDepth) {
+            cnc <- paste0(midas_merge_dir,"/snps/",i,"/",i,".snps_depth.tsv.lz4")
+            cnd <- gsub(".lz4","",cnc)
+            system2("lz4", args=c("-d","-f",
+                                  paste0(getwd(),"/",cnc),
+                                  paste0(getwd(),"/",cnd)),
+                    stdout=FALSE, stderr=FALSE)
+            depth <- read.table(cnd, row.names=1, header=1)
+            snpDepthList[[i]] <- depth
+            unlink(paste0(getwd(),"/",cnd))       
+          }
           checkPass <- NULL
           spStat <- c(i)
           for (clName in names(checkCl)){
@@ -406,7 +424,6 @@ loadMIDAS2 <- function(midas_merge_dir,
               qqcat("      Not passed the filter\n")            
           }
           snpStat <- rbind(snpStat, spStat)
-          unlink(paste0(getwd(),"/",cnd))
       }
   }
   qqcat("Genes\n")
@@ -470,6 +487,7 @@ loadMIDAS2 <- function(midas_merge_dir,
   stana@clearGenes <- clearGn
   stana@snps <- snpList
   stana@snpsInfo <- snpInfoList
+  stana@snpsDepth <- snpDepthList
   stana@genes <- geneList
   stana@ids <- union(names(geneList),names(snpList))
   stana <- initializeStana(stana,cl)

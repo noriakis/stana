@@ -71,9 +71,19 @@ consensusSeqMIDAS1 <- function(
 	for (sp in species) {
 		qqcat("Beginning @{sp}\n")
 		SPECIES <- list()
-		for (file in files) {
+		if (is.null(stana@snpsInfo[[sp]])) {
+			file <- "info"
 			filePath <- paste0(midas_merge_dir,"/",sp,"/snps_",file,".txt")
-			SPECIES[[file]] <- read.table(filePath, sep="\t", header=1)
+			SPECIES[[file]] <- read.table(filePath, sep="\t", header=1)			
+		} else {
+			SPECIES[["info"]] <- stana@snpsInfo[[sp]]
+		}
+		if (is.null(stana@snpsDepth[[sp]])) {
+			file <- "depth"
+			filePath <- paste0(midas_merge_dir,"/",sp,"/snps_",file,".txt")
+			SPECIES[[file]] <- read.table(filePath, sep="\t", header=1)	
+		} else {
+			SPECIES[["depth"]] <- stana@snpsDepth[[sp]]
 		}
 		SPECIES[["freq"]] <- stana@snps[[sp]]
 		siteNum <- dim(SPECIES[["freq"]])[1]
@@ -197,6 +207,7 @@ consensusSeqMIDAS1 <- function(
 consensusSeqMIDAS2 <- function(
 	stana,
 	species,
+	output_seq=FALSE,
 	mean_depth=0,
 	fract_cov=0,
 	site_depth=5,
@@ -219,7 +230,9 @@ consensusSeqMIDAS2 <- function(
 	for (sp in species) {
 		qqcat("Beginning calling for @{sp}\n")
 		SPECIES <- list()
-		for (file in files) {
+		## Load info and depth file per species
+		if (is.null(stana@snpsInfo[[sp]])) {
+			file <- "info"
 			if (verbose) {
 				qqcat("  Loading @{file]\n")
 			}
@@ -231,6 +244,24 @@ consensusSeqMIDAS2 <- function(
 	                  stdout=FALSE, stderr=FALSE)
 			SPECIES[[file]] <- read.table(filePathUn, row.names=1, header=1)
 	        unlink(paste0(getwd(),"/",filePathUn))
+		} else {
+			SPECIES[["info"]] <- stana@snpsInfo[[sp]]
+		}
+		if (is.null(stana@snpsDepth[[sp]])) {
+			file <- "depth"
+			if (verbose) {
+				qqcat("  Loading @{file]\n")
+			}
+			filePath <- paste0(midas_merge_dir,"/snps/",sp,"/",sp,".snps_",file,".tsv.lz4")
+            filePathUn <- gsub(".lz4","",filePath)
+	        system2("lz4", args=c("-d","-f",
+	                                paste0(getwd(),"/",filePath),
+	                                paste0(getwd(),"/",filePathUn)),
+	                  stdout=FALSE, stderr=FALSE)
+			SPECIES[[file]] <- read.table(filePathUn, row.names=1, header=1)
+	        unlink(paste0(getwd(),"/",filePathUn))
+		} else {
+			SPECIES[["depth"]] <- stana@snpsDepth[[sp]]
 		}
 		SPECIES[["freqs"]] <- stana@snps[[sp]]
 		siteNum <- dim(SPECIES[["freqs"]])[1]
@@ -343,9 +374,11 @@ consensusSeqMIDAS2 <- function(
 			cat(SAMPLES[[sample]][["consensus"]], file=fileConn, append=TRUE, sep="\n")
 		}
 		close(fileConn)
-
 		tre <- read.phyDat(faName, format = "fasta")
 		stana@fastaList[[sp]] <- tre
+		if (!output_seq) {
+			unlink(faName)
+		}
 		if (tree) {
 			dm <- dist.ml(tre, "F81")
 			tre <- NJ(dm)

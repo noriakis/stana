@@ -14,7 +14,9 @@ loadMIDAS2(
   candSp = NULL,
   filtType = "group",
   geneType = "copynum",
-  loadSummary = FALSE
+  loadSummary = FALSE,
+  loadInfo = FALSE,
+  loadDepth = FALSE
 )
 }
 \arguments{
@@ -38,6 +40,10 @@ or `Lineage` column.}
 \item{geneType}{"presabs" or "copynum"}
 
 \item{loadSummary}{default to FALSE, load summary information.}
+
+\item{loadInfo}{default to FALSE, load info information.}
+
+\item{loadDepth}{default to FALSE, load depth information.}
 }
 \description{
 load the MIDAS2 merge command output.

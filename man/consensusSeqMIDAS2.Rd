@@ -7,6 +7,7 @@
 consensusSeqMIDAS2(
   stana,
   species,
+  output_seq = FALSE,
   mean_depth = 0,
   fract_cov = 0,
   site_depth = 5,

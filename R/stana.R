@@ -9,6 +9,7 @@ setClass("stana", slots=list(
                             ids="character",
                             snps="list",
                             snpsInfo="list",
+                            snpsDepth="list",
                             snpsSummary="data.frame",
                             relab="data.frame",
                             geneType="character",

@@ -1,0 +1,4 @@
+url: ~
+template:
+  bootstrap: 5
+destination: ../software/docs/stana
