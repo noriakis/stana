@@ -303,6 +303,7 @@ initializeStana <- function(stana,cl) {
 #' or `Lineage` column.
 #' @param filtType "whole" or "group"
 #' @param geneType "presabs" or "copynum"
+#' @param loadSummary default to FALSE, load summary information.
 #' @export
 #' 
 loadMIDAS2 <- function(midas_merge_dir,
@@ -313,10 +314,17 @@ loadMIDAS2 <- function(midas_merge_dir,
                         taxtbl=NULL,
                         candSp=NULL,
                         filtType="group",
-                        geneType="copynum") {
+                        geneType="copynum",
+                        loadSummary=FALSE) {
   stana <- new("stana")
   stana@type <- "MIDAS2"
   stana@db <- db
+  stana@cl <- cl
+  if (loadSummary) {
+    filePath <- paste0(midas_merge_dir,"/snps/snps_summary.tsv")
+    snpsSummary <- read.table(filePath, header=1)
+    stana@snpsSummary <- snpsSummary
+  }
   if (db=="gtdb") {
     tblCol <- "GTDB species"
   } else if (db=="uhgg") {

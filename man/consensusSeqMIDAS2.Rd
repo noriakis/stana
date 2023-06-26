@@ -20,7 +20,8 @@ consensusSeqMIDAS2(
   max_samples = Inf,
   keep_samples = NULL,
   exclude_samples = NULL,
-  rand_samples = NULL
+  rand_samples = NULL,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -55,6 +56,8 @@ consensusSeqMIDAS2(
 \item{exclude_samples}{currently not implemented}
 
 \item{rand_samples}{currently not implemented}
+
+\item{verbose}{output current status}
 }
 \description{
 consensusSeqMIDAS2

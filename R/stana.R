@@ -3,11 +3,13 @@
 #' @importFrom grDevices colorRampPalette
 setClass("stana", slots=list(
                             type="character",
+                            cl="list",
                             mergeDir="character",
                             db="character",
                             ids="character",
                             snps="list",
                             snpsInfo="list",
+                            snpsSummary="data.frame",
                             relab="data.frame",
                             geneType="character",
                             genes="list",

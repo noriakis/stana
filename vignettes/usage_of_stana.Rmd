@@ -24,9 +24,31 @@ knitr::opts_chunk$set(echo = TRUE,
 `stana` is a library for strain-level analysis of metagenomic dataset using single nucleotide variants profile and gene contents.
 Multiple softwares are described, such as `MIDAS2`, `metaSNV`, and `InStrain`.
 The library load the profile to `stana` class object and perform various analysis like marker gene detection and visualization of trees based on metadata.
-Here, we compiled the sample dataset with 26 metagenome samples processed with `MIDAS2`, and random grouping from `PRJEB9584`. The data was loaded with `loadMIDAS2` function.
+Here, we included the sample stana class object profiled from 26 metagenome samples processed with `MIDAS2` against UHGG, and random grouping from `PRJEB9584`. The data was loaded with `loadMIDAS2` function. One species profile, identifier `100003` (`d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacteroidales;f__Rikenellaceae;g__Alistipes;s__Alistipes shahii`) is loaded.
 
 ```{r load, eval=FALSE}
 ## Specify the output of `merge` command with grouping
-stana <- loadMIDAS2("merge_midas2_sample")
+stana <- loadMIDAS2("merge_midas2_sample", cl=randomGroup, candSp="100003")
+```
+
+```{r load_data}
+## Examine sample object
+load(system.file("extdata", "sysdata.rda", package = "stana"))
+stana
+```
+
+## Calling consensus sequence
+
+You can call the consensus sequence based on SNV frequency table. The implementation and filtering options are based on the original `MIDAS` script (`call_consensus.py`). The resulting FASTA will be written to the current directory, and is loaded into `fastaList` slot.
+
+```{r cons, eval=FALSE}
+stana <- consensusSeqMIDAS2(stana, species="100003", verbose=FALSE)
+
+## Tree estimation and visualization by `ggtree`
+dm <- dist.ml(stana@fastaList$`100003`)
+tre <- NJ(dm)
+tre <- groupOTU(tre, stana@cl)
+tp <- ggtree(tre, aes(color=.data$group),
+             layout='circular') +
+        geom_tippoint(size=3)
 ```

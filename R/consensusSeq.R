@@ -192,6 +192,7 @@ consensusSeqMIDAS1 <- function(
 #' @param rand_samples currently not implemented
 #' @param tree if perform tree inference
 #' @param max_samples currently not implemented
+#' @param verbose output current status
 #' @export
 consensusSeqMIDAS2 <- function(
 	stana,
@@ -209,15 +210,19 @@ consensusSeqMIDAS2 <- function(
     max_samples=Inf,
     keep_samples=NULL,
     exclude_samples=NULL,
-    rand_samples=NULL) {
+    rand_samples=NULL,
+    verbose=FALSE) {
     ## site-list is currently not supported.
 	files <- c("depth","info")
 	midas_merge_dir <- stana@mergeDir
 	retList <- list()
 	for (sp in species) {
-		qqcat("Beginning @{sp}\n")
+		qqcat("Beginning calling for @{sp}\n")
 		SPECIES <- list()
 		for (file in files) {
+			if (verbose) {
+				qqcat("  Loading @{file]\n")
+			}
 			filePath <- paste0(midas_merge_dir,"/snps/",sp,"/",sp,".snps_",file,".tsv.lz4")
             filePathUn <- gsub(".lz4","",filePath)
 	        system2("lz4", args=c("-d","-f",
@@ -231,23 +236,39 @@ consensusSeqMIDAS2 <- function(
 		siteNum <- dim(SPECIES[["freqs"]])[1]
 		qqcat("  Site number: @{siteNum}\n")
 
-		filePath <- paste0(midas_merge_dir,"/snps/snps_summary.tsv")
-		snpsSummary <- read.table(filePath, header=1)
-        SPECIES[["summary"]] <- subset(snpsSummary, snpsSummary$species_id==sp)
+		if (dim(stana@snpsSummary)[1]==0) {
+			filePath <- paste0(midas_merge_dir,"/snps/snps_summary.tsv")
+			snpsSummary <- read.table(filePath, header=1)
+	        SPECIES[["summary"]] <- subset(snpsSummary, snpsSummary$species_id==sp)			
+		} else {
+			SPECIES[["summary"]] <- subset(stana@snpsSummary, stana@snpsSummary$species_id==sp)
+		}
 
 		SAMPLES <- list()
         for (i in seq_len(nrow(SPECIES[["summary"]]))) {
+        	if (verbose) {
+        		qqcat("  Filtering based on summary table using `fract_cov` and `mean_depth`\n")
+        	}
         	info <- SPECIES[["summary"]][i,]
+        	if (verbose) {
+	        	qqcat("    Processing @{info$sample_name}")        		
+        	}
         	if (info$fraction_covered < fract_cov) {
         		next
         	} else if (info$mean_coverage < mean_depth) {
         		next
         	} else {
+        		if (verbose) {
+	        		qqcat("  ... included, mean_coverage: @{info$mean_coverage}, fraction_covered: @{info$fraction_covered}\n")
+        		}
 	        	SAMPLES[[info$sample_name]] <- list(mean_depth=info$mean_coverage,
 	        		fract_cov=info$fraction_covered)
         	}
         }
         for (sample in names(SAMPLES)) {
+        	if (verbose) {
+	        	qqcat("    Processing @{sample} based on `site_depth`, `depth_ratio`, and `allel_support`\n")
+        	}
         	SAMPLES[[sample]][["freqs"]] <- as.numeric(SPECIES[["freqs"]][sample][,1])
         	SAMPLES[[sample]][["depth"]] <- as.numeric(SPECIES[["depth"]][sample][,1])
         	## Append sample-wise filter
@@ -261,17 +282,26 @@ consensusSeqMIDAS2 <- function(
         SITEFILTERS <- list()
         retainedSites <- 0
         for (i in seq_len(nrow(SPECIES[["freqs"]]))) {
+        	if (verbose) {qqcat("Site: @{i}\n")}
         	if (retainedSites >= max_sites) {break}
         	keepSamples <- NULL
         	pooledMaf <- NULL
         	for (sample in names(SAMPLES)) {
+        		if (verbose) {qqcat("  @{sample}")}
         		keep <- sum(SAMPLES[[sample]][["filter"]][["site_depth"]][i],
         		SAMPLES[[sample]][["filter"]][["depth_ratio"]][i],
         		SAMPLES[[sample]][["filter"]][["allele_support"]][i])
         		if (keep==3) {
+        			if (verbose) {
+        				qqcat(" ... Passed\n")
+        			}
         			keepSamples <- c(keepSamples, sample)
         			## Weight function is currently not supported.
         			pooledMaf <- c(pooledMaf, SAMPLES[[sample]][["freqs"]][i])
+        		} else {
+        			if (verbose) {
+        				qqcat(" ... Not Passed\n")
+        			}
         		}
         	}
 			if(is.null(keepSamples)) {pooledMaf <- 0}
