@@ -71,9 +71,19 @@ tp
 
 ### Identify key elements for differentiating groups
 
+Using the profiled matrices, the `Boruta` algorithm can be run to identify the key elements that distinguish the groups. The `doBoruta` function performs the `Boruta` algorithm between the clusters specified in `cl` (if `NULL`, the `cl` slot is used). If pre-processed matrices are to be used, please pass them to `mat`.
+
 ```{r boruta, eval=TRUE, fig.width=5, fig.height=5}
 library(Boruta)
 
 ## You can provide preprocessed matrix to `mat`
 doBoruta(stana, target = "gene", sp="100003")
+```
+
+### Parsing functional annotations
+
+#### Visualization 
+
+```{r sess}
+sessionInfo()
 ```
