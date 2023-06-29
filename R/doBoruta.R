@@ -15,19 +15,23 @@
 #' @return Boruta object
 #' @import ggplot2
 #' @export
-doBoruta <- function(stana, sp, cl,
-  target="snps", mat=NULL, whichToCount="ec_description", argList=list()) {
+doBoruta <- function(stana, sp, cl=NULL,
+  target="genes", mat=NULL, whichToCount="ec_description", argList=list()) {
   ret <- list()
-  if (target!="snps" & is.null(mat)){
-    qqcat("If needed, please provide preprocessed matrix of genes\n")
-    filtDf <- stana@genes[[sp]]
+  if (is.null(cl)) {
+    qqcat("Using grouping from the slot\n")
+    cl <- stana@cl
   }
-  if (target=="snps"){
+  if (target!="snps" & is.null(mat)){
+    qqcat("If needed, please provide preprocessed matrix of genes to `mat`\n")
+    filtDf <- stana@genes[[sp]]
+  } else if (target=="snps"){
     filtDf <- stana@snps[[sp]]
   } else {
     qqcat("Proceeding with provided matrix\n")
     filtDf <- mat
   }
+  qqcat("Feature number: @{dim(filtDf)[1]}\n")
   transDf <- data.frame(t(filtDf),
                         check.names=F)
   gr <- NULL
@@ -58,7 +62,7 @@ doBoruta <- function(stana, sp, cl,
   } else if (target!="snps"){
     whichGene <- confirmedIDs
   } else {
-    qqcat("currently not supported\n")
+    qqcat("SNV to gene mapping is currently not supported\n")
     return(ret)
   }
   

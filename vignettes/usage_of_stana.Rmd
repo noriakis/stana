@@ -28,7 +28,9 @@ Here, we included the sample stana class object profiled from 26 metagenome samp
 
 ```{r load, eval=FALSE}
 ## Specify the output of `merge` command with grouping
-stana <- loadMIDAS2("merge_midas2_sample", cl=randomGroup, candSp="100003")
+stana <- loadMIDAS2("merge_midas2_sample", cl=randomGroup, candSp="100003",
+                    loadSummary=TRUE,loadInfo=TRUE,loadDepth=TRUE,
+                    taxtbl=taxtbl, db="uhgg")
 ```
 
 ```{r load_data}
@@ -36,6 +38,15 @@ library(stana)
 ## Examine sample object
 load(system.file("extdata", "sysdata.rda", package = "stana"))
 stana
+```
+
+## Filtering
+
+The species that satisfies the filtering criteria specified can be accessed by the slot `clearSnps` storing species ID. If `taxtbl` was provided on `load*` functions, `clearSnpsSpecies` has species name.
+
+```{r filt}
+stana@clearSnps
+stana@clearSnpsSpecies
 ```
 
 ## Calling consensus sequence
@@ -55,4 +66,14 @@ tp <- ggtree(tre, aes(color=.data$group),
              layout='circular') +
         geom_tippoint(size=3)
 tp
+```
+
+
+### Identify key elements for differentiating groups
+
+```{r boruta, eval=TRUE, fig.width=5, fig.height=5}
+library(Boruta)
+
+## You can provide preprocessed matrix to `mat`
+doBoruta(stana, target = "gene", sp="100003")
 ```

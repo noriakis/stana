@@ -7,8 +7,8 @@
 doBoruta(
   stana,
   sp,
-  cl,
-  target = "snps",
+  cl = NULL,
+  target = "genes",
   mat = NULL,
   whichToCount = "ec_description",
   argList = list()
