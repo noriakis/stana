@@ -23,7 +23,7 @@ doAdonis(
 
 \item{cl}{named list of samples}
 
-\item{target}{snps, presabs, or copynum}
+\item{target}{tree, snps, genes}
 
 \item{formula}{pass to adonis2, specify distance matrix as d.}
 
@@ -31,13 +31,14 @@ doAdonis(
 
 \item{maj}{major allele distance}
 
-\item{deleteZeroDepth}{delete zero depth snvs}
+\item{deleteZeroDepth}{delete zero depth snvs (in MIDAS2, denoted as `-1`)}
 
 \item{argList}{parameters passed to adonis2}
 }
 \description{
 Perform PERMANOVA on distance matrix based 
-on SNV frequency or gene matrix using `adonis2`.
+on various distances based on such as SNV frequency or 
+gene matrix using `adonis2`.
 Named list of samples are to be provided.
 Note that this function currently performs 
 comparison using one category.

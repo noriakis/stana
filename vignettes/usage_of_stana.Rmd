@@ -68,6 +68,12 @@ tp <- ggtree(tre, aes(color=.data$group),
 tp
 ```
 
+### Perform PERMANOVA based on the groups
+
+```{r permanova}
+doAdonis(stana)
+```
+
 
 ### Identify key elements for differentiating groups
 
@@ -82,7 +88,17 @@ doBoruta(stana, target = "gene", sp="100003")
 
 ### Parsing functional annotations
 
-#### Visualization 
+Functional annotation of genes can be obtained through `PATRIC` server (used in `MIDAS`), and annotation results such as ortholog assignment using `eggNOG-mapper v2`. `checkPATRIC` and `checkEGGNOG` function can be used to parse the obtained data. The below example returns KEGG ORTHOLOGY from `eggNOG-mapper v2` annotation file.
+
+```{r egg, eval=FALSE}
+annotationFile <- "100003_uhgg_eggnog_out.emapper.annotations"
+annot <- checkEGGNOG(annotationFile, ret = "ko")
+annot
+```
+
+#### Visualization
+
+Several visualization functions are implemented.
 
 ```{r sess}
 sessionInfo()

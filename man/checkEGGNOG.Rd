@@ -19,3 +19,10 @@ one can query eggNOG-mapper for its functionality.
 This function assumes one performs eggNOG-mapper to centroids.ffn of candidate species, and
 parse the annotation results.
 }
+\details{
+Choices of IDs in `ret`:
+"COG_category" "Description" "Preferred_name" "GOs"           
+"EC"             "KEGG_ko"        "KEGG_Pathway"   "KEGG_Module"    "KEGG_Reaction" 
+"KEGG_rclass"    "BRITE"          "KEGG_TC"        "CAZy"           "BiGG_Reaction" 
+"PFAMs"
+}

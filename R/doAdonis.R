@@ -2,7 +2,8 @@
 #' doAdonis
 #' 
 #' Perform PERMANOVA on distance matrix based 
-#' on SNV frequency or gene matrix using `adonis2`.
+#' on various distances based on such as SNV frequency or 
+#' gene matrix using `adonis2`.
 #' Named list of samples are to be provided.
 #' Note that this function currently performs 
 #' comparison using one category.
@@ -11,12 +12,12 @@
 #' @param stana stana object
 #' @param specs species to be examined
 #' @param cl named list of samples
-#' @param target snps, presabs, or copynum
+#' @param target tree, snps, genes
 #' @param formula pass to adonis2, specify distance matrix as d.
 #' @param distMethod distance method passed to dist() (default, manhattan)
 #' @param maj major allele distance
 #' @param argList parameters passed to adonis2
-#' @param deleteZeroDepth delete zero depth snvs
+#' @param deleteZeroDepth delete zero depth snvs (in MIDAS2, denoted as `-1`)
 #' @importFrom vegan adonis2
 #' @importFrom stats as.formula dist
 #' @importFrom utils read.table
@@ -33,8 +34,12 @@ doAdonis <- function(stana, specs, cl,
             if (deleteZeroDepth) {
               snps <- snps[rowSums(snps==-1)==0,]
             }
+        } else if (target=="tree") {
+            if (!is.null(stana@treeList[[sp]])) {
+              snps <- stana@treeList[[sp]]
+            }
         } else {
-            snps <- stana@genes[[sp]]
+            snps <- stana@genes[[sp]]          
         }
         if (maj & target=="snps" & stana@type=="MIDAS1") {
             chk <- read.table(paste0(stana@mergeDir,
