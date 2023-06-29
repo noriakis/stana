@@ -188,3 +188,30 @@ checkEGGNOG <- function(annot_file, ret="all", checkIDs=NULL) {
   #   colnames(annotDf) <- c("id","function","functionID")
   #   return(annotDf)
   }
+
+  
+#' summariseAbundance
+#' 
+#' Given tibble with `ID` and `value` column,
+#' Obtain data.frame of genes consisting of `ID` within `value`
+#' and summarise them by default `mean`.
+#' 
+#' @param stana stana object
+#' @param sp candidate species
+#' @param anno annotation tibble
+#' @param how summarising function, default to mean
+#' @return data.frame
+#' @export
+#' 
+summariseAbundance <- function(stana, sp, anno, how=mean) {
+  geneDf <- stana@genes[[sp]]
+  merged <- list()
+  for (i in anno$value |> unique()) {
+    candID <- (anno |> dplyr::filter(anno$value==i))$ID
+    ints <- intersect(row.names(geneDf), candID)
+    if (length(ints)>0) {
+      merged[[i]] <- apply(geneDf[ints,], 2, mean)
+    }
+  }
+  do.call(rbind, merged)
+}

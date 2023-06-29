@@ -92,9 +92,17 @@ Functional annotation of genes can be obtained through `PATRIC` server (used in 
 
 ```{r egg, eval=FALSE}
 annotationFile <- "100003_uhgg_eggnog_out.emapper.annotations"
-annot <- checkEGGNOG(annotationFile, ret = "ko")
+annot <- checkEGGNOG(annotationFile, ret = "KEGG_ko")
 annot
 ```
+
+Using the parsed annotation tibble, gene copy number data frame can be summarised by user-defined function, such as `mean`.
+Note that annotation tibble must have `ID` and `value` column specifying gene ID in `ID` and functional annotation such as KEGG ORTHOLOGY ID in `value`.
+
+```{r merge, eval=FALSE}
+summariseAbundance(stana, "100224", annot)
+```
+
 
 #### Visualization
 
