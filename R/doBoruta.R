@@ -34,6 +34,7 @@ doBoruta <- function(stana, sp, cl=NULL,
   qqcat("Feature number: @{dim(filtDf)[1]}\n")
   transDf <- data.frame(t(filtDf),
                         check.names=F)
+  transDf <- transDf[intersect(row.names(transDf), cl |> unlist() |> unique()),]
   gr <- NULL
   for (cn in rownames(transDf)){
     for (clm in seq_along(cl)){
