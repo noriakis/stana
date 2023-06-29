@@ -70,7 +70,7 @@ tp
 
 ### Perform PERMANOVA based on the groups
 
-```{r permanova}
+```{r permanova, eval=FALSE}
 doAdonis(stana)
 ```
 
