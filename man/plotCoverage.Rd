@@ -4,7 +4,7 @@
 \alias{plotCoverage}
 \title{plotCoverage}
 \usage{
-plotCoverage(stana, species, cl, pointSize = 5)
+plotCoverage(stana, species, cl = NULL, pointSize = 5)
 }
 \arguments{
 \item{stana}{stana object}
@@ -14,6 +14,9 @@ plotCoverage(stana, species, cl, pointSize = 5)
 \item{cl}{named list of clusters}
 
 \item{pointSize}{scatter point size}
+}
+\value{
+ggplot
 }
 \description{
 plot the scatters of mean coverage across groups

@@ -4,7 +4,7 @@
 \alias{alleleStat}
 \title{alleleStat}
 \usage{
-alleleStat(stana, sp, cl, base = "maj", deleteZeroDepth = FALSE)
+alleleStat(stana, sp, cl = NULL, base = "maj", deleteZeroDepth = FALSE)
 }
 \arguments{
 \item{stana}{stana object}

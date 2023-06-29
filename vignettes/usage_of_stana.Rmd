@@ -104,9 +104,16 @@ summariseAbundance(stana, "100224", annot)
 ```
 
 
-#### Visualization
+### Visualization
 
 Several visualization functions are implemented.
+
+#### Plotting mean coverage across samples
+
+```{r cov}
+plotCoverage(stana, "100003")+ ## grouping is already set
+  ggrepel::geom_text_repel(aes(label=ids), bg.colour="white")
+```
 
 ```{r sess}
 sessionInfo()

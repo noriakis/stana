@@ -9,13 +9,29 @@
 #' @param cl named list of clusters
 #' @param pointSize scatter point size
 #' @import ggplot2
+#' @export
+#' @return ggplot
 #' 
-plotCoverage <- function(stana, species, cl,
+plotCoverage <- function(stana, species, cl=NULL,
 	pointSize=5) {
-	if(stana@type!="MIDAS1"){stop("currently MIDAS1 only")}
+	if (is.null(cl)) { cl <- stana@cl}
 	midas_merge_dir <- stana@mergeDir
-	snps <- read.table(paste0(midas_merge_dir,"/",species,"/snps_summary.txt"),
-                         sep="\t",header=1,row.names=1)
+
+	if (dim(stana@snpsSummary)[1]==0) {
+		if(stana@type!="MIDAS1") {
+			snps <- read.table(paste0(midas_merge_dir,"/",species,"/snps_summary.txt"),
+		                         sep="\t",header=1,row.names=1)			
+		} else {
+		    filePath <- paste0(midas_merge_dir,"/snps/snps_summary.tsv")
+    		snps <- read.table(filePath, header=1)
+		}
+	} else {
+		snps <- stana@snpsSummary
+	}
+	if (stana@type=="MIDAS2") {
+		snps <- snps |> dplyr::filter(species_id==species)
+		row.names(snps) <- snps$sample_name
+	}
 	ids <- row.names(snps)
 	for (nm in names(cl)){
 		ids[ids %in% cl[[nm]]] <- nm
