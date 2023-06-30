@@ -28,7 +28,7 @@ loadMIDAS2(
 
 \item{db}{data base that was used to profile, default to gtdb.}
 
-\item{filtPer}{filter by percentage}
+\item{filtPer}{filter by fraction}
 
 \item{taxtbl}{tax table, row.names: 6-digits MIDAS2 ID and `GTDB species` (gtdb)
 or `Lineage` column.}

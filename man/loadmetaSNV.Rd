@@ -24,7 +24,7 @@ loadmetaSNV(
 
 \item{filtNum}{the species with the samples above this number will be returned}
 
-\item{filtPer}{filter by percentage}
+\item{filtPer}{filter by fraction}
 }
 \description{
 Assess and store profile for species and return filtered species 

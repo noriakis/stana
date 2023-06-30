@@ -26,7 +26,7 @@ loadMIDAS(
 \item{filtNum}{The species with number above this threshold
 for each category is returned}
 
-\item{filtPer}{filter by percentage}
+\item{filtPer}{filter by fraction}
 
 \item{geneType}{"presabs" or "copynum"}
 }

@@ -210,7 +210,7 @@ summariseAbundance <- function(stana, sp, anno, how=mean) {
     candID <- (anno |> dplyr::filter(anno$value==i))$ID
     ints <- intersect(row.names(geneDf), candID)
     if (length(ints)>0) {
-      merged[[i]] <- apply(geneDf[ints,], 2, mean)
+      merged[[i]] <- apply(geneDf[ints,], 2, how)
     }
   }
   do.call(rbind, merged)

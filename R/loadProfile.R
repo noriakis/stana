@@ -114,7 +114,7 @@ loadInStrain <- function(compare_out_dir,
 #' @param metasnv_out_dir output directory of merge_midas.py
 #' @param cl named list of sample IDs
 #' @param filtNum the species with the samples above this number will be returned
-#' @param filtPer filter by percentage
+#' @param filtPer filter by fraction
 #' @param filtType "whole" or "group"
 #' @param candSp candidate species ID
 #' @import GetoptLong
@@ -156,7 +156,7 @@ loadmetaSNV <- function(metasnv_out_dir, cl=NULL,
 #' @param geneType "presabs" or "copynum"
 #' @param filtNum The species with number above this threshold
 #'                for each category is returned
-#' @param filtPer filter by percentage
+#' @param filtPer filter by fraction
 #' @param candSp candidate species ID
 #' @import GetoptLong
 #' @export
@@ -296,7 +296,7 @@ initializeStana <- function(stana,cl) {
 #' @param midas_merge_dir path to merged directory
 #' @param cl named list of category for samples
 #' @param filtNum the species with the samples above this number will be returned
-#' @param filtPer filter by percentage
+#' @param filtPer filter by fraction
 #' @param db data base that was used to profile, default to gtdb.
 #' @param candSp candidate species ID
 #' @param taxtbl tax table, row.names: 6-digits MIDAS2 ID and `GTDB species` (gtdb)
