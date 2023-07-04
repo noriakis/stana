@@ -22,11 +22,12 @@
 #' @importFrom stats as.formula dist
 #' @importFrom utils read.table
 #' @export
-doAdonis <- function(stana, specs, cl,
+doAdonis <- function(stana, specs, cl=NULL,
     target="snps", formula=NULL,
     distMethod="manhattan",
     maj=FALSE, deleteZeroDepth=FALSE,
     argList=list()) {
+      if (is.null(cl)) {cl <- stana@cl}
       for (sp in specs){
         qqcat("Performing adonis in @{sp}\n")
         if (target=="snps") {
@@ -36,43 +37,60 @@ doAdonis <- function(stana, specs, cl,
             }
         } else if (target=="tree") {
             if (!is.null(stana@treeList[[sp]])) {
-              snps <- stana@treeList[[sp]]
+              tre <- stana@treeList[[sp]]
+              ## cophenetic distance
+              d <- ape::cophenetic.phylo(tre)
+              sn <- row.names(d)
+            } else {
+              stop("No tree found in stana@treeList")
             }
         } else {
             snps <- stana@genes[[sp]]          
         }
-        if (maj & target=="snps" & stana@type=="MIDAS1") {
-            chk <- read.table(paste0(stana@mergeDir,
-              "/",sp,"/snps_info.txt"),
-            header=1)
-            qqcat("  before filtering: @{dim(chk)[1]}\n")
-            calcDif <- function(x){
-              if (x[14]=="bi") {
-                  maj <- paste0("count_",tolower(x[5]))
-                  min <- paste0("count_",tolower(x[6]))
-                  fre <- as.numeric(x[8:11]) / sum(as.numeric(x[8:11]))
-                  names(fre) <- names(x[8:11])
-                  fre[maj]-fre[min] > 0.6
-              } else {
-                FALSE
+
+        if (target!="tree") {
+          if (maj & target=="snps" & stana@type=="MIDAS1") {
+              chk <- read.table(paste0(stana@mergeDir,
+                "/",sp,"/snps_info.txt"),
+              header=1)
+              qqcat("  before filtering: @{dim(chk)[1]}\n")
+              calcDif <- function(x){
+                if (x[14]=="bi") {
+                    maj <- paste0("count_",tolower(x[5]))
+                    min <- paste0("count_",tolower(x[6]))
+                    fre <- as.numeric(x[8:11]) / sum(as.numeric(x[8:11]))
+                    names(fre) <- names(x[8:11])
+                    fre[maj]-fre[min] > 0.6
+                } else {
+                  FALSE
+                }
+              }
+            filtIDs <- chk[apply(chk, 1, function(x) calcDif(x)),]$site_id
+            qqcat("  after filtering: @{length(filtIDs)}\n")
+
+            inc <- intersect(filtIDs, row.names(snps))
+            snps <- snps[inc,]
+          }
+          snps <- snps[,intersect(colnames(snps),as.character(unlist(cl)))]
+          d <- dist(t(snps), method=distMethod)
+          gr <- NULL
+          for (cn in colnames(snps)){
+            for (clm in seq_along(cl)){
+              if (cn %in% cl[[clm]]) {
+                gr <- c(gr, names(cl)[clm])
               }
             }
-          filtIDs <- chk[apply(chk, 1, function(x) calcDif(x)),]$site_id
-          qqcat("  after filtering: @{length(filtIDs)}\n")
-
-          inc <- intersect(filtIDs, row.names(snps))
-          snps <- snps[inc,]
-        }
-        snps <- snps[,intersect(colnames(snps),as.character(unlist(cl)))]
-        d <- dist(t(snps), method=distMethod)
-
-        gr <- NULL
-        for (cn in colnames(snps)){
-          for (clm in seq_along(cl)){
-            if (cn %in% cl[[clm]]) {
-              gr <- c(gr, names(cl)[clm])
+          }       
+        } else {
+          gr <- NULL
+          for (cn in sn){
+            for (clm in seq_along(cl)){
+              if (cn %in% cl[[clm]]) {
+                gr <- c(gr, names(cl)[clm])
+              }
             }
-          }
+          }  
+          d <- as.dist(d)         
         }
 
         if (is.null(formula)){

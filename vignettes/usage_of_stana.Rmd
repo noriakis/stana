@@ -63,6 +63,7 @@ stana <- consensusSeqMIDAS2(stana, species="100003", verbose=FALSE)
 ## Tree estimation and visualization by `phangorn` and `ggtree`
 dm <- dist.ml(stana@fastaList$`100003`)
 tre <- NJ(dm)
+stana@treeList[["100003"]] <- tre
 tre <- groupOTU(tre, stana@cl)
 tp <- ggtree(tre, aes(color=.data$group),
              layout='circular') +
@@ -72,10 +73,10 @@ tp
 
 ## Perform PERMANOVA based on the groups
 
-```{r permanova, eval=FALSE}
-doAdonis(stana)
+```{r permanova, eval=TRUE}
+stana <- doAdonis(stana, specs = "100003",target="tree")
+stana@adonisList[["100003"]]
 ```
-
 
 ## Identify key elements for differentiating groups
 
@@ -90,7 +91,7 @@ doBoruta(stana, target = "gene", sp="100003")
 
 ## Parsing functional annotations
 
-Functional annotation of genes can be obtained through `PATRIC` server (used in `MIDAS`), and annotation results such as ortholog assignment using `eggNOG-mapper v2`. `checkPATRIC` and `checkEGGNOG` function can be used to parse the obtained data. The below example returns KEGG ORTHOLOGY from `eggNOG-mapper v2` annotation file.
+Functional annotation of genes can be obtained through `PATRIC` server (used in `MIDAS`), and annotation results such as ortholog assignment using `eggNOG-mapper v2`. `checkPATRIC` and `checkEGGNOG` function can be used to parse the obtained data. The below example returns KEGG ORTHOLOGY from `eggNOG-mapper v2` annotation file. Here, the annotation file is large and the code is not evaluated.
 
 ```{r egg, eval=FALSE}
 ## Not to be evaluated
@@ -117,6 +118,11 @@ Several visualization functions are implemented.
 ```{r cov}
 plotCoverage(stana, "100003")+ ## grouping is already set
   ggrepel::geom_text_repel(aes(label=ids), bg.colour="white")
+```
+
+### Plotting gene abundances
+```{r genes, fig.width=8}
+plotGenes(stana, "100003", geneID=stana@genes[[1]] |> row.names() |> head(3))
 ```
 
 ```{r sess}

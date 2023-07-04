@@ -7,7 +7,7 @@
 doAdonis(
   stana,
   specs,
-  cl,
+  cl = NULL,
   target = "snps",
   formula = NULL,
   distMethod = "manhattan",
