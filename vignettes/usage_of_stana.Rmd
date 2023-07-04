@@ -70,14 +70,14 @@ tp <- ggtree(tre, aes(color=.data$group),
 tp
 ```
 
-### Perform PERMANOVA based on the groups
+## Perform PERMANOVA based on the groups
 
 ```{r permanova, eval=FALSE}
 doAdonis(stana)
 ```
 
 
-### Identify key elements for differentiating groups
+## Identify key elements for differentiating groups
 
 Using the profiled matrices, the `Boruta` algorithm can be run to identify the key elements that distinguish the groups. The `doBoruta` function performs the `Boruta` algorithm between the clusters specified in `cl` (if `NULL`, the `cl` slot is used). If pre-processed matrices are to be used, please pass them to `mat`.
 
@@ -88,7 +88,7 @@ library(Boruta)
 doBoruta(stana, target = "gene", sp="100003")
 ```
 
-### Parsing functional annotations
+## Parsing functional annotations
 
 Functional annotation of genes can be obtained through `PATRIC` server (used in `MIDAS`), and annotation results such as ortholog assignment using `eggNOG-mapper v2`. `checkPATRIC` and `checkEGGNOG` function can be used to parse the obtained data. The below example returns KEGG ORTHOLOGY from `eggNOG-mapper v2` annotation file.
 
@@ -108,11 +108,11 @@ summariseAbundance(stana, "100224", annot)
 ```
 
 
-### Visualization
+## Visualization
 
 Several visualization functions are implemented.
 
-#### Plotting mean coverage across samples
+### Plotting mean coverage across samples
 
 ```{r cov}
 plotCoverage(stana, "100003")+ ## grouping is already set
