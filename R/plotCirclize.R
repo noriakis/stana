@@ -107,7 +107,6 @@ plotCirclize <- function(stana, candSp, genomeId, thresh_snp_gene=5, featList=li
               track.margin = c(0, mm_h(2)),
               x=as.numeric(circ_plot$position),
               y=as.numeric(circ_plot[[nm]]),
-              # ylim=c(-1.1,1.1),
               panel.fun = function(x, y) {
                 circos.text(CELL_META$xcenter,
                             CELL_META$cell.ylim[2] + mm_y(2),
@@ -170,7 +169,7 @@ plotCirclize <- function(stana, candSp, genomeId, thresh_snp_gene=5, featList=li
                        track.margin = c(0, mm_h(2)),
                        x=as.numeric(circ_plot$position),
                        y=as.numeric(circ_plot[[nm]]),
-                       ylim=c(-1.1,1.1),
+                       # ylim=c(-1.1,1.1),
                        panel.fun = function(x, y) {
                          circos.points(x, y, pch=19, cex=cex,
                                          # col = col)
