@@ -27,10 +27,12 @@ plotCirclize <- function(stana, candSp, genomeId, thresh_snp_gene=5, featList=li
                          featThresh=0, cex=0.3, textCex=0.5,bar_width=10,
                          contPalette=c("blue","red"), discPalette="Dark2") {
     qqcat("Type is @{stana@type}\n")
+    if (is.null(stana@snpsInfo[[candSp]])) {stop("No SNV info available")}
     info <- stana@snpsInfo[[candSp]]
 
     if (length(featList)==0) {
         qqcat("Features not provided, default to sample_counts\n")
+        ## Choosing default type for each pipeline
         if (stana@type=="MIDAS2") {
           sample_counts <- info$sample_counts
         } else if (stana@type=="InStrain") {
@@ -38,7 +40,7 @@ plotCirclize <- function(stana, candSp, genomeId, thresh_snp_gene=5, featList=li
         }
         names(sample_counts) <- row.names(info)
         featList[["sample_counts"]] <- sample_counts
-        featCircos[["sample_counts"]] <- "bar"
+        featCircos[["sample_counts"]] <- "rect"
     } else {
       qqcat("Number of features: @{length(featList)}\n")
     }
@@ -59,12 +61,16 @@ plotCirclize <- function(stana, candSp, genomeId, thresh_snp_gene=5, featList=li
     qqcat("Genome ID: @{genomeId}\n")
 
     ## Deleting "None" and gene ids with only one position
+    info$genome_id <- info$genome_id |> strsplit("_") |> 
+                                        vapply("[", 1, FUN.VALUE="character")
     circ_plot <- subset(info, info$genome_id==genomeId)
-    for (nm in names(featList)) {
-        circ_plot[[nm]] <- featList[[nm]][row.names(circ_plot)]
-        circ_plot <- circ_plot[!is.na(circ_plot[[nm]]),]
-    }
 
+    if (length(featList)>0) {
+      for (nm in names(featList)) {
+          circ_plot[[nm]] <- featList[[nm]][row.names(circ_plot)]
+          circ_plot <- circ_plot[!is.na(circ_plot[[nm]]),]
+      }      
+    }
     ## Sector will be gene_id
     circ_plot <- subset(circ_plot, circ_plot$gene_id!="None")
     gene_num <- table(circ_plot$gene_id)
@@ -73,7 +79,8 @@ plotCirclize <- function(stana, candSp, genomeId, thresh_snp_gene=5, featList=li
     qqcat("Included position: @{dim(circ_plot)[1]}\n")
 
     circos.clear() ## If have one
-    circos.par(cell.padding=c(0.02,0,0.02,0), gap.degree=0.5)
+    circos.par(cell.padding=c(0.02,0,0.02,0),
+      gap.degree=0.5)
     circos.initialize(factors = circ_plot$gene_id,
                       x=as.numeric(circ_plot$position))
     for (i in seq_along(names(featList))) {
@@ -91,7 +98,7 @@ plotCirclize <- function(stana, candSp, genomeId, thresh_snp_gene=5, featList=li
           circ_plot$color <- sapply(circ_plot[[nm]], function(x) discColors[x])
         }
 
-        
+
         if (i==1) {
           ## Plot text bending inside
           if (type=="point") {
@@ -100,7 +107,7 @@ plotCirclize <- function(stana, candSp, genomeId, thresh_snp_gene=5, featList=li
               track.margin = c(0, mm_h(2)),
               x=as.numeric(circ_plot$position),
               y=as.numeric(circ_plot[[nm]]),
-              ylim=c(-1.1,1.1),
+              # ylim=c(-1.1,1.1),
               panel.fun = function(x, y) {
                 circos.text(CELL_META$xcenter,
                             CELL_META$cell.ylim[2] + mm_y(2),
