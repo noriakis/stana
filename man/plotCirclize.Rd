@@ -8,16 +8,21 @@ plotCirclize(
   stana,
   candSp,
   genomeId,
+  include_gene = NULL,
   thresh_snp_gene = 5,
   featList = list(),
   cols = c("tomato", "steelblue", "gold", "seagreen"),
   controlColor = "steelblue",
+  MAF = FALSE,
+  cl = NULL,
   featCircos = list(),
+  showGeneName = TRUE,
+  returnRawDf = FALSE,
   featThresh = 0,
   cex = 0.3,
   textCex = 0.5,
   bar_width = 10,
-  contPalette = c("blue", "red"),
+  contPalette = c("steelblue", "tomato"),
   discPalette = "Dark2"
 )
 }
@@ -36,7 +41,15 @@ plotCirclize(
 
 \item{controlColor}{control (not reaching `featThresh`) color in points and barplot}
 
+\item{MAF}{plot MAF for each group}
+
+\item{cl}{cluster information (named list)}
+
 \item{featCircos}{which type of circos to use in the corresponding feature}
+
+\item{showGeneName}{show gene ID on the plot}
+
+\item{returnRawDf}{return the raw data frame used in the plot}
 
 \item{featThresh}{for numeric features, the values above this value will be colored , default to zero.}
 

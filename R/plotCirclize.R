@@ -11,24 +11,44 @@
 #' @param controlColor control (not reaching `featThresh`) color in points and barplot
 #' @param featThresh for numeric features, the values above this value will be colored , default to zero.
 #' @param cex point size
+#' @param MAF plot MAF for each group
+#' @param cl cluster information (named list)
 #' @param textCex text size
+#' @param showGeneName show gene ID on the plot
 #' @param bar_width on circos.barplot
 #' @param contPalette palette for continuous scale
 #' @param discPalette palette for discrete scale
+#' @param returnRawDf return the raw data frame used in the plot
 #' @param featCircos which type of circos to use in the corresponding feature
 #' @importFrom circlize CELL_META circos.clear circos.par circos.initialize circos.rect circos.barplot circos.track circos.text circos.points
 #' @return draw circlize plot
 #' @export
 #' 
-plotCirclize <- function(stana, candSp, genomeId, thresh_snp_gene=5, featList=list(),
+plotCirclize <- function(stana, candSp, genomeId, include_gene=NULL,
+                         thresh_snp_gene=5, featList=list(),
                          cols=c("tomato","steelblue","gold","seagreen"),
-                         controlColor="steelblue",
-                         featCircos=list(),
+                         controlColor="steelblue", MAF=FALSE, cl=NULL,
+                         featCircos=list(), showGeneName=TRUE,
+                         returnRawDf=FALSE,
                          featThresh=0, cex=0.3, textCex=0.5,bar_width=10,
-                         contPalette=c("blue","red"), discPalette="Dark2") {
+                         contPalette=c("steelblue",
+                          "tomato"), discPalette="Dark2") {
     qqcat("Type is @{stana@type}\n")
     if (is.null(stana@snpsInfo[[candSp]])) {stop("No SNV info available")}
     info <- stana@snpsInfo[[candSp]]
+    if (MAF) {
+      maf <- stana@snps[[candSp]]
+      if (is.null(cl)) {cl <- stana@cl}
+      ## Subset to MAF row.names
+      info <- info[row.names(maf),]
+      for (clnm in names(cl)) {
+        inc <- intersect(colnames(maf),cl[[clnm]])
+        tmpMaf <- maf[, inc]
+        ## For considering MIDAS2, -1 will be deleted
+        featList[[clnm]] <- apply(tmpMaf, 1, function(x) mean(x[x != -1]))
+        featCircos[[clnm]] <- "rect"
+      }
+    }
 
     if (length(featList)==0) {
         qqcat("Features not provided, default to sample_counts\n")
@@ -74,10 +94,14 @@ plotCirclize <- function(stana, candSp, genomeId, thresh_snp_gene=5, featList=li
     ## Sector will be gene_id
     circ_plot <- subset(circ_plot, circ_plot$gene_id!="None")
     gene_num <- table(circ_plot$gene_id)
-    circ_plot <- subset(circ_plot, !circ_plot$gene_id %in% names(gene_num[gene_num<thresh_snp_gene]))
-    
-    qqcat("Included position: @{dim(circ_plot)[1]}\n")
+    if (is.null(include_gene)) {
+      circ_plot <- subset(circ_plot, !circ_plot$gene_id %in% names(gene_num[gene_num<thresh_snp_gene]))
+    } else {
+      circ_plot <- subset(circ_plot, circ_plot$gene_id %in% include_gene)
 
+    }
+    qqcat("Included position: @{dim(circ_plot)[1]}\n")
+    if (returnRawDf) {return(circ_plot)}
     circos.clear() ## If have one
     circos.par(cell.padding=c(0.02,0,0.02,0),
       gap.degree=0.5)
@@ -100,7 +124,7 @@ plotCirclize <- function(stana, candSp, genomeId, thresh_snp_gene=5, featList=li
 
 
         if (i==1) {
-          ## Plot text bending inside
+          ## Plot text bending inside if i==1
           if (type=="point") {
             circos.track(
               factors=circ_plot$gene_id,
@@ -108,11 +132,13 @@ plotCirclize <- function(stana, candSp, genomeId, thresh_snp_gene=5, featList=li
               x=as.numeric(circ_plot$position),
               y=as.numeric(circ_plot[[nm]]),
               panel.fun = function(x, y) {
-                circos.text(CELL_META$xcenter,
-                            CELL_META$cell.ylim[2] + mm_y(2),
-                            CELL_META$sector.index,
-                            facing="bending.inside",
-                            cex=textCex)
+                if (showGeneName){
+                  circos.text(CELL_META$xcenter,
+                              CELL_META$cell.ylim[2] + mm_y(2),
+                              CELL_META$sector.index,
+                              facing="bending.inside",
+                              cex=textCex)                  
+                }
                 circos.points(x, y, pch=19, cex=cex,
                               # col = col)
                               col = ifelse(y > featThresh, cols[i], controlColor))
@@ -126,13 +152,13 @@ plotCirclize <- function(stana, candSp, genomeId, thresh_snp_gene=5, featList=li
                          x=circ_plot$position,
                          y=circ_plot$color,
                          panel.fun = function(x, y) {
-                           
-                           circos.text(CELL_META$xcenter,
-                                       CELL_META$cell.ylim[2] + mm_y(2),
-                                       CELL_META$sector.index,
-                                       facing="bending.inside",
-                                       cex=textCex)
-                           
+                           if (showGeneName) {
+                             circos.text(CELL_META$xcenter,
+                                         CELL_META$cell.ylim[2] + mm_y(2),
+                                         CELL_META$sector.index,
+                                         facing="bending.inside",
+                                         cex=textCex)                            
+                           }                           
                            xlim = CELL_META$xlim
                            ylim = CELL_META$ylim
                            n = length(x)
@@ -149,13 +175,13 @@ plotCirclize <- function(stana, candSp, genomeId, thresh_snp_gene=5, featList=li
               x=as.numeric(circ_plot$position),
               y=as.numeric(circ_plot[[nm]]),
               panel.fun = function(x, y) {
-                
-                circos.text(CELL_META$xcenter,
-                            CELL_META$cell.ylim[2] + mm_y(2),
-                            CELL_META$sector.index,
-                            facing="bending.inside",
-                            cex=textCex)
-                
+                if (showGeneName) {
+                  circos.text(CELL_META$xcenter,
+                              CELL_META$cell.ylim[2] + mm_y(2),
+                              CELL_META$sector.index,
+                              facing="bending.inside",
+                              cex=textCex)                  
+                }                
                 circos.barplot(value=y, pos=x, bar_width = bar_width,
                                border=ifelse(y > featThresh, cols[i], controlColor),
                                col = ifelse(y > featThresh, cols[i], controlColor))
@@ -187,7 +213,6 @@ plotCirclize <- function(stana, candSp, genomeId, thresh_snp_gene=5, featList=li
                               xlim = CELL_META$xlim
                               ylim = CELL_META$ylim
                               n = length(x)
-                              print(x[-n])
                               ## Position are squeezed, unlike point
                               circos.rect(x[-n], rep(ylim[1], n-1),
                                           x[-1], rep(ylim[2], n-1),

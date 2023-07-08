@@ -78,6 +78,13 @@ stana <- doAdonis(stana, specs = "100003",target="tree")
 stana@adonisList[["100003"]]
 ```
 
+## Compare gene abundances
+
+```{r wilcox}
+gn <- compareGenes(stana, "100003")
+gn[[1]]
+```
+
 ## Identify key elements for differentiating groups
 
 Using the profiled matrices, the `Boruta` algorithm can be run to identify the key elements that distinguish the groups. The `doBoruta` function performs the `Boruta` algorithm between the clusters specified in `cl` (if `NULL`, the `cl` slot is used). If pre-processed matrices are to be used, please pass them to `mat`.
@@ -108,7 +115,6 @@ Note that annotation tibble must have `ID` and `value` column specifying gene ID
 summariseAbundance(stana, "100224", annot)
 ```
 
-
 ## Visualization
 
 Several visualization functions are implemented.
@@ -123,6 +129,18 @@ plotCoverage(stana, "100003")+ ## grouping is already set
 ### Plotting gene abundances
 ```{r genes, fig.width=8}
 plotGenes(stana, "100003", geneID=stana@genes[[1]] |> row.names() |> head(3))
+```
+
+### Plotting `circlize` plot
+
+In this example, mean minor allele frequency of SNV on genes in the genome `UHGG000008` per group is plotted per track.
+
+```{r circ, warning=FALSE, message=FALSE}
+library(circlize)
+plotCirclize(stana, "100003",
+            genomeId="UHGG000008",
+            thresh_snp_gene = 20,
+            MAF=TRUE)
 ```
 
 ```{r sess}
