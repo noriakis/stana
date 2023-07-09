@@ -8,7 +8,8 @@ loadInStrain(
   compare_out_dir,
   candidate_species,
   cl = NULL,
-  just_species = FALSE
+  just_species = FALSE,
+  fill_na = TRUE
 )
 }
 \arguments{
@@ -20,6 +21,8 @@ need `output` in the directory}
 \item{cl}{named list of grouping}
 
 \item{just_species}{if TRUE, returns the vector of species IDs}
+
+\item{fill_na}{fill NA in resulting data.frame by -1}
 }
 \description{
 For InStrain, you should provide `compare` output

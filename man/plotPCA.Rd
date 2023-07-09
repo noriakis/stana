@@ -9,8 +9,8 @@ plotPCA(
   species,
   cl = NULL,
   target = "snps",
-  ignore = FALSE,
-  replace = FALSE,
+  ignoreZero = FALSE,
+  replaceZero = FALSE,
   pointSize = 5,
   ltype = 2,
   useBlend = FALSE
@@ -25,15 +25,15 @@ plotPCA(
 
 \item{target}{snps, genes}
 
-\item{ignore}{ignore the SNVs containing -1}
+\item{ignoreZero}{ignore the SNVs containing -1}
+
+\item{replaceZero}{replace the SNVs -1 (zero depth) with zero}
 
 \item{pointSize}{scatter point size}
 
 \item{ltype}{line type for ellipse}
 
 \item{useBlend}{use ggblend for point}
-
-\item{replaceZero}{replace the SNVs -1 (zero depth) with zero}
 }
 \description{
 plot the PCA results from snp or gene table

@@ -24,6 +24,7 @@ consensusSeq <- function(stana,
 }
 
 #' consensusSeqMIDAS1
+#' 
 #' @param stana stana obj
 #' @param species candidate species vector
 #' @param mean_depth parameter for filtering

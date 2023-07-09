@@ -27,6 +27,17 @@ loadInStrain <- function(compare_out_dir,
     stana@mergeDir <- compare_out_dir
     snps <- list()
     snpsInfoList <- list()
+
+    ctpath <- paste0(compare_out_dir,"/output/",output_list[grepl("comparisonsTable.tsv", output_list)])
+    ct <- data.table::fread(ctpath)
+    stana@comparisonTable <- ct
+    gcpath <- paste0(compare_out_dir,"/output/",output_list[grepl("genomeWide_compare.tsv", output_list)])
+    gc <- data.table::fread(gcpath)
+    stana@genomeWideCompare <- gc
+    scpath <- paste0(compare_out_dir,"/output/",output_list[grepl("strain_clusters.tsv", output_list)])
+    sc <- data.table::fread(scpath)
+    stana@strainClusters <- sc
+
     if (sum(grepl("pooled_SNV_data",output_list))!=0) {
         if (!just_species) {
           qqcat("Loading allele count table\n")
