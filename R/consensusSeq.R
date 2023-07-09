@@ -248,32 +248,36 @@ consensusSeqMIDAS2 <- function(
 		} else {
 			SPECIES[["info"]] <- stana@snpsInfo[[sp]]
 		}
-		if (is.null(stana@snpsDepth[[sp]])) {
-			file <- "depth"
-			if (verbose) {
-				qqcat("  Loading @{file]\n")
-			}
-			filePath <- paste0(midas_merge_dir,"/snps/",sp,"/",sp,".snps_",file,".tsv.lz4")
-            filePathUn <- gsub(".lz4","",filePath)
-	        system2("lz4", args=c("-d","-f",
-	                                paste0(getwd(),"/",filePath),
-	                                paste0(getwd(),"/",filePathUn)),
-	                  stdout=FALSE, stderr=FALSE)
-			SPECIES[[file]] <- read.table(filePathUn, row.names=1, header=1)
-	        unlink(paste0(getwd(),"/",filePathUn))
-		} else {
-			SPECIES[["depth"]] <- stana@snpsDepth[[sp]]
+		if (stana@type=="MIDAS2") {
+			if (is.null(stana@snpsDepth[[sp]])) {
+				file <- "depth"
+				if (verbose) {
+					qqcat("  Loading @{file]\n")
+				}
+				filePath <- paste0(midas_merge_dir,"/snps/",sp,"/",sp,".snps_",file,".tsv.lz4")
+	            filePathUn <- gsub(".lz4","",filePath)
+		        system2("lz4", args=c("-d","-f",
+		                                paste0(getwd(),"/",filePath),
+		                                paste0(getwd(),"/",filePathUn)),
+		                  stdout=FALSE, stderr=FALSE)
+				SPECIES[[file]] <- read.table(filePathUn, row.names=1, header=1)
+		        unlink(paste0(getwd(),"/",filePathUn))
+			} else {
+				SPECIES[["depth"]] <- stana@snpsDepth[[sp]]
+			}			
 		}
 		SPECIES[["freqs"]] <- stana@snps[[sp]]
 		siteNum <- dim(SPECIES[["freqs"]])[1]
 		qqcat("  Site number: @{siteNum}\n")
 
-		if (dim(stana@snpsSummary)[1]==0) {
-			filePath <- paste0(midas_merge_dir,"/snps/snps_summary.tsv")
-			snpsSummary <- read.table(filePath, header=1)
-	        SPECIES[["summary"]] <- subset(snpsSummary, snpsSummary$species_id==sp)			
-		} else {
-			SPECIES[["summary"]] <- subset(stana@snpsSummary, stana@snpsSummary$species_id==sp)
+		if (stana@type=="MIDAS2") {
+			if (dim(stana@snpsSummary)[1]==0) {
+				filePath <- paste0(midas_merge_dir,"/snps/snps_summary.tsv")
+				snpsSummary <- read.table(filePath, header=1)
+		        SPECIES[["summary"]] <- subset(snpsSummary, snpsSummary$species_id==sp)			
+			} else {
+				SPECIES[["summary"]] <- subset(stana@snpsSummary, stana@snpsSummary$species_id==sp)
+			}			
 		}
 
 		SAMPLES <- list()
