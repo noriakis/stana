@@ -6,8 +6,8 @@
 \usage{
 loadInStrain(
   compare_out_dir,
-  sample_threshold,
   candidate_species,
+  cl = NULL,
   just_species = FALSE
 )
 }
@@ -15,9 +15,9 @@ loadInStrain(
 \item{compare_out_dir}{output directory of compare.
 need `output` in the directory}
 
-\item{sample_threshold}{SNVs with at least this number of samples are included}
-
 \item{candidate_species}{candidate species ID, e.g. `GUT_GENOME000024`}
+
+\item{cl}{named list of grouping}
 
 \item{just_species}{if TRUE, returns the vector of species IDs}
 }
@@ -25,5 +25,5 @@ need `output` in the directory}
 For InStrain, you should provide `compare` output
 with --bams options implmented from version 1.6.
 It computes MAF of var_base per position and return the frequency matrix.
-Filters of popSNV or conSNV will be added.
+Note it considers con_base and var_base in info table for calculation.
 }

@@ -7,7 +7,7 @@
 plotPCA(
   stana,
   species,
-  cl,
+  cl = NULL,
   target = "snps",
   ignore = FALSE,
   replace = FALSE,

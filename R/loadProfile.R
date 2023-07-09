@@ -4,32 +4,41 @@
 #' For InStrain, you should provide `compare` output
 #' with --bams options implmented from version 1.6.
 #' It computes MAF of var_base per position and return the frequency matrix.
-#' Filters of popSNV or conSNV will be added.
+#' Note it considers con_base and var_base in info table for calculation.
 #' 
 #' @param compare_out_dir output directory of compare.
 #' need `output` in the directory
-#' @param sample_threshold SNVs with at least this number of samples are included
 #' @param candidate_species candidate species ID, e.g. `GUT_GENOME000024`
+#' @param cl named list of grouping
 #' @param just_species if TRUE, returns the vector of species IDs
+#' @param fill_na fill NA in resulting data.frame by -1
 #' 
 #' @export
 loadInStrain <- function(compare_out_dir,
-                         sample_threshold,
                          candidate_species,
-                         just_species=FALSE) {
-    
+                         cl=NULL,
+                         just_species=FALSE,
+                         fill_na=TRUE) {
+    sample_threshold <- 1
     output_list <- list.files(paste0(compare_out_dir,"/output"))
     stana <- new("stana")
+    if (!is.null(cl)) {stana@cl <- cl}
     stana@type <- "InStrain"
     stana@mergeDir <- compare_out_dir
     snps <- list()
     snpsInfoList <- list()
     if (sum(grepl("pooled_SNV_data",output_list))!=0) {
-        path <- paste0(compare_out_dir,"/output/",output_list[grepl("pooled_SNV_data.tsv.gz",output_list)])
-        tbl <- data.table::fread(path)
+        if (!just_species) {
+          qqcat("Loading allele count table\n")
+          path <- paste0(compare_out_dir,"/output/",output_list[grepl("pooled_SNV_data.tsv.gz",output_list)])
+          tbl <- data.table::fread(path)          
+        }
+
         keys_path <- paste0(compare_out_dir,"/output/",output_list[grepl("pooled_SNV_data_keys.tsv",output_list)])
+        qqcat("Loading key table\n")
         keys <- data.table::fread(keys_path)
         info_path <- paste0(compare_out_dir,"/output/",output_list[grepl("pooled_SNV_info.tsv.gz",output_list)])
+        qqcat("Loading info table\n")
         info <- data.table::fread(info_path)
 
         info$scaffold_position <- paste0(info$scaffold,"|",info$position)
@@ -60,19 +69,20 @@ loadInStrain <- function(compare_out_dir,
             
             read_num <- as.numeric(x[4:7])
             names(read_num) <- names(x[4:7])
-            
-            det <- c(det, cb, vb,
-                     as.numeric((read_num / sum(read_num))[vb]))
+            ## Return -1 in zero depth
+            if (sum(read_num)==0) {val <- -1} else {
+                val <- as.numeric((read_num / sum(read_num))[vb])
+            }
+            det <- c(det, cb, vb, val)
             det
         }
         mafs <- NULL
         
         sdt <- tbl[tbl$scaffold %in% candKeys,]
-        qqcat("  Dimension of pooled SNV table for species: @{dim(sdt)[1]}")
-        
+        qqcat("  Dimension of pooled SNV table for species: @{dim(sdt)[1]}\n")
         # Only bi-allelic position
         # sdt <- sdt[apply(sdt[,4:7],1,function(x)sum(x==0))==2,]
-        
+
         nm_sample <- keys$sample
         names(nm_sample) <- keys$key
         nm_sample <- nm_sample[nm_sample!=""]
@@ -85,19 +95,31 @@ loadInStrain <- function(compare_out_dir,
         sdt$conBase <- conBase[paste0(sdt$scaffold,"|",sdt$position)]
         sdt$varBase <- varBase[paste0(sdt$scaffold,"|",sdt$position)]
         
+
+        qqcat("Calculating MAF\n")
         maf <- apply(sdt, 1, function(x) ret(x))
         maf <- data.frame(t(maf))
         
         maf <- maf |> `colnames<-`(c("id","scaffold_position","major_allele","minor_allele","maf"))
         maf$maf <- as.numeric(maf$maf)
-        
         maf$scaffold_position <- paste0(maf$scaffold_position,"|",maf$major_allele,">",maf$minor_allele)
-        sample_snv <- tidyr::pivot_wider(maf, id_cols=maf$id,
-          names_from = maf$scaffold_position, values_from = maf$maf)
+
+        sample_snv <- tidyr::pivot_wider(maf, id_cols=id,
+                                 names_from = scaffold_position,
+                                 values_from = maf)
         thresh <- apply(sample_snv[2:ncol(sample_snv)], 2, function(x) sum(!is.na(x))) > sample_threshold
-        snps[[candidate_species]] <- sample_snv[,c("id",names(thresh[thresh]))]
+        snvDf <- data.frame(sample_snv[,c("id",names(thresh[thresh]))], check.names=FALSE)
+        row.names(snvDf) <- snvDf$id
+        snvDf$id <- NULL
+        snvDf <- data.frame(t(snvDf), check.names=FALSE)
+        ## Return the data.frame
+        if (fill_na) {
+          snvDf[is.na(snvDf)] <- -1
+        }
+        snps[[candidate_species]] <- snvDf
         stana@snps <- snps
         stana@snpsInfo <- snpsInfoList
+        stana <- initializeStana(stana,cl)
     } else {
         qqcat("No pooled results present\n")
     }

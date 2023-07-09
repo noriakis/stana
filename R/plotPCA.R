@@ -10,17 +10,18 @@
 #' @param pointSize scatter point size
 #' @param ltype line type for ellipse
 #' @param useBlend use ggblend for point
-#' @param ignore ignore the SNVs containing -1
+#' @param ignoreZero ignore the SNVs containing -1
 #' @param replaceZero replace the SNVs -1 (zero depth) with zero
 #' @import ggplot2
 #' @importFrom stats prcomp
 #' @export
 #' 
-plotPCA <- function(stana, species, cl, target="snps",
-	ignore=FALSE, replace=FALSE,
+plotPCA <- function(stana, species, cl=NULL, target="snps",
+	ignoreZero=FALSE, replaceZero=FALSE,
 	pointSize=5, ltype=2, useBlend=FALSE) {
 	cols <- stana@colors
 	pcaList <- list()
+	if (is.null(cl)) {cl <- stana@cl}
 	for (sp in species) {
 		if (target=="snps") {
 			df <- stana@snps[[sp]]
@@ -32,14 +33,14 @@ plotPCA <- function(stana, species, cl, target="snps",
 
 		df <- df[,intersect(colnames(df),
 			as.character(unlist(cl)))]
-		if (replace) {
+		if (ignoreZero) {
+			df <- df[rowSums(df==-1)==0,]
+		}
+		if (replaceZero) {
 			df[df==-1] <- 0
 		}
-		if (ignore) {
-			df <- df[rowSums(df==-1)==0,]
-			qqcat("After filtering: @{dim(df)[1]} SNVs\n")
-		}
-
+		print(df)
+		qqcat("After filtering: @{dim(df)[1]} SNVs\n")
 		if (!is.null(cl)) {
 			ids <- colnames(df)
 			for (nm in names(cl)){
