@@ -11,8 +11,8 @@
 genomeHeatmap <- function(stana, species, column="conANI", cl=NULL) {
   if (stana@type!="InStrain") {stop("Please provide InStrain profiles")}
   if (is.null(cl)) {cl <- stana@cl}
-  subMat <- a@genomeWideCompare[grepl(species,
-                                      a@genomeWideCompare$genome),] |> 
+  subMat <- stana@genomeWideCompare[grepl(species,
+                                      stana@genomeWideCompare$genome),] |> 
     data.frame()
   subMat <- subMat[,c("name1","name2",column)]
   edge_mat <- subMat |>
@@ -29,4 +29,40 @@ genomeHeatmap <- function(stana, species, column="conANI", cl=NULL) {
   m[lower.tri(m)] <- t(m)[lower.tri(t(m))]
   Heatmap(m, name=column,
           column_split=gr[colnames(m)])
+}
+
+
+
+#' strainClusterHeatmap
+#'
+#' Draw a heatmap representing presence/absence of strain cluster
+#' 
+#' 
+#' @param stana stana object
+#' @param species interesting species
+#' @param column column to plot, default to conANI
+#' @param cl grouping, if NULL, it automatically obtain grouping from stana object
+#' @return Heatmap by ComplexHeatmap
+strainClusterHeatmap <- function(stana, species, cl=NULL) {
+  if (stana@type!="InStrain") {stop("Please provide InStrain profiles")}
+  if (is.null(cl)) {cl <- stana@cl}
+  sc <- stana@strainClusters
+  candsc <- sc[grepl(species, sc$genome),]
+
+  subMat <- candsc[,c("cluster","sample")]
+  subMat$present <- 1
+  edge_mat <- subMat |>
+      tidyr::pivot_wider(names_from=sample,values_from=present) |>
+      data.frame(check.names=FALSE)
+  gr <- NULL
+  if (length(cl)>0) {
+      for (cln in names(cl)) {
+          gr <- c(gr, rep(cln, length(cl[[cln]])) |> setNames(cl[[cln]]))
+      }
+  }
+  row.names(edge_mat) <- edge_mat$cluster
+  edge_mat$cluster <- NULL
+  edge_mat[is.na(edge_mat)] <- 0
+  Heatmap(edge_mat, name="cluster_present",
+          column_split=gr[colnames(edge_mat)])
 }
