@@ -11,7 +11,7 @@ devtools::install_github("noriakis/stana")
 
 ## Documentation
 
-The documentation is available using pkgdown at [https://noriakis.github.io/software/stana](https://noriakis.github.io/software/stana).
+The documentation is available using `pkgdown` at [https://noriakis.github.io/software/stana](https://noriakis.github.io/pkgdown/stana). The detailed usage is available [here](https://noriakis.github.io/software/stana), using `bookdown`.
 
 ## Databases
 - [midas_db_v1.2](https://github.com/snayfach/MIDAS/blob/master/docs/ref_db.md): Contains 31,007 bacterial reference genomes clustered into 5,952 species groups.
@@ -25,6 +25,5 @@ The function includes filtering of species based on clinical / environmental var
 <img src="https://github.com/noriakis/software/blob/main/images/stana_example.png?raw=true" width="800px">
 
 ## TODO
-- Read all data in S4 class, and perform the downstream analysis. Currently the package reads the data per function.
 - Add more filters and tree inferring options in `consensusSeq()`.
 - Add reasonable filtering options to `loadInStrain` and `loadmetaSNV`
