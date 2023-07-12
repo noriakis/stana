@@ -2,7 +2,7 @@
 #' loadInStrain
 #' 
 #' For InStrain, you should provide `compare` output
-#' with --bams options implmented from version 1.6.
+#' It can import outputs with --bams options implmented from version 1.6.
 #' It computes MAF of var_base per position and return the frequency matrix.
 #' Note it considers con_base and var_base in info table for calculation.
 #' 
@@ -11,14 +11,18 @@
 #' @param candidate_species candidate species ID, e.g. `GUT_GENOME000024`
 #' @param cl named list of grouping
 #' @param just_species if TRUE, returns the vector of species IDs
+#' (needs pooled SNV data, otherwise use genome wide compraison table)
 #' @param fill_na fill NA in resulting data.frame by -1
+#' @param skip_pool skip pooled results loading
 #' 
 #' @export
 loadInStrain <- function(compare_out_dir,
                          candidate_species,
                          cl=NULL,
                          just_species=FALSE,
-                         fill_na=TRUE) {
+                         fill_na=TRUE,
+                         skip_pool=TRUE) {
+
     sample_threshold <- 1
     output_list <- list.files(paste0(compare_out_dir,"/output"))
     stana <- new("stana")
@@ -37,12 +41,18 @@ loadInStrain <- function(compare_out_dir,
     scpath <- paste0(compare_out_dir,"/output/",output_list[grepl("strain_clusters.tsv", output_list)])
     sc <- data.table::fread(scpath)
     stana@strainClusters <- sc
+    
+    if (just_species) {if (skip_pool) {
+      return(gc$genome |> strsplit("\\.") |> vapply("[", 1, FUN.VALUE="character") |> unique())
+    }}
+
+    if (skip_pool) {return(stana)}
 
     if (sum(grepl("pooled_SNV_data",output_list))!=0) {
         if (!just_species) {
           qqcat("Loading allele count table\n")
           path <- paste0(compare_out_dir,"/output/",output_list[grepl("pooled_SNV_data.tsv.gz",output_list)])
-          tbl <- data.table::fread(path)          
+          tbl <- data.table::fread(path)                      
         }
 
         keys_path <- paste0(compare_out_dir,"/output/",output_list[grepl("pooled_SNV_data_keys.tsv",output_list)])
@@ -60,6 +70,7 @@ loadInStrain <- function(compare_out_dir,
         conBase <- info$con_base
         names(conBase) <- info$scaffold_position
         
+        ## Assuming default database
         sps <- unique(paste0(sapply(strsplit(keys$scaffold, "_"),"[",1),"_",sapply(strsplit(keys$scaffold, "_"),"[",2)))
         if (just_species) {
             return(sps)

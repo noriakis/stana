@@ -4,7 +4,7 @@
 \alias{strainClusterHeatmap}
 \title{strainClusterHeatmap}
 \usage{
-strainClusterHeatmap(stana, species, cl = NULL)
+strainClusterHeatmap(stana, species, cl = NULL, heatmapArgs = list())
 }
 \arguments{
 \item{stana}{stana object}
@@ -12,6 +12,8 @@ strainClusterHeatmap(stana, species, cl = NULL)
 \item{species}{interesting species}
 
 \item{cl}{grouping, if NULL, it automatically obtain grouping from stana object}
+
+\item{heatmapArgs}{list of parameters passed to Heatmap()}
 
 \item{column}{column to plot, default to conANI}
 }

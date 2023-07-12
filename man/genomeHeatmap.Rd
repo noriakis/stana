@@ -4,7 +4,13 @@
 \alias{genomeHeatmap}
 \title{genomeHeatmap}
 \usage{
-genomeHeatmap(stana, species, column = "conANI", cl = NULL)
+genomeHeatmap(
+  stana,
+  species,
+  column = "conANI",
+  cl = NULL,
+  heatmapArgs = list()
+)
 }
 \arguments{
 \item{stana}{stana object}
@@ -14,6 +20,8 @@ genomeHeatmap(stana, species, column = "conANI", cl = NULL)
 \item{column}{column to plot, default to conANI}
 
 \item{cl}{grouping, if NULL, it automatically obtain grouping from stana object}
+
+\item{heatmapArgs}{list of parameters passed to Heatmap()}
 }
 \value{
 Heatmap by ComplexHeatmap

@@ -7,8 +7,10 @@
 #' @param species interesting species
 #' @param column column to plot, default to conANI
 #' @param cl grouping, if NULL, it automatically obtain grouping from stana object
+#' @param heatmapArgs list of parameters passed to Heatmap()
 #' @return Heatmap by ComplexHeatmap
-genomeHeatmap <- function(stana, species, column="conANI", cl=NULL) {
+#' @export
+genomeHeatmap <- function(stana, species, column="conANI", cl=NULL, heatmapArgs=list()) {
   if (stana@type!="InStrain") {stop("Please provide InStrain profiles")}
   if (is.null(cl)) {cl <- stana@cl}
   subMat <- stana@genomeWideCompare[grepl(species,
@@ -27,8 +29,10 @@ genomeHeatmap <- function(stana, species, column="conANI", cl=NULL) {
   edge_mat$name1 <- NULL
   m <- edge_mat
   m[lower.tri(m)] <- t(m)[lower.tri(t(m))]
-  Heatmap(m, name=column,
-          column_split=gr[colnames(m)])
+  heatmapArgs[["matrix"]] <- m
+  heatmapArgs[["name"]] <- column
+  heatmapArgs[["column_split"]] <- gr[colnames(m)]
+  do.call(Heatmap, heatmapArgs)
 }
 
 
@@ -42,8 +46,10 @@ genomeHeatmap <- function(stana, species, column="conANI", cl=NULL) {
 #' @param species interesting species
 #' @param column column to plot, default to conANI
 #' @param cl grouping, if NULL, it automatically obtain grouping from stana object
+#' @param heatmapArgs list of parameters passed to Heatmap()
 #' @return Heatmap by ComplexHeatmap
-strainClusterHeatmap <- function(stana, species, cl=NULL) {
+#' @export
+strainClusterHeatmap <- function(stana, species, cl=NULL, heatmapArgs=list()) {
   if (stana@type!="InStrain") {stop("Please provide InStrain profiles")}
   if (is.null(cl)) {cl <- stana@cl}
   sc <- stana@strainClusters
@@ -63,6 +69,8 @@ strainClusterHeatmap <- function(stana, species, cl=NULL) {
   row.names(edge_mat) <- edge_mat$cluster
   edge_mat$cluster <- NULL
   edge_mat[is.na(edge_mat)] <- 0
-  Heatmap(edge_mat, name="cluster_present",
-          column_split=gr[colnames(edge_mat)])
+  heatmapArgs[["matrix"]] <- edge_mat
+  heatmapArgs[["name"]] <- "cluster_present"
+  heatmapArgs[["column_split"]] <- gr[colnames(edge_mat)]
+  do.call(Heatmap, heatmapArgs)
 }

@@ -40,12 +40,18 @@ setMethod("show",
   function(object) {
     qqcat("Type: @{object@type}\n")
     qqcat("Directory: @{object@mergeDir}\n")
-    qqcat("Species: @{length(object@ids)}\n")
-    qqcat("Filter type: @{object@sampleFilter}, number: @{object@sampleFilterVal}, proportion: @{object@sampleFilterPer}\n")
+    qqcat("Species number: @{length(object@ids)}\n")
+    if (object@type %in% c("MIDAS","MIDAS2")) {
+      qqcat("Filter type: @{object@sampleFilter}, number: @{object@sampleFilterVal}, proportion: @{object@sampleFilterPer}\n")
+    }
     qqcat("Loaded SNV table: @{length(object@snps)}\n")
-    qqcat("  Species cleared SNV filter: @{length(object@clearSnps)}\n")
+    if (object@type %in% c("MIDAS","MIDAS2")) {
+      qqcat("  Species cleared SNV filter: @{length(object@clearSnps)}\n")
+    }
     qqcat("Loaded gene table (@{object@geneType}): @{length(object@genes)}\n")
-    qqcat("  Species cleared gene filter: @{length(object@clearGenes)}\n")
+    if (object@type %in% c("MIDAS","MIDAS2")) {
+      qqcat("  Species cleared gene filter: @{length(object@clearGenes)}\n")
+    }
     print(object.size(object), units="auto")
   })
 
