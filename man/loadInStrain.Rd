@@ -9,7 +9,8 @@ loadInStrain(
   candidate_species,
   cl = NULL,
   just_species = FALSE,
-  fill_na = TRUE
+  fill_na = TRUE,
+  skip_pool = TRUE
 )
 }
 \arguments{
@@ -20,13 +21,16 @@ need `output` in the directory}
 
 \item{cl}{named list of grouping}
 
-\item{just_species}{if TRUE, returns the vector of species IDs}
+\item{just_species}{if TRUE, returns the vector of species IDs
+(needs pooled SNV data, otherwise use genome wide compraison table)}
 
 \item{fill_na}{fill NA in resulting data.frame by -1}
+
+\item{skip_pool}{skip pooled results loading}
 }
 \description{
 For InStrain, you should provide `compare` output
-with --bams options implmented from version 1.6.
+It can import outputs with --bams options implmented from version 1.6.
 It computes MAF of var_base per position and return the frequency matrix.
 Note it considers con_base and var_base in info table for calculation.
 }

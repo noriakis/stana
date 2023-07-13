@@ -527,8 +527,8 @@ loadMIDAS2 <- function(midas_merge_dir,
 
   stana@freqTableSnps <- snpStat
   stana@freqTableGenes <- geneStat
-  stana@clearSnps <- clearSn
-  stana@clearGenes <- clearGn
+  if (!is.null(clearSn)) stana@clearSnps <- clearSn
+  if (!is.null(clearGn)) stana@clearGenes <- clearGn
   stana@snps <- snpList
   stana@snpsInfo <- snpInfoList
   stana@snpsDepth <- snpDepthList
@@ -536,8 +536,8 @@ loadMIDAS2 <- function(midas_merge_dir,
   stana@ids <- union(names(geneList),names(snpList))
   stana <- initializeStana(stana,cl)
   if (!is.null(taxtbl)){
-    stana@clearSnpsSpecies <- clearSnSp
-    stana@clearGenesSpecies <- clearGnSp
+    if (!is.null(clearSnSp)) stana@clearSnpsSpecies <- clearSnSp
+    if (!is.null(clearGnSp)) stana@clearGenesSpecies <- clearGnSp
   }
   stana
 }
