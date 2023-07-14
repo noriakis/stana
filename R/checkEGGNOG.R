@@ -198,7 +198,7 @@ checkEGGNOG <- function(annot_file, ret="all", checkIDs=NULL) {
 #' 
 #' @param stana stana object
 #' @param sp candidate species
-#' @param anno annotation tibble
+#' @param anno annotation tibble obtained by checkEGGNOG
 #' @param how summarising function, default to mean
 #' @return data.frame
 #' @export

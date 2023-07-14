@@ -308,7 +308,11 @@ loadMIDAS <- function(midas_merge_dir,
 #' @noRd
 getColors <- function(cl){
   numgr <- length(names(cl))
-  cols <- brewer.pal(numgr, "PuOr") 
+  if (numgr > 2) {
+    cols <- brewer.pal(numgr, "PuOr") 
+  } else {
+    cols <- brewer.pal(3, "PuOr")[seq_len(numgr)]
+  }
 }
 
 #' initializeStana

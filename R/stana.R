@@ -1,6 +1,8 @@
 #' @import methods
 #' @importFrom utils object.size
 #' @importFrom grDevices colorRampPalette
+#' @slot type type of pipeline, such as `MIDAS`
+#' @slot eggNOG list of path for eggNOG mapper v2 results for species
 setClass("stana", slots=list(
                             type="character",
                             cl="list",
@@ -11,6 +13,7 @@ setClass("stana", slots=list(
                             genomeWideCompare="data.table",
                             strainClusters="data.table",
                             snps="list",
+                            eggNOG="list",
                             snpsInfo="list",
                             snpsDepth="list",
                             snpsSummary="data.frame",
