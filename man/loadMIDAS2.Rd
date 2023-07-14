@@ -9,6 +9,7 @@ loadMIDAS2(
   cl,
   filtNum = 2,
   db = "gtdb",
+  only_stat = FALSE,
   filtPer = 0.8,
   taxtbl = NULL,
   candSp = NULL,
@@ -27,6 +28,8 @@ loadMIDAS2(
 \item{filtNum}{the species with the samples above this number will be returned}
 
 \item{db}{data base that was used to profile, default to gtdb.}
+
+\item{only_stat}{only samples per species is returned (snpStat and geneStat)}
 
 \item{filtPer}{filter by fraction}
 

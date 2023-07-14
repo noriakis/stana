@@ -350,12 +350,14 @@ initializeStana <- function(stana,cl) {
 #' @param loadSummary default to FALSE, load summary information.
 #' @param loadInfo default to FALSE, load info information.
 #' @param loadDepth default to FALSE, load depth information.
+#' @param only_stat only samples per species is returned (snpStat and geneStat)
 #' @export
 #' 
 loadMIDAS2 <- function(midas_merge_dir,
                         cl,
                         filtNum=2,
                         db="gtdb",
+                        only_stat=FALSE,
                         filtPer=0.8,
                         taxtbl=NULL,
                         candSp=NULL,
@@ -365,14 +367,11 @@ loadMIDAS2 <- function(midas_merge_dir,
                         loadInfo=FALSE,
                         loadDepth=FALSE) {
   stana <- new("stana")
+  if (only_stat) loadSummary <- TRUE
   stana@type <- "MIDAS2"
   stana@db <- db
   stana@cl <- cl
-  if (loadSummary) {
-    filePath <- paste0(midas_merge_dir,"/snps/snps_summary.tsv")
-    snpsSummary <- read.table(filePath, header=1)
-    stana@snpsSummary <- snpsSummary
-  }
+
   if (db=="gtdb") {
     tblCol <- "GTDB species"
   } else if (db=="uhgg") {
@@ -380,6 +379,69 @@ loadMIDAS2 <- function(midas_merge_dir,
   } else {
     stop("Please provide gtdb or uhgg to `db`")
   }
+
+  if (loadSummary) {
+    filePath <- paste0(midas_merge_dir,"/snps/snps_summary.tsv")
+    snpsSummary <- read.table(filePath, header=1)
+    stana@snpsSummary <- snpsSummary
+  }
+
+  if (only_stat) {
+    filePath <- paste0(midas_merge_dir,"/genes/genes_summary.tsv")
+    genesSummary <- read.table(filePath, header=1)
+
+    grnm <- NULL
+    for (sn in snpsSummary$sample_name) {
+      tmpgr <- NULL
+      for (i in names(cl)) {
+        if (sn %in% cl[[i]]) {
+          tmpgr <- c(tmpgr, i)
+        }
+      }
+      if (length(tmpgr)>1) {
+        stop("Sample in multiple groups")
+      } else {
+        grnm <- c(grnm, tmpgr)
+      }
+    }
+
+    snpsSummary$group <- grnm
+
+    grnm <- NULL
+    for (sn in genesSummary$sample_name) {
+      tmpgr <- NULL
+      for (i in names(cl)) {
+        if (sn %in% cl[[i]]) {
+          tmpgr <- c(tmpgr, i)
+        }
+      }
+      if (length(tmpgr)>1) {
+        stop("Sample in multiple groups")
+      } else {
+        grnm <- c(grnm, tmpgr)
+      }
+    }
+
+    genesSummary$group <- grnm
+    snpRet <- snpsSummary |> dplyr::group_by(species_id) |>
+        dplyr::count(group)
+    geneRet <- genesSummary |> dplyr::group_by(species_id) |>
+        dplyr::count(group)
+
+    if (!is.null(taxtbl)) {
+      nmdic <- taxtbl[[tblCol]] |> setNames(row.names(taxtbl))
+      snpRet$species_name <- nmdic[as.character(snpRet$species_id)]
+      geneRet$species_name <- nmdic[as.character(geneRet$species_id)]
+    }
+    return(
+      list("snps"=snpRet,
+      "genes"=geneRet)
+    )
+  }
+
+
+
+
   stana@mergeDir <- midas_merge_dir
   stana@geneType <- geneType
   stana@sampleFilter <- filtType
