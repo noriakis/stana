@@ -11,7 +11,7 @@ summariseAbundance(stana, sp, anno, how = mean)
 
 \item{sp}{candidate species}
 
-\item{anno}{annotation tibble}
+\item{anno}{annotation tibble obtained by checkEGGNOG}
 
 \item{how}{summarising function, default to mean}
 }
