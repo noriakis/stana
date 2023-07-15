@@ -59,10 +59,11 @@ plotKEGGPathway <- function(stana, species, pathway_id,
       lfcs[[sp]] <- apply(ko_tbl, 1, sum)
     } else {
         qqcat("@{sp}: @{names(cl)[1]} / @{names(cl)[2]}\n")
+        ko_tbl <- ko_tbl + eps
         inc1 <- intersect(colnames(ko_tbl), cl[[1]])
         inc2 <- intersect(colnames(ko_tbl), cl[[2]])
-        lfcs[[sp]] <- log2((apply(ko_tbl[,inc1], 1, how) + eps) / 
-                             (apply(ko_tbl[,inc2], 1, how) + eps))
+        lfcs[[sp]] <- log2((apply(ko_tbl[,inc1], 1, how)) / 
+                             (apply(ko_tbl[,inc2], 1, how)))
       }
     }
     ## Obtain graph
