@@ -11,7 +11,7 @@ devtools::install_github("noriakis/stana")
 
 ## Documentation
 
-The documentation is available using `pkgdown` at [https://noriakis.github.io/software/stana_pkgdown](https://noriakis.github.io/pkgdown/stana_pkgdown). The detailed usage is available [here](https://noriakis.github.io/software/stana), using `bookdown`.
+The documentation is available using `pkgdown` at [https://noriakis.github.io/software/stana_pkgdown](https://noriakis.github.io/software/stana_pkgdown). The detailed usage is available [here](https://noriakis.github.io/software/stana), using `bookdown`.
 
 ## Databases
 - [midas_db_v1.2](https://github.com/snayfach/MIDAS/blob/master/docs/ref_db.md): Contains 31,007 bacterial reference genomes clustered into 5,952 species groups.
