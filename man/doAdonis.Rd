@@ -11,6 +11,8 @@ doAdonis(
   target = "snps",
   formula = NULL,
   distMethod = "manhattan",
+  AAfunc = dist.ml,
+  AAargs = list(),
   maj = FALSE,
   deleteZeroDepth = FALSE,
   argList = list(),
@@ -24,11 +26,15 @@ doAdonis(
 
 \item{cl}{named list of samples}
 
-\item{target}{tree, snps, genes}
+\item{target}{tree, snps, genes, fasta}
 
 \item{formula}{pass to adonis2, specify distance matrix as d.}
 
 \item{distMethod}{distance method passed to dist() (default, manhattan)}
+
+\item{AAfunc}{if choose `fasta`, provide function for calculating distance}
+
+\item{AAargs}{provided to `AAfunc`}
 
 \item{maj}{major allele distance}
 

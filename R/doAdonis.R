@@ -12,10 +12,12 @@
 #' @param stana stana object
 #' @param specs species to be examined
 #' @param cl named list of samples
-#' @param target tree, snps, genes
+#' @param target tree, snps, genes, fasta
 #' @param formula pass to adonis2, specify distance matrix as d.
 #' @param distMethod distance method passed to dist() (default, manhattan)
 #' @param maj major allele distance
+#' @param AAfunc if choose `fasta`, provide function for calculating distance
+#' @param AAargs provided to `AAfunc`
 #' @param argList parameters passed to adonis2
 #' @param deleteZeroDepth delete zero depth snvs (in MIDAS2, denoted as `-1`)
 #' @param distArg passed to `dist()`
@@ -26,6 +28,7 @@
 doAdonis <- function(stana, specs, cl=NULL,
     target="snps", formula=NULL,
     distMethod="manhattan",
+    AAfunc=dist.ml, AAargs=list(),
     maj=FALSE, deleteZeroDepth=FALSE,
     argList=list(), distArg=list()) {
       if (is.null(cl)) {cl <- stana@cl}
@@ -46,11 +49,15 @@ doAdonis <- function(stana, specs, cl=NULL,
             } else {
               stop("No tree found in stana@treeList")
             }
+        } else if (target=="fasta") {
+          AAargs[["x"]] <- stana@fastaList[[sp]]
+          d <- do.call(AAfunc, AAargs)
+          sn <- attr(d, "Labels")
         } else {
             snps <- stana@genes[[sp]]          
         }
 
-        if (target!="tree") {
+        if (!target %in% c("tree","fasta")) {
           if (maj & target=="snps" & stana@type=="MIDAS1") {
               chk <- read.table(paste0(stana@mergeDir,
                 "/",sp,"/snps_info.txt"),

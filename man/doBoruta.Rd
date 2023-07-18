@@ -8,6 +8,7 @@ doBoruta(
   stana,
   sp,
   cl = NULL,
+  doFix = TRUE,
   target = "genes",
   mat = NULL,
   whichToCount = "ec_description",
@@ -20,6 +21,8 @@ doBoruta(
 \item{sp}{candidate species ID}
 
 \item{cl}{named list of category}
+
+\item{doFix}{performs TentativeRoughFix on Boruta result}
 
 \item{target}{default to snps}
 

@@ -11,11 +11,12 @@
 #' otherwise the raw gene matrix is used.
 #' @param whichToCount which to show on box plots,
 #' pass to checkPATRIC() (in MIDAS1)
+#' @param doFix performs TentativeRoughFix on Boruta result
 #' @param argList passed to Boruta()
 #' @return Boruta object
 #' @import ggplot2
 #' @export
-doBoruta <- function(stana, sp, cl=NULL,
+doBoruta <- function(stana, sp, cl=NULL, doFix=TRUE,
   target="genes", mat=NULL, whichToCount="ec_description", argList=list()) {
   ret <- list()
   if (is.null(cl)) {
@@ -49,7 +50,11 @@ doBoruta <- function(stana, sp, cl=NULL,
   argList[["formula"]] <- group ~ .
   argList[["data"]] <- transDf
   rf <- do.call("Boruta", argList)
-  bor <- Boruta::TentativeRoughFix(rf)
+  if (doFix) {
+    bor <- Boruta::TentativeRoughFix(rf)
+  } else {
+    bor <- rf
+  }
   ret[["boruta"]] <- bor
   
   dec <- bor$finalDecision
