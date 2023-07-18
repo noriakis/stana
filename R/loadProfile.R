@@ -310,8 +310,11 @@ getColors <- function(cl){
   numgr <- length(names(cl))
   if (numgr > 2) {
     cols <- brewer.pal(numgr, "PuOr") 
+  } else if (numgr == 2) {
+    three <- brewer.pal(3, "PuOr")
+    cols <- c(three[1], three[3])
   } else {
-    cols <- brewer.pal(3, "PuOr")[seq_len(numgr)]
+    cols <- brewer.pal(3, "PuOr")[1]
   }
 }
 

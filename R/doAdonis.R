@@ -18,6 +18,7 @@
 #' @param maj major allele distance
 #' @param argList parameters passed to adonis2
 #' @param deleteZeroDepth delete zero depth snvs (in MIDAS2, denoted as `-1`)
+#' @param distArg passed to `dist()`
 #' @importFrom vegan adonis2
 #' @importFrom stats as.formula dist
 #' @importFrom utils read.table
@@ -26,7 +27,7 @@ doAdonis <- function(stana, specs, cl=NULL,
     target="snps", formula=NULL,
     distMethod="manhattan",
     maj=FALSE, deleteZeroDepth=FALSE,
-    argList=list()) {
+    argList=list(), distArg=list()) {
       if (is.null(cl)) {cl <- stana@cl}
       for (sp in specs){
         qqcat("Performing adonis in @{sp}\n")
@@ -34,6 +35,7 @@ doAdonis <- function(stana, specs, cl=NULL,
             snps <- stana@snps[[sp]]
             if (deleteZeroDepth) {
               snps <- snps[rowSums(snps==-1)==0,]
+              qqcat("After filtering `-1`, position numbers: @{dim(snps)[1]}\n")
             }
         } else if (target=="tree") {
             if (!is.null(stana@treeList[[sp]])) {
@@ -72,7 +74,9 @@ doAdonis <- function(stana, specs, cl=NULL,
             snps <- snps[inc,]
           }
           snps <- snps[,intersect(colnames(snps),as.character(unlist(cl)))]
-          d <- dist(t(snps), method=distMethod)
+          distArg[["x"]] <- t(snps)
+          distArg[["method"]] <- distMethod
+          d <- do.call(dist, distArg)
           gr <- NULL
           for (cn in colnames(snps)){
             for (clm in seq_along(cl)){

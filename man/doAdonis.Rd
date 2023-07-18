@@ -13,7 +13,8 @@ doAdonis(
   distMethod = "manhattan",
   maj = FALSE,
   deleteZeroDepth = FALSE,
-  argList = list()
+  argList = list(),
+  distArg = list()
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ doAdonis(
 \item{deleteZeroDepth}{delete zero depth snvs (in MIDAS2, denoted as `-1`)}
 
 \item{argList}{parameters passed to adonis2}
+
+\item{distArg}{passed to `dist()`}
 }
 \description{
 Perform PERMANOVA on distance matrix based 
