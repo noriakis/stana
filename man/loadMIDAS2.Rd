@@ -15,9 +15,9 @@ loadMIDAS2(
   candSp = NULL,
   filtType = "group",
   geneType = "copynum",
-  loadSummary = FALSE,
-  loadInfo = FALSE,
-  loadDepth = FALSE
+  loadSummary = TRUE,
+  loadInfo = TRUE,
+  loadDepth = TRUE
 )
 }
 \arguments{

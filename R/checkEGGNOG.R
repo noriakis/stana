@@ -6,38 +6,45 @@
 #' @param annot_file annotation file
 #' @param geneIDs geneIDs
 #' @param candPlot vector consisting of 
-#' "cog","ec","ko","kegg","module","reaction"
+#' "COG_category" "Description" "Preferred_name" "GOs"           
+#' "EC"             "KEGG_ko"        "KEGG_Pathway"   "KEGG_Module"    "KEGG_Reaction" 
+#' "KEGG_rclass"    "BRITE"          "KEGG_TC"        "CAZy"           "BiGG_Reaction" 
+#' "PFAMs"
 #' @export
 #' 
 drawEGGNOG <- function(annot_file, geneIDs, candPlot) {
   retList <- list()
   egng <- checkEGGNOG(annot_file,"all", geneIDs)
-  # delete map* entry
-  egng <- egng[!grepl("map",egng[,3]),]
+  # delete map* entry (in KEGG)
+  egng <- egng[!grepl("map",egng$value),]
+  print(egng)
   ap <- NULL
   for (i in geneIDs) {
-    tmp <- egng[egng[,1] %in% i,]
-    tmp <- tmp[ tmp[,2] %in% candPlot,]
+    print(i)
+    tmp <- egng[egng$ID == i,]
+    print(tmp)
+    tmp <- tmp[ tmp$name %in% candPlot,]
     for (cnd in candPlot) {
       remCnd <- candPlot[ !candPlot %in% cnd ]
-      if (dim(tmp[ tmp[,2] %in% cnd, ])[1]!=0) {
-        for (no in tmp[ tmp[,2] %in% cnd, ][,3]) {
-          for (no2 in tmp[ tmp[,2] %in% remCnd,][,3]){
+      if (dim(tmp[ tmp$name %in% cnd, ])[1]!=0) {
+        for (no in tmp[ tmp$name %in% cnd, ]$value) {
+          for (no2 in tmp[ tmp$name %in% remCnd,]$value){
             ap <- rbind(ap, c(no, no2))
           }
         }
       }
     }  
   }
-  counter <- table(egng[,3])
+
+  counter <- table(egng$value)
   g <- graph_from_data_frame( ap, directed=FALSE)
   category <- NULL
   for (nn in names(V(g))) {
     category <- c(category,
-      unique(as.character(egng[egng[,3]==nn,][,2])))
+      unique(as.character(egng[egng$value==nn,]$name)))
   }
   V(g)$category <- category
-  V(g)$size <- counter[names(V(g))]
+  V(g)$size <- as.numeric(counter[names(V(g))])
   retList[["graph"]] <- g
   plt <- ggraph(g, layout="nicely")+
             geom_edge_diagonal()+

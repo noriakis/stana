@@ -12,7 +12,10 @@ drawEGGNOG(annot_file, geneIDs, candPlot)
 \item{geneIDs}{geneIDs}
 
 \item{candPlot}{vector consisting of 
-"cog","ec","ko","kegg","module","reaction"}
+"COG_category" "Description" "Preferred_name" "GOs"           
+"EC"             "KEGG_ko"        "KEGG_Pathway"   "KEGG_Module"    "KEGG_Reaction" 
+"KEGG_rclass"    "BRITE"          "KEGG_TC"        "CAZy"           "BiGG_Reaction" 
+"PFAMs"}
 }
 \description{
 draw the graph representing the eggNOG annotation

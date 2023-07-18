@@ -370,9 +370,9 @@ loadMIDAS2 <- function(midas_merge_dir,
                         candSp=NULL,
                         filtType="group",
                         geneType="copynum",
-                        loadSummary=FALSE,
-                        loadInfo=FALSE,
-                        loadDepth=FALSE) {
+                        loadSummary=TRUE,
+                        loadInfo=TRUE,
+                        loadDepth=TRUE) {
   stana <- new("stana")
   if (only_stat) loadSummary <- TRUE
   stana@type <- "MIDAS2"
