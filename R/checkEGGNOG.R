@@ -20,9 +20,7 @@ drawEGGNOG <- function(annot_file, geneIDs, candPlot) {
   print(egng)
   ap <- NULL
   for (i in geneIDs) {
-    print(i)
     tmp <- egng[egng$ID == i,]
-    print(tmp)
     tmp <- tmp[ tmp$name %in% candPlot,]
     for (cnd in candPlot) {
       remCnd <- candPlot[ !candPlot %in% cnd ]

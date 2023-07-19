@@ -39,6 +39,6 @@ checkPATRIC(
 Obtain gene information from PATRIC server.
 Input named list of genes, and returns queried results,
 Count for functionality after removing duplicate entries,
-and network representation of EC and KEGG pathway.
+and make network representation of EC and KEGG pathway.
 For midas_db_v1.2 only.
 }
