@@ -1,4 +1,36 @@
 
+#' @noRd
+alleleStat_metaSNV <- function(stana, sp, cl, deleteZeroDepth) {
+	statList <- list()
+	freqDf <- stana@snps[[sp]]
+	qqcat("Overall, @{dim(freqDf)[1]} SNVs\n")
+	if (deleteZeroDepth) {
+		freqDf <- freqDf[rowSums(freqDf==-1)==0,]
+		qqcat("  After removal of -1, @{dim(freqDf)[1]} SNVs\n")
+	}
+	trans_raw <- row.names(freqDf) |> strsplit(":") |> vapply("[", 4, FUN.VALUE="character")
+	statList[["transTable"]] <- table(trans_raw)
+	if (length(cl)!=0) {
+		freqs <- NULL
+		wholeFreqs <- NULL
+		for (cln in names(cl)) {
+		  tmp <- freqDf[,intersect(colnames(freqDf),cl[[cln]])]
+		  meanFreq <- apply(tmp, 1, mean)
+		  names(meanFreq) <- trans_raw
+		  meanTrans <- data.frame(tapply(meanFreq, names(meanFreq), mean))
+		  ord <- row.names(meanTrans)
+		  freqs <- cbind(freqs, meanTrans[ord,])
+		}
+		freqs <- data.frame(freqs) |>
+		  `colnames<-`(names(cl)) |>
+		  `row.names<-`(ord)
+	    statList[["meanMafPerGroup"]] <- freqs		
+	}
+	return(statList)
+}
+
+
+
 #' alleleStat
 #' 
 #' Output statistics of MAF, using site-by-sample 
@@ -16,6 +48,7 @@ alleleStat <- function(stana, sp, cl=NULL, base="maj",
 	deleteZeroDepth=FALSE) {
 	if (length(sp)!=1) {stop("please provide one species")}
 	if (is.null(cl)) {cl <- stana@cl}
+	if (stana@type=="metaSNV") {return(alleleStat_metaSNV(stana, sp, cl, deleteZeroDepth))}
 	statList <- list()
 	merge_dir <- stana@mergeDir
 	freqDf <- stana@snps[[sp]]
@@ -54,20 +87,21 @@ alleleStat <- function(stana, sp, cl=NULL, base="maj",
 	  info$trans <- paste0(info$ref_allele,":",info$major_allele,">",info$minor_allele)
 	}
 	statList[["transTable"]] <- table(info$trans)
-
-	freqs <- NULL
-	wholeFreqs <- NULL
-	for (cln in names(cl)) {
-	  tmp <- freqDf[,intersect(colnames(freqDf),cl[[cln]])]
-	  meanFreq <- apply(tmp, 1, mean)
-	  names(meanFreq) <- info[names(meanFreq),"trans"]
-	  meanTrans <- data.frame(tapply(meanFreq, names(meanFreq), mean))
-	  ord <- row.names(meanTrans)
-	  freqs <- cbind(freqs, meanTrans[ord,])
+	if (length(cl)!=0) {
+		freqs <- NULL
+		wholeFreqs <- NULL
+		for (cln in names(cl)) {
+		  tmp <- freqDf[,intersect(colnames(freqDf),cl[[cln]])]
+		  meanFreq <- apply(tmp, 1, mean)
+		  names(meanFreq) <- info[names(meanFreq),"trans"]
+		  meanTrans <- data.frame(tapply(meanFreq, names(meanFreq), mean))
+		  ord <- row.names(meanTrans)
+		  freqs <- cbind(freqs, meanTrans[ord,])
+		}
+		freqs <- data.frame(freqs) |>
+		  `colnames<-`(names(cl)) |>
+		  `row.names<-`(ord)
+	    statList[["meanMafPerGroup"]] <- freqs		
 	}
-	freqs <- data.frame(freqs) |>
-	  `colnames<-`(names(cl)) |>
-	  `row.names<-`(ord)
-    statList[["meanMafPerGroup"]] <- freqs
 	return(statList)
 }

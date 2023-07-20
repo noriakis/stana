@@ -11,13 +11,15 @@
 #' otherwise the raw gene matrix is used.
 #' @param whichToCount which to show on box plots,
 #' pass to checkPATRIC() (in MIDAS1)
+#' @param deleteZeroDepth delete zero depth SNV
 #' @param doFix performs TentativeRoughFix on Boruta result
 #' @param argList passed to Boruta()
 #' @return Boruta object
 #' @import ggplot2
 #' @export
 doBoruta <- function(stana, sp, cl=NULL, doFix=TRUE,
-  target="genes", mat=NULL, whichToCount="ec_description", argList=list()) {
+  target="genes", mat=NULL, whichToCount="ec_description", argList=list(),
+  deleteZeroDepth=FALSE) {
   ret <- list()
   if (is.null(cl)) {
     qqcat("Using grouping from the slot\n")
@@ -28,6 +30,10 @@ doBoruta <- function(stana, sp, cl=NULL, doFix=TRUE,
     filtDf <- stana@genes[[sp]]
   } else if (target=="snps"){
     filtDf <- stana@snps[[sp]]
+    if (deleteZeroDepth) {
+      filtDf <- filtDf[rowSums(filtDf==-1)==0,]
+      qqcat("After filtering `-1`, position numbers: @{dim(filtDf)[1]}\n")
+    }
   } else {
     qqcat("Proceeding with provided matrix\n")
     filtDf <- mat

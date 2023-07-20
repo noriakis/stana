@@ -4,30 +4,17 @@
 \alias{loadmetaSNV}
 \title{loadmetaSNV}
 \usage{
-loadmetaSNV(
-  metasnv_out_dir,
-  cl = NULL,
-  filtType = "group",
-  candSp = NULL,
-  filtNum = 2,
-  filtPer = 0.8
-)
+loadmetaSNV(metasnv_out_dir, cl = NULL, just_species = FALSE, candSp = NULL)
 }
 \arguments{
 \item{metasnv_out_dir}{output directory of merge_midas.py}
 
 \item{cl}{named list of sample IDs}
 
-\item{filtType}{"whole" or "group"}
+\item{just_species}{just return species id}
 
 \item{candSp}{candidate species ID}
-
-\item{filtNum}{the species with the samples above this number will be returned}
-
-\item{filtPer}{filter by fraction}
 }
 \description{
-Assess and store profile for species and return filtered species 
-based on the number of samples for each category or whole population.
-For metaSNV only.
+Assess and store profile for species for metaSNV.
 }

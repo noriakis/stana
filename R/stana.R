@@ -49,11 +49,15 @@ setMethod("show",
     if (object@type %in% c("MIDAS","MIDAS2")) {
       qqcat("Filter type: @{object@sampleFilter}, number: @{object@sampleFilterVal}, proportion: @{object@sampleFilterPer}\n")
     }
-    qqcat("Loaded SNV table: @{length(object@snps)}\n")
+    if (length(object@snps)!=0) {
+      qqcat("Loaded SNV table: @{length(object@snps)}\n")      
+    }
     if (object@type %in% c("MIDAS","MIDAS2")) {
       qqcat("  Species cleared SNV filter: @{length(object@clearSnps)}\n")
     }
-    qqcat("Loaded gene table (@{object@geneType}): @{length(object@genes)}\n")
+    if (length(object@genes)!=0) {
+      qqcat("Loaded gene table (@{object@geneType}): @{length(object@genes)}\n")
+    }
     if (object@type %in% c("MIDAS","MIDAS2")) {
       qqcat("  Species cleared gene filter: @{length(object@clearGenes)}\n")
     }

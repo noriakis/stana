@@ -12,7 +12,8 @@ doBoruta(
   target = "genes",
   mat = NULL,
   whichToCount = "ec_description",
-  argList = list()
+  argList = list(),
+  deleteZeroDepth = FALSE
 )
 }
 \arguments{
@@ -33,6 +34,8 @@ otherwise the raw gene matrix is used.}
 pass to checkPATRIC() (in MIDAS1)}
 
 \item{argList}{passed to Boruta()}
+
+\item{deleteZeroDepth}{delete zero depth SNV}
 }
 \value{
 Boruta object

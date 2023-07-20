@@ -22,6 +22,7 @@ plotPCA <- function(stana, species, cl=NULL, target="snps",
 	cols <- stana@colors
 	pcaList <- list()
 	if (is.null(cl)) {cl <- stana@cl}
+
 	for (sp in species) {
 		if (target=="snps") {
 			df <- stana@snps[[sp]]
@@ -30,22 +31,24 @@ plotPCA <- function(stana, species, cl=NULL, target="snps",
 		} else {
 			stop("please specify snps or genes")
 		}
-
-		df <- df[,intersect(colnames(df),
-			as.character(unlist(cl)))]
+    	if (length(cl)==0) {} else {
+			df <- df[,intersect(colnames(df),
+				as.character(unlist(cl)))]    		
+    	}
 		if (ignoreZero) {
 			df <- df[rowSums(df==-1)==0,]
 		}
 		if (replaceZero) {
 			df[df==-1] <- 0
 		}
-		print(df)
 		qqcat("After filtering: @{dim(df)[1]} SNVs\n")
-		if (!is.null(cl)) {
+		if (length(cl)!=0) {
 			ids <- colnames(df)
 			for (nm in names(cl)){
 				ids[ids %in% cl[[nm]]] <- nm
 			}
+		} else {
+			ids <- "No_Group"
 		}
 	    pc <- prcomp(t(df))
 	    pcdf <- data.frame(cbind(pc$x[,1:2], ids),
