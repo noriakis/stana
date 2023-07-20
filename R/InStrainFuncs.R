@@ -44,7 +44,6 @@ genomeHeatmap <- function(stana, species, column="conANI", cl=NULL, heatmapArgs=
 #' 
 #' @param stana stana object
 #' @param species interesting species
-#' @param column column to plot, default to conANI
 #' @param cl grouping, if NULL, it automatically obtain grouping from stana object
 #' @param heatmapArgs list of parameters passed to Heatmap()
 #' @return Heatmap by ComplexHeatmap

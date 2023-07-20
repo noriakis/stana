@@ -30,6 +30,8 @@ consensusSeqMIDAS2(
 
 \item{species}{candidate species vector}
 
+\item{output_seq}{whether to output actual FASTA file}
+
 \item{mean_depth}{parameter for filtering}
 
 \item{fract_cov}{parameter for filtering}

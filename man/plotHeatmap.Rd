@@ -11,7 +11,10 @@ plotHeatmap(
   km = 10,
   mat = NULL,
   seed = 1,
-  fnc = "KEGG_Pathway"
+  fnc = "KEGG_Pathway",
+  removeHigh = TRUE,
+  removeAdditional = NULL,
+  max_words = 10
 )
 }
 \arguments{
@@ -26,7 +29,15 @@ plotHeatmap(
 \item{mat}{if customized matrix is to be used. Row will be gene names
 and column sample names}
 
+\item{seed}{random seed}
+
 \item{fnc}{One of `KEGG_Pathway` or `KEGG_Module`, when eggNOG annotation is used}
+
+\item{removeHigh}{remove high frequent words (preset)}
+
+\item{removeAdditional}{remove additional words specified}
+
+\item{max_words}{max words to plot}
 }
 \description{
 plot a heatmap with functional annotation by simplifyEnrichment

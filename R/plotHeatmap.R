@@ -11,11 +11,15 @@
 #' @param mat if customized matrix is to be used. Row will be gene names
 #' and column sample names
 #' @param fnc One of `KEGG_Pathway` or `KEGG_Module`, when eggNOG annotation is used
+#' @param removeHigh remove high frequent words (preset)
+#' @param removeAdditional remove additional words specified
+#' @param max_words max words to plot
+#' @param seed random seed
 #' @importFrom ComplexHeatmap Heatmap
 #' @export
 #' 
 plotHeatmap <- function(stana, sp, cl=NULL, km=10, mat=NULL, seed=1,
-	fnc="KEGG_Pathway") {
+	fnc="KEGG_Pathway", removeHigh=TRUE, removeAdditional=NULL, max_words=10) {
 	set.seed(seed)
 
 	if (!is.null(mat)) {
@@ -49,8 +53,8 @@ plotHeatmap <- function(stana, sp, cl=NULL, km=10, mat=NULL, seed=1,
 			rowAnnotation(
 			    keywords = stana::anno_PATRIC_keywords(split = km,
 			      genes = rownames(expr), fnc="pathway_name",
-			      removeHigh=TRUE, 
-			      argList=list(max_words = 10))
+			      removeHigh=removeHigh,  removeAdditional=removeAdditional,
+			      argList=list(max_words = max_words))
 			)
 		return(hm)		
 	} else if (stana@type=="MIDAS2") {
@@ -74,8 +78,8 @@ plotHeatmap <- function(stana, sp, cl=NULL, km=10, mat=NULL, seed=1,
 			rowAnnotation(
 			    keywords = stana::anno_eggNOG_keywords(split = km,
 			      genes = rownames(expr), tib=tib,
-			      removeHigh=TRUE, 
-			      argList=list(max_words = 10))
+			      removeHigh=removeHigh,  removeAdditional=removeAdditional,
+			      argList=list(max_words = max_words))
 			)
 		return(hm)
 	} else {}

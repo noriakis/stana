@@ -14,8 +14,6 @@ strainClusterHeatmap(stana, species, cl = NULL, heatmapArgs = list())
 \item{cl}{grouping, if NULL, it automatically obtain grouping from stana object}
 
 \item{heatmapArgs}{list of parameters passed to Heatmap()}
-
-\item{column}{column to plot, default to conANI}
 }
 \value{
 Heatmap by ComplexHeatmap

@@ -33,6 +33,8 @@ plotCirclize(
 
 \item{genomeId}{genome ID to plot}
 
+\item{include_gene}{include these gene IDs, ignoring the thesh_snp_gene argument}
+
 \item{thresh_snp_gene}{include only genes with at least this number of SNVs}
 
 \item{featList}{features to plot}

@@ -20,6 +20,7 @@
 #' @param discPalette palette for discrete scale
 #' @param returnRawDf return the raw data frame used in the plot
 #' @param featCircos which type of circos to use in the corresponding feature
+#' @param include_gene include these gene IDs, ignoring the thesh_snp_gene argument
 #' @importFrom circlize CELL_META circos.clear circos.par circos.initialize circos.rect circos.barplot circos.track circos.text circos.points
 #' @return draw circlize plot
 #' @export

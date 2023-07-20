@@ -28,7 +28,7 @@ anno_PATRIC_keywords <- function(split, genes, fnc="pathway_name",
   names(lt) <- names(gene_list)
 
   if (removeHigh) {
-    highTerms <- c("metabolism","biosynthesis","degradation")
+    highTerms <- c("metabolism","biosynthesis","degradation","pathways","metbolic")
   } else {
     highTerms <- NULL
   }

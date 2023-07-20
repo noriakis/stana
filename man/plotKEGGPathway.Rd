@@ -25,6 +25,8 @@ plotKEGGPathway(
 
 \item{pathway_id}{KEGG PATHWAY id}
 
+\item{cl}{grouping (named list). If not specified, use stana@cl slot}
+
 \item{multi_scale}{if TRUE, use ``ggh4x`` to plot multiple scales per species}
 
 \item{eggnog}{use eggNOG annotation in stana object}

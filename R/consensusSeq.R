@@ -204,6 +204,7 @@ consensusSeqMIDAS1 <- function(
 #' @param tree if perform tree inference
 #' @param max_samples currently not implemented
 #' @param verbose output current status
+#' @param output_seq whether to output actual FASTA file
 #' @export
 consensusSeqMIDAS2 <- function(
 	stana,

@@ -13,6 +13,7 @@
 #' @param color_list color list if multi_scale=TRUE,
 #' passed to scale_fill_multi()
 #' @param only_ko only calculates KO and return stana
+#' @param cl grouping (named list). If not specified, use stana@cl slot
 #' @export
 #' @importFrom ggkegg pathway
 #'
