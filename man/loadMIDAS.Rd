@@ -11,6 +11,9 @@ loadMIDAS(
   candSp = NULL,
   filtNum = 2,
   filtPer = 0.8,
+  loadSummary = TRUE,
+  loadDepth = TRUE,
+  loadInfo = TRUE,
   geneType = "copynum"
 )
 }
@@ -27,6 +30,12 @@ loadMIDAS(
 for each category is returned}
 
 \item{filtPer}{filter by fraction}
+
+\item{loadSummary}{default to FALSE, load summary information.}
+
+\item{loadDepth}{default to FALSE, load depth information.}
+
+\item{loadInfo}{default to FALSE, load info information.}
 
 \item{geneType}{"presabs" or "copynum"}
 }

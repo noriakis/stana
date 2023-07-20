@@ -202,11 +202,17 @@ loadmetaSNV <- function(metasnv_out_dir, cl=NULL,
 #'                for each category is returned
 #' @param filtPer filter by fraction
 #' @param candSp candidate species ID
+#' @param loadSummary default to FALSE, load summary information.
+#' @param loadInfo default to FALSE, load info information.
+#' @param loadDepth default to FALSE, load depth information.
 #' @import GetoptLong
 #' @export
 loadMIDAS <- function(midas_merge_dir,
   cl, filtType="group", candSp=NULL,
   filtNum=2, filtPer=0.8,
+  loadSummary=TRUE,
+  loadDepth=TRUE,
+  loadInfo=TRUE,
   geneType="copynum") {
   stana <- new("stana")
   stana@type <- "MIDAS1"
@@ -214,6 +220,7 @@ loadMIDAS <- function(midas_merge_dir,
   stana@sampleFilter <- filtType
   stana@sampleFilterVal <- filtNum
   stana@sampleFilterPer <- filtPer
+  stana@cl <- cl
   dirLs <- list.files(midas_merge_dir)
   specNames <- NULL
   for (d in dirLs) {
@@ -229,7 +236,10 @@ loadMIDAS <- function(midas_merge_dir,
   freqtblGn <- NULL
   snpList <- list()
   geneList <- list()
-
+  ## Summary is loaded per species and concatenated
+  snpInfoList <- list()
+  snpDepthList <- list()
+  snpSummary <- list()
   if (filtType=="whole") {
     checkCl <- list("whole"=as.character(unlist(cl)))
   } else if (filtType=="group") {
@@ -245,6 +255,26 @@ loadMIDAS <- function(midas_merge_dir,
     qqcat("@{sp}\n")
     qqcat("  Snps\n")
     cont <- list.files(paste0(midas_merge_dir,"/",sp))
+    if (loadSummary & "snps_summary.txt" %in% cont){
+      summ <- read.table(paste0(midas_merge_dir,"/",sp,"/snps_summary.txt"),
+                         sep="\t",header=1)
+      summ$species_id <- sp
+      snpSummary[[sp]] <- summ
+
+    }
+    if (loadInfo & "snps_info.txt" %in% cont) {
+      info <- read.table(paste0(midas_merge_dir,"/",sp,"/snps_info.txt"),
+                         sep="\t",header=1,row.names=1)
+      snpInfoList[[sp]] <- info
+
+    }
+    if (loadDepth & "snps_depth.txt" %in% cont) {
+      depth <- read.table(paste0(midas_merge_dir,"/",sp,"/snps_depth.txt"),
+                         sep="\t",header=1,row.names=1)
+      snpDepthList[[sp]] <- depth   
+    }
+
+
     if ("snps_freq.txt" %in% cont) {
       snps <- read.table(paste0(midas_merge_dir,"/",sp,"/snps_freq.txt"),
                          sep="\t",header=1,row.names=1)
@@ -289,13 +319,16 @@ loadMIDAS <- function(midas_merge_dir,
   colnames(freqtblGn) <- c("species",names(checkCl))
   row.names(freqtblSn) <- seq_len(nrow(freqtblSn))
   row.names(freqtblGn) <- seq_len(nrow(freqtblGn))
-  stana@clearSnps <- clearSn
-  stana@clearGenes <- clearGn
+  if (!is.null(clearSn)) stana@clearSnps <- clearSn
+  if (!is.null(clearGn)) stana@clearGenes <- clearGn
   stana@freqTableSnps <- freqtblSn
   stana@freqTableGenes <- freqtblGn
   stana@snps <- snpList
   stana@genes <- geneList
-  
+  stana@snpsInfo <- snpInfoList
+  stana@snpsDepth <- snpDepthList
+  stana@snpsSummary <- do.call(rbind, snpSummary)
+
   stana <- initializeStana(stana,cl)
 
   qqcat("Overall, @{length(clearSn)} species met criteria in SNPs\n")
@@ -316,25 +349,6 @@ getColors <- function(cl){
   } else {
     cols <- brewer.pal(3, "PuOr")[1]
   }
-}
-
-#' initializeStana
-#' @noRd
-initializeStana <- function(stana,cl) {
-  stana@colors <- getColors(cl)
-  faList <- vector("list", length(stana@ids))
-  names(faList) <- stana@ids
-  stana@fastaList <- faList
-  treeList <- vector("list", length(stana@ids))
-  names(treeList) <- stana@ids
-  stana@treeList <- treeList
-  treePlotList <- vector("list", length(stana@ids))
-  names(treePlotList) <- stana@ids
-  stana@treePlotList <- treePlotList
-  adonisList <- vector("list", length(stana@ids))
-  names(adonisList) <- stana@ids
-  stana@adonisList <- adonisList
-  stana
 }
 
 #' loadMIDAS2
@@ -609,82 +623,4 @@ loadMIDAS2 <- function(midas_merge_dir,
     if (!is.null(clearGnSp)) stana@clearGenesSpecies <- clearGnSp
   }
   stana
-}
-
-#' checkProfile
-#' 
-#' Assess profile for species and return filtered species 
-#' based on the number of samples for each category.
-#' For MIDAS only. Deprecated, use load* functions instead.
-#'
-#' @param midas_merge_dir output directory of merge_midas.py
-#' @param cl named list of sample IDs
-#' @param filtNum The species with number above this threshold
-#'                for each category is returned
-#' @import GetoptLong
-#' @export
-checkProfile <- function(midas_merge_dir, cl, filtNum=2) {
-  clearSn <- NULL
-  clearGn <- NULL
-
-  dirLs <- list.files(midas_merge_dir)
-  specNames <- NULL
-  for (d in dirLs) {
-    if (dir.exists(paste0(midas_merge_dir,"/",d))){
-      specNames <- c(specNames, d)
-    }
-  }
-  freqtblSn <- NULL
-  freqtblGn <- NULL
-  for (sp in specNames){
-    pnum <- c(sp)
-    qqcat("@{sp}\n")
-    qqcat("  Snps\n")
-    cont <- list.files(paste0(midas_merge_dir,"/",sp))
-    if ("snps_freq.txt" %in% cont) {
-      snps <- read.table(paste0(midas_merge_dir,"/",sp,"/snps_freq.txt"),
-                         sep="\t",header=1,row.names=1)
-      grBoolSn <- list()
-      for (nm in names(cl)){
-        grProfile <- length(intersect(cl[[nm]],colnames(snps)))
-        qqcat("    @{nm} @{grProfile}\n")
-        grBoolSn[[nm]] <- grProfile > filtNum
-        pnum <- c(pnum, grProfile)
-      }
-      if (sum(unlist(grBoolSn))==length(cl)){
-        qqcat("    @{sp} cleared filtering threshold in SNV\n")
-        clearSn <- c(clearSn, sp)
-      }
-      freqtblSn <- rbind(freqtblSn, pnum)
-    }
-
-    pnum <- c(sp)
-    if ("genes_presabs.txt" %in% cont) {
-      qqcat("  Genes\n")
-      genes <- read.table(paste0(midas_merge_dir,"/",sp,"/genes_presabs.txt"),
-                         sep="\t",header=1,row.names=1)
-      grBoolGn <- list()
-      for (nm in names(cl)){
-        grProfile <- length(intersect(cl[[nm]],colnames(genes)))
-        qqcat("    @{nm} @{grProfile}\n")
-        grBoolGn[[nm]] <- grProfile > filtNum
-        pnum <- c(pnum, grProfile)
-      }
-      if (sum(unlist(grBoolGn))==length(cl)){
-        qqcat("    @{sp} cleared filtering threshold in genes\n")
-        clearGn <- c(clearGn, sp)
-      }
-      freqtblGn <- rbind(freqtblGn, pnum)
-    }
-  }
-  freqtblSn <- data.frame(freqtblSn)
-  freqtblGn <- data.frame(freqtblGn)
-  colnames(freqtblSn) <- c("species",names(cl))
-  colnames(freqtblGn) <- c("species",names(cl))
-  row.names(freqtblSn) <- seq_len(nrow(freqtblSn))
-  row.names(freqtblGn) <- seq_len(nrow(freqtblGn))
-  qqcat("Overall, @{length(clearSn)} species met criteria\n")
-  qqcat("Overall, @{length(clearGn)} species met criteria\n")
-  return(list(clearSnps=clearSn,clearGenes=clearGn,
-    freqTblSn=freqtblSn, freqTblGn=freqtblGn))
 }

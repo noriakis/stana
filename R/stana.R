@@ -1,6 +1,10 @@
+#' Note that gene summary and depth is not loaded in MIDAS and MIDAS2.
 #' @import methods
 #' @importFrom utils object.size
 #' @importFrom grDevices colorRampPalette
+#' @slot snpsInfo snp info
+#' @slot snpsDepth snp depth
+#' @slot snpsSummary snp summary
 #' @slot kos stores ko table
 #' @slot type type of pipeline, such as `MIDAS`
 #' @slot eggNOG list of path for eggNOG mapper v2 results for species
@@ -64,6 +68,25 @@ setMethod("show",
     print(object.size(object), units="auto")
   })
 
+
+#' initializeStana
+#' @noRd
+initializeStana <- function(stana,cl) {
+  stana@colors <- getColors(cl)
+  faList <- vector("list", length(stana@ids))
+  names(faList) <- stana@ids
+  stana@fastaList <- faList
+  treeList <- vector("list", length(stana@ids))
+  names(treeList) <- stana@ids
+  stana@treeList <- treeList
+  treePlotList <- vector("list", length(stana@ids))
+  names(treePlotList) <- stana@ids
+  stana@treePlotList <- treePlotList
+  adonisList <- vector("list", length(stana@ids))
+  names(adonisList) <- stana@ids
+  stana@adonisList <- adonisList
+  stana
+}
 
 #' getGenes (concatenated to checkProfile)
 #' 

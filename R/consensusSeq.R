@@ -39,7 +39,8 @@ consensusSeq <- function(stana,
 #' @param keep_samples currently not implemented
 #' @param exclude_samples currently not implemented
 #' @param rand_samples currently not implemented
-#' @param tree if perform tree inference
+#' @param tree if perform tree inference using dist.ml()
+#' and NJ() in default parameters
 #' @param max_samples currently not implemented
 #' @importFrom phangorn read.phyDat dist.ml NJ
 #' @import ggtree ggplot2
@@ -86,10 +87,21 @@ consensusSeqMIDAS1 <- function(
 		} else {
 			SPECIES[["depth"]] <- stana@snpsDepth[[sp]]
 		}
+
+
+		if (dim(stana@snpsSummary)[1]==0) {
+			filePath <- paste0(midas_merge_dir,"/",sp,"/snps_summary.txt")
+			snpsSummary <- read.table(filePath, header=1)
+	        SPECIES[["summary"]] <- snpsSummary			
+		} else {
+			SPECIES[["summary"]] <- subset(stana@snpsSummary, stana@snpsSummary$species_id==sp)
+		}			
+
 		SPECIES[["freq"]] <- stana@snps[[sp]]
 		siteNum <- dim(SPECIES[["freq"]])[1]
 		qqcat("  Site number: @{siteNum}\n")
 		SAMPLES <- list()
+
         for (i in seq_len(nrow(SPECIES[["summary"]]))) {
         	info <- SPECIES[["summary"]][i,]
         	if (info$fraction_covered < fract_cov) {
@@ -101,6 +113,7 @@ consensusSeqMIDAS1 <- function(
 	        		fract_cov=info$fraction_covered)
         	}
         }
+
         for (sample in names(SAMPLES)) {
         	SAMPLES[[sample]][["freq"]] <- as.numeric(SPECIES[["freq"]][sample][,1])
         	SAMPLES[[sample]][["depth"]] <- as.numeric(SPECIES[["depth"]][sample][,1])

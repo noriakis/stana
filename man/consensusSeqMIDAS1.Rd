@@ -46,7 +46,8 @@ consensusSeqMIDAS1(
 
 \item{max_sites}{currently not implemented}
 
-\item{tree}{if perform tree inference}
+\item{tree}{if perform tree inference using dist.ml()
+and NJ() in default parameters}
 
 \item{max_samples}{currently not implemented}
 
