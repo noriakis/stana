@@ -61,9 +61,9 @@ plotKEGGPathway <- function(stana, species, pathway_id,
 
 
     if (summarize) {
-        commons <- Reduce(intersect, lapply(aa@kos[species], function(x) row.names(x)))
-        commoncol <- Reduce(intersect, lapply(aa@kos[species], function(x) colnames(x)))
-        ko_tbl <- Reduce("+", lapply(aa@kos[c("101346","102438")], function(x) x[commons,commoncol]))
+        commons <- Reduce(intersect, lapply(stana@kos[species], function(x) row.names(x)))
+        commoncol <- Reduce(intersect, lapply(stana@kos[species], function(x) colnames(x)))
+        ko_tbl <- Reduce("+", lapply(stana@kos[c("101346","102438")], function(x) x[commons,commoncol]))
 
         if (sum_flag) {
           lfcs[["Sum"]] <- apply(ko_tbl, 1, sum)
