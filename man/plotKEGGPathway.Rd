@@ -15,7 +15,8 @@ plotKEGGPathway(
   how = mean,
   eps = 0.01,
   color_list = NULL,
-  only_ko = FALSE
+  only_ko = FALSE,
+  summarize = FALSE
 )
 }
 \arguments{
@@ -41,6 +42,11 @@ plotKEGGPathway(
 passed to scale_fill_multi()}
 
 \item{only_ko}{only calculates KO and return stana}
+
+\item{summarize}{summarize the value if multiple species are set ("+")}
+}
+\value{
+list of plots or plot
 }
 \description{
 plot the KEGG pathway
