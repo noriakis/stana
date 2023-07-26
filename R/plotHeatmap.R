@@ -24,7 +24,7 @@
 #' 
 plotHeatmap <- function(stana, sp, cl=NULL, k=10, mat=NULL, seed=1,
 	fnc="KEGG_Pathway", removeHigh=TRUE, removeAdditional=NULL, max_words=10,
-    filter_zero_frac=0.8, filter_max_frac=0, filter_max_value=5) {
+    filter_zero_frac=0.8, filter_max_frac=Inf, filter_max_value=5) {
 	set.seed(seed)
 
 	if (!is.null(mat)) {
@@ -54,7 +54,7 @@ plotHeatmap <- function(stana, sp, cl=NULL, k=10, mat=NULL, seed=1,
 
 	km = kmeans(expr, centers = k)$cluster
 
-	if (stana@type=="MIDAS") {
+	if (stana@type=="MIDAS1") {
 	    hm <- Heatmap(expr, row_split = km,
 	        column_split=spl,
 	        show_column_names = FALSE,border=TRUE,name="Copy number",

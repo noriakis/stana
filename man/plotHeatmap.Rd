@@ -16,7 +16,7 @@ plotHeatmap(
   removeAdditional = NULL,
   max_words = 10,
   filter_zero_frac = 0.8,
-  filter_max_frac = 0,
+  filter_max_frac = Inf,
   filter_max_value = 5
 )
 }
