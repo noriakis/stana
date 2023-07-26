@@ -7,7 +7,7 @@
 #' @param stana stana object
 #' @param sp candidate species
 #' @param cl grouping named list
-#' @param km k-means param for splitting gene
+#' @param k k-means param for splitting gene
 #' @param mat if customized matrix is to be used. Row will be gene names
 #' and column sample names
 #' @param fnc One of `KEGG_Pathway` or `KEGG_Module`, when eggNOG annotation is used
@@ -15,19 +15,29 @@
 #' @param removeAdditional remove additional words specified
 #' @param max_words max words to plot
 #' @param seed random seed
+#' @param filter_zero_frac genes with zero abundance over fraction of samples as this value
+#' are removed before sample filtering. As typically gene matrix is large, for further filtering, please use `mat` option
+#' @param replace_na_below replace the abundance below this argument to NA
+#' @param filter_max_frac remove genes with values below `filter_max_value` in this fraction of sample
 #' @importFrom ComplexHeatmap Heatmap
 #' @export
 #' 
-plotHeatmap <- function(stana, sp, cl=NULL, km=10, mat=NULL, seed=1,
-	fnc="KEGG_Pathway", removeHigh=TRUE, removeAdditional=NULL, max_words=10) {
+plotHeatmap <- function(stana, sp, cl=NULL, k=10, mat=NULL, seed=1,
+	fnc="KEGG_Pathway", removeHigh=TRUE, removeAdditional=NULL, max_words=10,
+    filter_zero_frac=0.8, filter_max_frac=0, filter_max_value=5) {
 	set.seed(seed)
 
 	if (!is.null(mat)) {
 		df <- mat
 	} else {
 		df <- stana@genes[[sp]]
+        ## Filter
+        df <- df[!rowSums(df == 0) > ncol(df) * filter_zero_frac,]
+        df <- df[!rowSums(df > filter_max_value) > ncol(df) * filter_max_frac,]
 	}
-	df <- df |> head(500)
+
+    qqcat("In resulting matrix, max: @{max(df)}, min: @{min(df)}\n")
+
 	qqcat("Dimension: @{dim(df)[1]}, @{dim(df)[2]}\n")
 	if (is.null(cl)) {cl <- stana@cl}
 	if (length(cl)==0) {cl <- list("all"=colnames(df))}
@@ -42,7 +52,7 @@ plotHeatmap <- function(stana, sp, cl=NULL, km=10, mat=NULL, seed=1,
 	    spl <- c(spl, rep(nm, length(inc)))
 	}
 
-	km = kmeans(expr, centers = 20)$cluster
+	km = kmeans(expr, centers = k)$cluster
 
 	if (stana@type=="MIDAS") {
 	    hm <- Heatmap(expr, row_split = km,
@@ -66,7 +76,7 @@ plotHeatmap <- function(stana, sp, cl=NULL, km=10, mat=NULL, seed=1,
      		mp <- data.table::fread("https://rest.kegg.jp/list/pathway", header=FALSE)
      		mp$value <- paste0("ko",mp$V1 |> strsplit("map") |> sapply("[",2))
 	    } else if (fnc=="KEGG_Module") {
-     		mp <- data.table::fread("https://rest.kegg.jp/list/pathway", header=FALSE)
+     		mp <- data.table::fread("https://rest.kegg.jp/list/module", header=FALSE)
      		mp$value <- mp$V1
 	    } else {return(1)}
 	    tib <- merge(tib, mp, by="value")

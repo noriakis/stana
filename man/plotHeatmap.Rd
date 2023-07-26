@@ -8,13 +8,16 @@ plotHeatmap(
   stana,
   sp,
   cl = NULL,
-  km = 10,
+  k = 10,
   mat = NULL,
   seed = 1,
   fnc = "KEGG_Pathway",
   removeHigh = TRUE,
   removeAdditional = NULL,
-  max_words = 10
+  max_words = 10,
+  filter_zero_frac = 0.8,
+  filter_max_frac = 0,
+  filter_max_value = 5
 )
 }
 \arguments{
@@ -24,7 +27,7 @@ plotHeatmap(
 
 \item{cl}{grouping named list}
 
-\item{km}{k-means param for splitting gene}
+\item{k}{k-means param for splitting gene}
 
 \item{mat}{if customized matrix is to be used. Row will be gene names
 and column sample names}
@@ -38,6 +41,13 @@ and column sample names}
 \item{removeAdditional}{remove additional words specified}
 
 \item{max_words}{max words to plot}
+
+\item{filter_zero_frac}{genes with zero abundance over fraction of samples as this value
+are removed before sample filtering. As typically gene matrix is large, for further filtering, please use `mat` option}
+
+\item{filter_max_frac}{remove genes with values below `filter_max_value` in this fraction of sample}
+
+\item{replace_na_below}{replace the abundance below this argument to NA}
 }
 \description{
 plot a heatmap with functional annotation by simplifyEnrichment
