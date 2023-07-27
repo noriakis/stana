@@ -16,7 +16,9 @@ plotKEGGPathway(
   eps = 0.01,
   color_list = NULL,
   only_ko = FALSE,
-  summarize = FALSE
+  summarize = FALSE,
+  point_mode = FALSE,
+  sp_colors = NULL
 )
 }
 \arguments{
@@ -44,6 +46,11 @@ passed to scale_fill_multi()}
 \item{only_ko}{only calculates KO and return stana}
 
 \item{summarize}{summarize the value if multiple species are set ("+")}
+
+\item{point_mode}{default to FALSE, show whether the corresponding KOs
+are present in species by points}
+
+\item{sp_colors}{species colors used in point_mode}
 }
 \value{
 list of plots or plot

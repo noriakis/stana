@@ -15,6 +15,9 @@
 #' @param only_ko only calculates KO and return stana
 #' @param cl grouping (named list). If not specified, use stana@cl slot
 #' @param summarize summarize the value if multiple species are set ("+")
+#' @param point_mode default to FALSE, show whether the corresponding KOs
+#' are present in species by points
+#' @param sp_colors species colors used in point_mode
 #' @export
 #' @return list of plots or plot
 #' @importFrom ggkegg pathway
@@ -23,8 +26,14 @@ plotKEGGPathway <- function(stana, species, pathway_id,
                             cl=NULL, multi_scale=FALSE,
                             eggnog=TRUE, kegg_name_match="all",
                             how=mean, eps=1e-2, color_list=NULL,
-                            only_ko=FALSE, summarize=FALSE){
+                            only_ko=FALSE, summarize=FALSE,
+                            point_mode=FALSE, sp_colors=NULL){
     sum_flag <- FALSE
+    if (is.null(sp_colors)) {
+    	## Assign random colors
+    	sp_colors <- scales::brewer_pal(palette="RdBu")(length(species)) |>
+		setNames(species)
+	}
     if (length(species)==1 & summarize) {stop("summarize option is intended for multiple species")}
     if (is.null(color_list)) {
         color_list <- list(
@@ -93,6 +102,63 @@ plotKEGGPathway <- function(stana, species, pathway_id,
 
 
     ## Obtain graph
+    
+    
+    
+    if (point_mode) {
+    	qqcat("Point mode enabled\n")
+        graphList <- list()
+        for (pid in pathway_id) {
+            g <- ggkegg::pathway(pid)
+            for (sp in species) {
+	            g <- g |>
+	            	dplyr::mutate(!!sp := node_numeric(lfcs[[sp]]))        	
+            }
+            
+            nds <- g |> data.frame(check.names=FALSE)
+            number <- rowSums(!is.na(nds[,species]))
+            g <- g |> mutate(number=number)
+            
+            spnum <- length(species)
+
+			g <- g |> mutate(space=width/(number-1))
+
+			gg <- ggraph(g, layout="manual", x=x, y=y)
+			nds <- g |> data.frame()
+			
+			for (sp in seq_along(species)) {
+    			num <- sp-1
+    			## Drop the NA values
+    			gg <- gg + geom_node_point(aes(x=x, y=y, fill="transparent"),
+                            x=nds[nds$type %in% "ortholog",]$xmin + 
+                                nds[nds$type %in% "ortholog",]$space*num,
+                            y=nds[nds$type %in% "ortholog",]$y,
+                            color=sp_colors[species[sp]], size=1,
+                            data=nds[nds$type %in% "ortholog",])
+    		}
+    		plotter <- gg+overlay_raw_map()+theme_void()
+	
+			## Make pseudo-legend
+			pseudo <- data.frame(x=rep(1, spnum),
+			           y=rep(1, spnum),
+			           group=species)
+			dd2 <- ggplot(pseudo, aes(x=x, y=y))+
+			  geom_node_point(aes(color=group))+
+			  scale_color_manual(values=sp_colors, name="Species")+
+			  guides(color = guide_legend(override.aes = list(shape=19, size=5)))+
+			  theme_void()
+			grobs <- ggplot_gtable(ggplot_build(dd2))
+			num <- which(sapply(grobs$grobs, function(x) x$name) == "guide-box")
+			legendGrob <- grobs$grobs[[num]]
+			overlaidGtable <- ggplot_gtable(ggplot_build(plotter))
+			num2 <- which(sapply(overlaidGtable$grobs, function(x) x$name) == "guide-box")
+			overlaidGtable$grobs[[num2]] <- legendGrob
+			returng <- ggplotify::as.ggplot(overlaidGtable)
+            graphList[[pid]] <- returng
+		}
+        return(graphList)
+    }
+    
 
     if (summarize) {
         graphList <- list()
