@@ -17,8 +17,10 @@ plotKEGGPathway(
   color_list = NULL,
   only_ko = FALSE,
   summarize = FALSE,
+  nudge_y = 0,
   point_mode = FALSE,
-  sp_colors = NULL
+  sp_colors = NULL,
+  point_size = 1
 )
 }
 \arguments{
@@ -47,10 +49,14 @@ passed to scale_fill_multi()}
 
 \item{summarize}{summarize the value if multiple species are set ("+")}
 
+\item{nudge_y}{nudge the y positions in point_mode}
+
 \item{point_mode}{default to FALSE, show whether the corresponding KOs
 are present in species by points}
 
 \item{sp_colors}{species colors used in point_mode}
+
+\item{point_size}{point size in point_mode}
 }
 \value{
 list of plots or plot

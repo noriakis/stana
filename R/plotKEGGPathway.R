@@ -18,6 +18,8 @@
 #' @param point_mode default to FALSE, show whether the corresponding KOs
 #' are present in species by points
 #' @param sp_colors species colors used in point_mode
+#' @param nudge_y nudge the y positions in point_mode
+#' @param point_size point size in point_mode
 #' @export
 #' @return list of plots or plot
 #' @importFrom ggkegg pathway
@@ -26,8 +28,9 @@ plotKEGGPathway <- function(stana, species, pathway_id,
                             cl=NULL, multi_scale=FALSE,
                             eggnog=TRUE, kegg_name_match="all",
                             how=mean, eps=1e-2, color_list=NULL,
-                            only_ko=FALSE, summarize=FALSE,
-                            point_mode=FALSE, sp_colors=NULL){
+                            only_ko=FALSE, summarize=FALSE, nudge_y=0,
+                            point_mode=FALSE, sp_colors=NULL,
+                            point_size=1){
     sum_flag <- FALSE
     if (is.null(sp_colors)) {
     	## Assign random colors
@@ -114,27 +117,27 @@ plotKEGGPathway <- function(stana, species, pathway_id,
 	            g <- g |>
 	            	dplyr::mutate(!!sp := node_numeric(lfcs[[sp]]))        	
             }
-            
-            nds <- g |> data.frame(check.names=FALSE)
+            nds <- g |> activate("nodes") |> data.frame(check.names=FALSE)            
             number <- rowSums(!is.na(nds[,species]))
-            g <- g |> mutate(number=number)
+            g <- g |> mutate(number=number) |> mutate(space=width/(number-1))
+            nds <- g |> activate("nodes") |> data.frame(check.names=FALSE)            
             
             spnum <- length(species)
 
-			g <- g |> mutate(space=width/(number-1))
-
 			gg <- ggraph(g, layout="manual", x=x, y=y)
-			nds <- g |> data.frame()
 			
 			for (sp in seq_along(species)) {
-    			num <- sp-1
+                nds_tmp <- nds[!is.na(nds[[species[sp]]]),]
+                num <- sp-1
+                nds_tmp <- nds_tmp |> dplyr::filter(type=="ortholog") |> 
+                    dplyr::mutate(tmp_x=xmin+ifelse(number==1, width/2, space*!!num))
+
     			## Drop the NA values
-    			gg <- gg + geom_node_point(aes(x=x, y=y, fill="transparent"),
-                            x=nds[nds$type %in% "ortholog",]$xmin + 
-                                nds[nds$type %in% "ortholog",]$space*num,
-                            y=nds[nds$type %in% "ortholog",]$y,
-                            color=sp_colors[species[sp]], size=1,
-                            data=nds[nds$type %in% "ortholog",])
+    			gg <- gg + geom_node_point(aes(fill="transparent"),
+                            x=nds_tmp$tmp_x,
+                            y=nds_tmp$y+nudge_y,
+                            color=sp_colors[species[sp]], size=point_size,
+                            data=nds_tmp)
     		}
     		plotter <- gg+overlay_raw_map()+theme_void()
 	
