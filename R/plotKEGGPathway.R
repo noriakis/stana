@@ -115,12 +115,12 @@ plotKEGGPathway <- function(stana, species, pathway_id,
             g <- ggkegg::pathway(pid)
             for (sp in species) {
 	            g <- g |>
-	            	dplyr::mutate(!!sp := node_numeric(lfcs[[sp]]))        	
+	            	dplyr::mutate(!!sp := ggkegg::node_numeric(lfcs[[sp]]))        	
             }
-            nds <- g |> activate("nodes") |> data.frame(check.names=FALSE)            
+            nds <- g |> tidygraph::activate("nodes") |> data.frame(check.names=FALSE)            
             number <- rowSums(!is.na(nds[,species]))
-            g <- g |> mutate(number=number) |> mutate(space=width/(number-1))
-            nds <- g |> activate("nodes") |> data.frame(check.names=FALSE)            
+            g <- g |> dplyr::mutate(number=number) |> dplyr::mutate(space=width/(number-1))
+            nds <- g |> tidygraph::activate("nodes") |> data.frame(check.names=FALSE)            
             
             spnum <- length(species)
 
@@ -139,7 +139,7 @@ plotKEGGPathway <- function(stana, species, pathway_id,
                             color=sp_colors[species[sp]], size=point_size,
                             data=nds_tmp)
     		}
-    		plotter <- gg+overlay_raw_map()+theme_void()
+    		plotter <- gg+ggkegg::overlay_raw_map()+theme_void()
 	
 			## Make pseudo-legend
 			pseudo <- data.frame(x=rep(1, spnum),
