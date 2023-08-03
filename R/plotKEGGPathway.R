@@ -127,16 +127,17 @@ plotKEGGPathway <- function(stana, species, pathway_id,
 			gg <- ggraph(g, layout="manual", x=x, y=y)
 			
 			for (sp in seq_along(species)) {
+    			## Drop the NA values
                 nds_tmp <- nds[!is.na(nds[[species[sp]]]),]
                 num <- sp-1
                 nds_tmp <- nds_tmp |> dplyr::filter(type=="ortholog") |> 
                     dplyr::mutate(tmp_x=xmin+ifelse(number==1, width/2, space*!!num))
-
-    			## Drop the NA values
-    			gg <- gg + geom_node_point(aes(fill="transparent"),
+    			gg <- gg + geom_node_point(
+    				        aes(fill="transparent"),
                             x=nds_tmp$tmp_x,
                             y=nds_tmp$y+nudge_y,
-                            color=sp_colors[species[sp]], size=point_size,
+                            color=sp_colors[species[sp]],
+                            size=point_size,
                             data=nds_tmp)
     		}
     		plotter <- gg+ggkegg::overlay_raw_map()+theme_void()
