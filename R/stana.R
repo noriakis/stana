@@ -88,6 +88,40 @@ initializeStana <- function(stana,cl) {
   stana
 }
 
+#' @param stana stana object
+#' @param annotList named list of the path to eggNOG annotation file
+#' (*emapper.annotations)
+#' @export
+#' @return stana object
+setAnnotation <- function(stana, annotList) {
+	stana@eggNOG <- annotList
+	return(stana)
+}
+
+#' getColors
+#' @import RColorBrewer
+#' @noRd
+getColors <- function(cl){
+  numgr <- length(names(cl))
+  if (numgr > 2) {
+    cols <- brewer.pal(numgr, "PuOr") 
+  } else if (numgr == 2) {
+    three <- brewer.pal(3, "PuOr")
+    cols <- c(three[1], three[3])
+  } else {
+    cols <- brewer.pal(3, "PuOr")[1]
+  }
+}
+
+#' @param stana stana object
+#' @param colors color vector
+#' @export
+#' @return stana object
+changeColors <- function(stana, colors) {
+	stana@colors <- colors
+	return(stana)
+}
+
 #' getGenes (concatenated to checkProfile)
 #' 
 #' Obtain gene matrix from midas merge directory from MIDAS.
