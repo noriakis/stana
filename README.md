@@ -13,17 +13,10 @@ devtools::install_github("noriakis/stana")
 
 The documentation is available using `pkgdown` at [https://noriakis.github.io/software/stana_pkgdown](https://noriakis.github.io/software/stana_pkgdown). The detailed usage is available [here](https://noriakis.github.io/software/stana), using `bookdown`.
 
-## Databases
-- [midas_db_v1.2](https://github.com/snayfach/MIDAS/blob/master/docs/ref_db.md): Contains 31,007 bacterial reference genomes clustered into 5,952 species groups.
-- UHGG (in MIDAS2): Contains 286,997 genomes clustered into 4,644 species (**from human stool samples**).
-- GTDB (in MIDAS2): Contains 258,406 genomes clustered into 45,555 bacterial and 2,339 archaeal species.
-- proGenomes2, proGenomes3
+## Pipeline
 
-## Example analysis
-The function includes filtering of species based on clinical / environmental variables interested, calling of consensus sequencing, constructing the tree, plotting the results based on groups, and functional annotations. The below example shows the analysis of the subset of `PRJEB9584`, sequenced by HiSeq 2000. Packages including [`ggtree`](https://github.com/YuLab-SMU/ggtree), [`ComplexHeatmap`](https://github.com/jokergoo/ComplexHeatmap), [`simplyfyEnrichment`](https://github.com/jokergoo/simplifyEnrichment), [`phangorn`](https://github.com/KlausVigo/phangorn), [`circlize`](https://github.com/jokergoo/circlize), and [`ggraph`](https://github.com/thomasp85/ggraph) are used.
+<img src="https://github.com/noriakis/software/blob/main/images/stana_pipeline.png?raw=true" width="800px">
 
-<img src="https://github.com/noriakis/software/blob/main/images/stana_example.png?raw=true" width="800px">
+## Interactive inspection of metagenotyping results based on clinical variables
 
-## TODO
-- Add more filters and tree inferring options in `consensusSeq()`.
-- Add reasonable filtering options to `loadInStrain` and `loadmetaSNV`
+<img src="https://github.com/noriakis/software/blob/main/images/stana_app.png?raw=true" width="800px">
