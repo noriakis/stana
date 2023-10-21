@@ -80,9 +80,9 @@ drawEGGNOG <- function(annot_file, geneIDs, candPlot) {
 #' @importFrom data.table fread
 #' @export
 #' 
-checkEGGNOG <- function(annot_file, ret="all", checkIDs=NULL) {
+checkEGGNOG <- function(annot_file, ret="all", checkIDs=NULL, fill=TRUE) {
   ann <- data.table::fread(annot_file,
-                           skip=4,sep="\t")
+                           skip=4,sep="\t",fill=fill)
   if (ret!="all") {
     parsed <- ann[,c("#query",ret), with=FALSE] |>
       tidyr::pivot_longer(-1) |>
@@ -211,7 +211,8 @@ checkEGGNOG <- function(annot_file, ret="all", checkIDs=NULL) {
 summariseAbundance <- function(stana, sp, anno, how=mean) {
   geneDf <- stana@genes[[sp]]
   merged <- list()
-  for (i in anno$value |> unique()) {
+  annoval <- anno$value |> unique()
+  for (i in annoval) {
     candID <- (anno |> dplyr::filter(anno$value==i))$ID
     ints <- intersect(row.names(geneDf), candID)
     if (length(ints)>0) {

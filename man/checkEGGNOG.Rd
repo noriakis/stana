@@ -4,7 +4,7 @@
 \alias{checkEGGNOG}
 \title{checkEGGNOG}
 \usage{
-checkEGGNOG(annot_file, ret = "all", checkIDs = NULL)
+checkEGGNOG(annot_file, ret = "all", checkIDs = NULL, fill = TRUE)
 }
 \arguments{
 \item{annot_file}{path to eggnog-mapper annotation}
