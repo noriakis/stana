@@ -23,6 +23,7 @@
 #' @export
 #' @return list of plots or plot
 #' @importFrom ggkegg pathway
+#' @importFrom ggplotify as.ggplot
 #'
 plotKEGGPathway <- function(stana, species, pathway_id,
                             cl=NULL, multi_scale=FALSE,

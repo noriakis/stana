@@ -4,7 +4,14 @@
 \alias{exportInteractive}
 \title{exportInteractive}
 \usage{
-exportInteractive(stana, out = ".", db = "uhgg", calcko = TRUE)
+exportInteractive(
+  stana,
+  out = ".",
+  db = "uhgg",
+  calcko = TRUE,
+  calctree = TRUE,
+  species = NULL
+)
 }
 \arguments{
 \item{stana}{stana object}
@@ -12,6 +19,14 @@ exportInteractive(stana, out = ".", db = "uhgg", calcko = TRUE)
 \item{out}{output directory
 export the stana results for the inspection in interactive
 application}
+
+\item{db}{db used to profile 'uhgg' or 'gtdb'}
+
+\item{calcko}{calculate KO abundance}
+
+\item{calctree}{calculate consensus tree}
+
+\item{species}{calk}
 }
 \value{
 output the results to specified directory

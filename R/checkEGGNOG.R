@@ -77,6 +77,7 @@ drawEGGNOG <- function(annot_file, geneIDs, candPlot) {
 #' @param annot_file path to eggnog-mapper annotation
 #' @param ret default to all
 #' @param checkIDs only return functions related to IDs
+#' @param fill data.table::fread argument
 #' @importFrom data.table fread
 #' @export
 #' 

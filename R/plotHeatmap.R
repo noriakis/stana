@@ -17,8 +17,8 @@
 #' @param seed random seed
 #' @param filter_zero_frac genes with zero abundance over fraction of samples as this value
 #' are removed before sample filtering. As typically gene matrix is large, for further filtering, please use `mat` option
-#' @param replace_na_below replace the abundance below this argument to NA
 #' @param filter_max_frac remove genes with values below `filter_max_value` in this fraction of sample
+#' @param filter_max_value max value for copy numbers
 #' @importFrom ComplexHeatmap Heatmap
 #' @export
 #' 

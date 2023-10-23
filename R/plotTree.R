@@ -2,8 +2,9 @@
 #' 
 #' infer the tree and plot
 #' 
-#' @param stana
-#' @param species
+#' @param stana stana object
+#' @param species species to plot
+#' @param cl optional, cluster to plot
 #' 
 #' @export
 plotTree <- function(stana, species, cl=NULL) {

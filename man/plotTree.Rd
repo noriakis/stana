@@ -7,7 +7,11 @@
 plotTree(stana, species, cl = NULL)
 }
 \arguments{
-\item{species}{}
+\item{stana}{stana object}
+
+\item{species}{species to plot}
+
+\item{cl}{optional, cluster to plot}
 }
 \description{
 infer the tree and plot

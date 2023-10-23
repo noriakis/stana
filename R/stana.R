@@ -88,6 +88,7 @@ initializeStana <- function(stana,cl) {
   stana
 }
 
+#' setAnnotation
 #' @param stana stana object
 #' @param annotList named list of the path to eggNOG annotation file
 #' (*emapper.annotations)
@@ -113,6 +114,7 @@ getColors <- function(cl){
   }
 }
 
+#' changeColors
 #' @param stana stana object
 #' @param colors color vector
 #' @export

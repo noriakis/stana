@@ -4,6 +4,10 @@
 #' @param out output directory
 #' export the stana results for the inspection in interactive
 #' application
+#' @param db db used to profile 'uhgg' or 'gtdb'
+#' @param calcko calculate KO abundance
+#' @param calctree calculate consensus tree
+#' @param species calk
 #' @export
 #' @return output the results to specified directory
 exportInteractive <- function(stana, out=".", db="uhgg", calcko=TRUE,
@@ -28,7 +32,7 @@ exportInteractive <- function(stana, out=".", db="uhgg", calcko=TRUE,
 	    }
 	}
 	
-	for (tre in names(stana@treeList)) {
+	for (tre in species) {
 		if (is.null(stana@treeList[[tre]])) {
 			qqcat("No tree for @{tre}\n")
 			if (calctree) {
@@ -54,15 +58,19 @@ exportInteractive <- function(stana, out=".", db="uhgg", calcko=TRUE,
 	}
 	dir.create(paste0(out,"/tree"))
 	for (i in names(stana@treeList)) {
-		tre <- stana@treeList[[i]]
-		if (!is.null(tre)) {
-			ape::write.tree(tre, paste0(out,"/tree/",i,".cons.tree"))
+		if (i %in% species) {
+			tre <- stana@treeList[[i]]
+			if (!is.null(tre)) {
+				ape::write.tree(tre, paste0(out,"/tree/",i,".cons.tree"))
+			}			
 		}
 	}
 	dir.create(paste0(out,"/KOs"))
 	for (i in names(stana@kos)) {
-		ko <- stana@kos[[i]]
-		write.table(ko, paste0(out, "/KOs/", i, ".txt"), sep="\t", quote=FALSE)
+		if (i %in% species) {
+			ko <- stana@kos[[i]]
+			write.table(ko, paste0(out, "/KOs/", i, ".txt"), sep="\t", quote=FALSE)			
+		}
 	}
 	write.table(meta, paste0(out, "metadata.tsv"), sep="\t", quote=FALSE)
 	return(stana)

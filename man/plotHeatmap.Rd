@@ -47,7 +47,7 @@ are removed before sample filtering. As typically gene matrix is large, for furt
 
 \item{filter_max_frac}{remove genes with values below `filter_max_value` in this fraction of sample}
 
-\item{replace_na_below}{replace the abundance below this argument to NA}
+\item{filter_max_value}{max value for copy numbers}
 }
 \description{
 plot a heatmap with functional annotation by simplifyEnrichment

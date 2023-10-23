@@ -12,6 +12,8 @@ checkEGGNOG(annot_file, ret = "all", checkIDs = NULL, fill = TRUE)
 \item{ret}{default to all}
 
 \item{checkIDs}{only return functions related to IDs}
+
+\item{fill}{data.table::fread argument}
 }
 \description{
 When the interesting genes (e.g. differentially abundant between category) are found,

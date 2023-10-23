@@ -219,7 +219,7 @@ consensusSeqMIDAS1 <- function(
 #' @param verbose output current status
 #' @param output_seq whether to output actual FASTA file
 #' @export
-consensusSeqMIDAS2 <- function(
+consensusSeqMIDAS2Slow <- function(
 	stana,
 	species,
 	output_seq=FALSE,
