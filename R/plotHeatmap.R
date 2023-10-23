@@ -92,7 +92,9 @@ plotHeatmap <- function(stana, sp, cl=NULL, k=10, mat=NULL, seed=1,
 			      argList=list(max_words = max_words))
 			)
 		return(hm)
-	} else {}
+	} else {
+		stop("Currently MIDAS2 and MIDAS are supported.")
+	}
 
 
 }

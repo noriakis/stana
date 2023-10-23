@@ -46,7 +46,7 @@ consensusSeq <- function(stana,
 #' @import ggtree ggplot2
 #' @importFrom phangorn read.phyDat
 #' @export
-consensusSeqMIDAS1 <- function(
+consensusSeqMIDAS1Slow <- function(
 	stana,
 	species,
 	mean_depth=0,
