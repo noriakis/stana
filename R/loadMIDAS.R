@@ -78,7 +78,7 @@ loadMIDAS <- function(midas_merge_dir,
   			))
 
   }
-  stana@ids <- specNames
+
   stana@geneType <- geneType
   clearSn <- NULL
   clearGn <- NULL
@@ -100,6 +100,7 @@ loadMIDAS <- function(midas_merge_dir,
   stana@sampleFilter=filtType
 
   if (!is.null(candSp)) {specNames <- candSp}
+  stana@ids <- specNames
   for (sp in specNames){
     pnum <- c(sp)
     qqcat("@{sp}\n")

@@ -21,7 +21,7 @@
 #' @export
 consensusSeqMIDAS2 <- function(
 	stana,
-	species,
+	species=NULL,
 	output_seq=FALSE,
 	mean_depth=0,
 	fract_cov=0,
@@ -39,6 +39,7 @@ consensusSeqMIDAS2 <- function(
     rand_samples=NULL,
     verbose=FALSE) {
     ## site-list is currently not supported.
+    if (is.null(species)) {species <- stana@ids}
 	files <- c("depth","info")
 	midas_merge_dir <- stana@mergeDir
 	retList <- list()
@@ -164,11 +165,11 @@ consensusSeqMIDAS2 <- function(
 	    	per_sample_allele <- lapply(names(site_filters), function(sample) {
 	    		if (site_filters[[sample]][["flag"]][i]!=3) {
 	    			ap <- "-"
-	    		} else if (site_filters[[sample]][["depths"]][i]==0) {
+	    		} else if (site_filters[[sample]][["depths"]][i] == 0) {
 	    			ap <- "-"
-	    		} else if (site_filters[[sample]][["freqs"]][i]==-1) {
+	    		} else if (site_filters[[sample]][["freqs"]][i] == -1) {
 	    		    ap <- "-"	
-	    		} else if (site_filters[[sample]][["freqs"]][i]>=0.5) {
+	    		} else if (site_filters[[sample]][["freqs"]][i] >= 0.5) {
 	    			ap <- sp_minor_allele[i]
 	    		} else {
 	    			ap <- sp_major_allele[i]
@@ -241,7 +242,7 @@ consensusSeqMIDAS2 <- function(
 #' @export
 consensusSeqMIDAS1 <- function(
 	stana,
-	species,
+	species=NULL,
 	mean_depth=0,
 	fract_cov=0,
 	site_depth=5,
@@ -259,6 +260,7 @@ consensusSeqMIDAS1 <- function(
     verbose=FALSE,
     output_seq=FALSE) {
     ## site-list is currently not supported.
+    if (is.null(species)) {species <- stana@ids}
     midas_merge_dir <- stana@mergeDir
 	files <- c("depth","info","summary")
 	retList <- list()

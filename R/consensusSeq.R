@@ -11,7 +11,8 @@
 #' @export
 #'
 consensusSeq <- function(stana,
-	species, argList=list()){
+	species=NULL, argList=list()){
+    if (is.null(species)) {species <- stana@ids}
 	argList[["stana"]] <- stana
 	argList[["species"]] <- species
 	if (stana@type=="MIDAS2") {
@@ -48,7 +49,7 @@ consensusSeq <- function(stana,
 #' @export
 consensusSeqMIDAS1Slow <- function(
 	stana,
-	species,
+	species=NULL,
 	mean_depth=0,
 	fract_cov=0,
 	site_depth=5,
@@ -64,6 +65,7 @@ consensusSeqMIDAS1Slow <- function(
     exclude_samples=NULL,
     rand_samples=NULL) {
     ## site-list is currently not supported.
+    if (is.null(species)) {species <- stana@ids}
     midas_merge_dir <- stana@mergeDir
 	files <- c("depth","info","summary")
 	retList <- list()
