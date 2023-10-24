@@ -4,11 +4,13 @@
 #' 
 #' @param stana stana object
 #' @param species species to plot
+#' If NULL, first species is assigned
 #' @param cl optional, cluster to plot
 #' 
 #' @export
-plotTree <- function(stana, species, cl=NULL) {
+plotTree <- function(stana, species=NULL, cl=NULL) {
 	if (is.null(cl)) {cl <- stana@cl}
+	if (is.null(species)) {species <- stana@ids[1]}
 	tre <- stana@fastaList[[species]]
 	dm <- dist.ml(tre, "F81")
 	tre <- NJ(dm)

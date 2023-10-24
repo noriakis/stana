@@ -1,0 +1,58 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  fig.dev = "grDevices::png",
+  dpi = 300L,
+  dev.args = list(),
+  fig.ext = "png",
+  fig.height=8,
+  fig.width=12,
+  fig.retina = 2L,
+  fig.align = "center"
+)
+```
+
+# stana
+
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/noriakis/stana/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/noriakis/stana/actions/workflows/R-CMD-check.yaml) [![CodeFactor](https://www.codefactor.io/repository/github/noriakis/stana/badge)](https://www.codefactor.io/repository/github/noriakis/stana)
+<!-- badges: end -->
+
+Metagenotyping analysis in R. Import and analyse, plot output of the software like [MIDAS](https://github.com/snayfach/MIDAS), [MIDAS2](https://github.com/czbiohub/MIDAS2), [metaSNV v1, metaSNV v2](https://github.com/metasnv-tool/metaSNV) and [inStrain](https://github.com/MrOlm/inStrain). Primarly developed for `MIDAS` and `MIDAS2`. The documentation is available using `pkgdown` at [https://noriakis.github.io/software/stana_pkgdown](https://noriakis.github.io/software/stana_pkgdown). The detailed usage is available [here](https://noriakis.github.io/software/stana), using `bookdown`.
+
+## Installation
+
+Using `devtools`:
+
+```{r, eval=FALSE}
+devtools::install_github("noriakis/stana")
+```
+
+## Pipeline
+
+<img src="https://github.com/noriakis/software/blob/main/images/stana_pipeline.png?raw=true" width="800px">
+
+## Examples
+
+```{r message=FALSE, warning=FALSE, fig.width=3, fig.height=3}
+## Using example data
+library(stana)
+load("inst/extdata/sysdata.rda")
+stana <- stana |>
+  consensusSeq(argList=list(site_prev=0.95)) |>
+  plotTree()
+stana@fastaList[[1]]
+stana@treePlotList[[1]] + ggplot2::theme_void()
+```
+
+## Interactive inspection
+
+The users can inspect metagenotyping results interactively using Shiny based on the variables such as disease conditions (`exportInteractive()`).

@@ -4,7 +4,7 @@
 \alias{consensusSeq}
 \title{consensusSeq}
 \usage{
-consensusSeq(stana, species, argList = list())
+consensusSeq(stana, species = NULL, argList = list())
 }
 \arguments{
 \item{stana}{stana object}

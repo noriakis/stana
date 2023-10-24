@@ -4,12 +4,12 @@
 \alias{alleleStat}
 \title{alleleStat}
 \usage{
-alleleStat(stana, sp, cl = NULL, base = "maj", deleteZeroDepth = FALSE)
+alleleStat(stana, sp = NULL, cl = NULL, base = "maj", deleteZeroDepth = FALSE)
 }
 \arguments{
 \item{stana}{stana object}
 
-\item{sp}{candidate species}
+\item{sp}{candidate species, if NULL, first species is used.}
 
 \item{cl}{named list of clusters of samples}
 

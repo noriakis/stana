@@ -37,15 +37,16 @@ alleleStat_metaSNV <- function(stana, sp, cl, deleteZeroDepth) {
 #' minor allele frequency table output by MIDAS1 and MIDAS2.
 #' 
 #' @param stana stana object
-#' @param sp candidate species
+#' @param sp candidate species, if NULL, first species is used.
 #' @param cl named list of clusters of samples
 #' @param base "maj","ref", or "majref"
 #' @param deleteZeroDepth delete snvs with zero depth
 #' @export
 #' 
 
-alleleStat <- function(stana, sp, cl=NULL, base="maj",
+alleleStat <- function(stana, sp=NULL, cl=NULL, base="maj",
 	deleteZeroDepth=FALSE) {
+	if (is.null(sp)) {sp <- stana@ids[1]}
 	if (length(sp)!=1) {stop("please provide one species")}
 	if (is.null(cl)) {cl <- stana@cl}
 	if (stana@type=="metaSNV") {return(alleleStat_metaSNV(stana, sp, cl, deleteZeroDepth))}

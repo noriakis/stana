@@ -4,12 +4,13 @@
 \alias{plotTree}
 \title{plotTree}
 \usage{
-plotTree(stana, species, cl = NULL)
+plotTree(stana, species = NULL, cl = NULL)
 }
 \arguments{
 \item{stana}{stana object}
 
-\item{species}{species to plot}
+\item{species}{species to plot
+If NULL, first species is assigned}
 
 \item{cl}{optional, cluster to plot}
 }

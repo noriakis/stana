@@ -6,7 +6,7 @@
 \usage{
 consensusSeqMIDAS2(
   stana,
-  species,
+  species = NULL,
   output_seq = FALSE,
   mean_depth = 0,
   fract_cov = 0,
