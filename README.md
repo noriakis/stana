@@ -37,6 +37,8 @@ devtools::install_github("noriakis/stana")
 ## Using example data
 library(stana)
 load("inst/extdata/sysdata.rda")
+stana@ids
+#> [1] "100003"
 stana <- stana |>
   consensusSeq(argList=list(site_prev=0.95)) |>
   plotTree()
@@ -47,10 +49,15 @@ stana <- stana |>
 stana@fastaList[[1]]
 #> 11 sequences with 896 character and 625 different site patterns.
 #> The states are a c g t
-stana@treePlotList[[1]] + ggplot2::theme_void()
+stana@treeList[[1]]
+#> 
+#> Phylogenetic tree with 11 tips and 9 internal nodes.
+#> 
+#> Tip labels:
+#>   ERR1711593, ERR1711594, ERR1711596, ERR1711598, ERR1711603, ERR1711605, ...
+#> 
+#> Unrooted; includes branch lengths.
 ```
-
-<img src="man/figures/README-unnamed-chunk-2-1.png" width="900" style="display: block; margin: auto;" />
 
 ## Interactive inspection
 

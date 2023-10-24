@@ -46,11 +46,12 @@ devtools::install_github("noriakis/stana")
 ## Using example data
 library(stana)
 load("inst/extdata/sysdata.rda")
+stana@ids
 stana <- stana |>
   consensusSeq(argList=list(site_prev=0.95)) |>
   plotTree()
 stana@fastaList[[1]]
-stana@treePlotList[[1]] + ggplot2::theme_void()
+stana@treeList[[1]]
 ```
 
 ## Interactive inspection
