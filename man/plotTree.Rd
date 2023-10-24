@@ -4,16 +4,27 @@
 \alias{plotTree}
 \title{plotTree}
 \usage{
-plotTree(stana, species = NULL, cl = NULL)
+plotTree(
+  stana,
+  species = NULL,
+  cl = NULL,
+  model = "F81",
+  branch.length = "none"
+)
 }
 \arguments{
 \item{stana}{stana object}
 
 \item{species}{species to plot
-If NULL, first species is assigned}
+If NULL, first species in fasta list is assigned}
 
 \item{cl}{optional, cluster to plot}
+
+\item{model}{dist.ml model}
+
+\item{branch.length}{branch length, default to "none", cladogram}
 }
 \description{
 infer the tree and plot
+use dist.ml and NJ for inference
 }

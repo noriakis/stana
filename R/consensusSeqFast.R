@@ -39,7 +39,8 @@ consensusSeqMIDAS2 <- function(
     rand_samples=NULL,
     verbose=FALSE) {
     ## site-list is currently not supported.
-    if (is.null(species)) {species <- stana@ids}
+    if (is.null(species)) {species <- stana@clearSnps}
+    if (length(species)==0) {stop("No species available")}
 	files <- c("depth","info")
 	midas_merge_dir <- stana@mergeDir
 	retList <- list()
@@ -260,7 +261,8 @@ consensusSeqMIDAS1 <- function(
     verbose=FALSE,
     output_seq=FALSE) {
     ## site-list is currently not supported.
-    if (is.null(species)) {species <- stana@ids}
+    if (is.null(species)) {species <- stana@clearSnps}
+    if (length(species)==0) {stop("No species available")}
     midas_merge_dir <- stana@mergeDir
 	files <- c("depth","info","summary")
 	retList <- list()

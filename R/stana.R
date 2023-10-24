@@ -73,18 +73,22 @@ setMethod("show",
 #' @noRd
 initializeStana <- function(stana,cl) {
   stana@colors <- getColors(cl)
-  faList <- vector("list", length(stana@ids))
-  names(faList) <- stana@ids
-  stana@fastaList <- faList
-  treeList <- vector("list", length(stana@ids))
-  names(treeList) <- stana@ids
-  stana@treeList <- treeList
-  treePlotList <- vector("list", length(stana@ids))
-  names(treePlotList) <- stana@ids
-  stana@treePlotList <- treePlotList
-  adonisList <- vector("list", length(stana@ids))
-  names(adonisList) <- stana@ids
-  stana@adonisList <- adonisList
+  # faList <- vector("list", length(stana@ids))
+  # names(faList) <- stana@ids
+  # stana@fastaList <- faList
+  # treeList <- vector("list", length(stana@ids))
+  # names(treeList) <- stana@ids
+  # stana@treeList <- treeList
+  # treePlotList <- vector("list", length(stana@ids))
+  # names(treePlotList) <- stana@ids
+  # stana@treePlotList <- treePlotList
+  # adonisList <- vector("list", length(stana@ids))
+  # names(adonisList) <- stana@ids
+  # stana@adonisList <- adonisList
+  stana@treeList <- list()
+  stana@treePlotList <- list()
+  stana@fastaList <- list()
+  stana@adonisList <- list()
   stana
 }
 

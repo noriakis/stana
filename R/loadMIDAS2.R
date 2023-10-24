@@ -47,13 +47,14 @@ loadMIDAS2 <- function(midas_merge_dir,
   } else {
     stop("Please provide gtdb or uhgg to `db`")
   }
-
+    
+  ## Probably filter based on these summaries, but what if 
+  ## These files are not available and only species directories are present?
   if (loadSummary) {
     filePath <- paste0(midas_merge_dir,"/snps/snps_summary.tsv")
     snpsSummary <- read.table(filePath, header=1)
     stana@snpsSummary <- snpsSummary
   }
-
   if (only_stat) {
     filePath <- paste0(midas_merge_dir,"/genes/genes_summary.tsv")
     genesSummary <- read.table(filePath, header=1)

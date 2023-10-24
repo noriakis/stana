@@ -12,7 +12,8 @@
 #'
 consensusSeq <- function(stana,
 	species=NULL, argList=list()){
-    if (is.null(species)) {species <- stana@ids}
+    if (is.null(species)) {species <- stana@clearSnps}
+    if (length(species)==0) {stop("No species available")}
 	argList[["stana"]] <- stana
 	argList[["species"]] <- species
 	if (stana@type=="MIDAS2") {
