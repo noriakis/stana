@@ -21,6 +21,7 @@
 #' @param returnRawDf return the raw data frame used in the plot
 #' @param featCircos which type of circos to use in the corresponding feature
 #' @param include_gene include these gene IDs, ignoring the thesh_snp_gene argument
+#' @param only_genome_id show only the genome IDs
 #' @importFrom circlize CELL_META circos.clear circos.par circos.initialize circos.rect circos.barplot circos.track circos.text circos.points
 #' @return draw circlize plot
 #' @export
@@ -30,7 +31,7 @@ plotCirclize <- function(stana, candSp, genomeId, include_gene=NULL,
                          cols=c("tomato","steelblue","gold","seagreen"),
                          controlColor="steelblue", MAF=FALSE, cl=NULL,
                          featCircos=list(), showGeneName=TRUE,
-                         returnRawDf=FALSE,
+                         returnRawDf=FALSE, only_genome_id=FALSE,
                          featThresh=0, cex=0.3, textCex=0.5,bar_width=10,
                          contPalette=c("steelblue",
                           "tomato"), discPalette="Dark2") {
@@ -76,8 +77,11 @@ plotCirclize <- function(stana, candSp, genomeId, include_gene=NULL,
     qqcat("Genome ID in SNV information:\n")
     for (i in unique(info$genome_id)) {
       tmp_info <- subset(info, genome_id==i)
-      qqcat("  @{i}: @{min(tmp_info$position)} - @{max(tmp_info$position)}, number of position: @{nrow(tmp_info)}\n")
+      qqcat("  @{i}: @{min(tmp_info$position)} - @{max(tmp_info$position)}",
+      	", number of position: @{nrow(tmp_info)}\n")
     }
+    
+    if (only_genome_id) {return(1)}
     
     qqcat("Genome ID: @{genomeId}\n")
 
@@ -85,7 +89,6 @@ plotCirclize <- function(stana, candSp, genomeId, include_gene=NULL,
     info$genome_id <- info$genome_id |> strsplit("_") |> 
                                         vapply("[", 1, FUN.VALUE="character")
     circ_plot <- subset(info, info$genome_id==genomeId)
-
     if (length(featList)>0) {
       for (nm in names(featList)) {
           circ_plot[[nm]] <- featList[[nm]][row.names(circ_plot)]
@@ -99,9 +102,9 @@ plotCirclize <- function(stana, candSp, genomeId, include_gene=NULL,
       circ_plot <- subset(circ_plot, !circ_plot$gene_id %in% names(gene_num[gene_num<thresh_snp_gene]))
     } else {
       circ_plot <- subset(circ_plot, circ_plot$gene_id %in% include_gene)
-
     }
     qqcat("Included position: @{dim(circ_plot)[1]}\n")
+    if (dim(circ_plot)[1]==0) {stop("No position available, finishing ...")}
     if (returnRawDf) {return(circ_plot)}
     circos.clear() ## If have one
     circos.par(cell.padding=c(0.02,0,0.02,0),

@@ -18,6 +18,7 @@ plotCirclize(
   featCircos = list(),
   showGeneName = TRUE,
   returnRawDf = FALSE,
+  only_genome_id = FALSE,
   featThresh = 0,
   cex = 0.3,
   textCex = 0.5,
@@ -52,6 +53,8 @@ plotCirclize(
 \item{showGeneName}{show gene ID on the plot}
 
 \item{returnRawDf}{return the raw data frame used in the plot}
+
+\item{only_genome_id}{show only the genome IDs}
 
 \item{featThresh}{for numeric features, the values above this value will be colored , default to zero.}
 
