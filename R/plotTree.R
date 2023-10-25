@@ -8,17 +8,20 @@
 #' If NULL, first species in fasta list is assigned
 #' @param cl optional, cluster to plot
 #' @param model dist.ml model
+#' @param tree_args passed to dist function in phangorn
+#' @param dist_method dist method in phangorn, default to dist.ml
 #' @param branch.length branch length, default to "none", cladogram
 #' 
 #' @export
 plotTree <- function(stana, species=NULL, cl=NULL,
-	model="F81", branch.length="none") {
+	dist_method="dist.ml",
+	tree_args=list(), branch.length="none") {
 	if (is.null(cl)) {cl <- stana@cl}
 	if (is.null(species)) {species <- names(stana@fastaList)}
-	
 	for (sp in species) {
 		tre <- stana@fastaList[[sp]]
-		dm <- dist.ml(tre, model)
+		tree_args[["x"]] <- tre
+		dm <- do.call(dist_method, tree_args)
 		tre <- NJ(dm)
 		stana@treeList[[sp]] <- tre
 	    tre <- groupOTU(tre, cl)

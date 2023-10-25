@@ -8,7 +8,8 @@ plotTree(
   stana,
   species = NULL,
   cl = NULL,
-  model = "F81",
+  dist_method = "dist.ml",
+  tree_args = list(),
   branch.length = "none"
 )
 }
@@ -20,9 +21,13 @@ If NULL, first species in fasta list is assigned}
 
 \item{cl}{optional, cluster to plot}
 
-\item{model}{dist.ml model}
+\item{dist_method}{dist method in phangorn, default to dist.ml}
+
+\item{tree_args}{passed to dist function in phangorn}
 
 \item{branch.length}{branch length, default to "none", cladogram}
+
+\item{model}{dist.ml model}
 }
 \description{
 infer the tree and plot

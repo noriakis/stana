@@ -15,6 +15,8 @@ consensusSeqMIDAS2(
   site_maf = 0.01,
   allele_support = 0.5,
   site_prev = 0.9,
+  locus_type = "CDS",
+  site_list = NULL,
   cl = NULL,
   max_sites = Inf,
   tree = FALSE,
@@ -22,6 +24,7 @@ consensusSeqMIDAS2(
   keep_samples = NULL,
   exclude_samples = NULL,
   rand_samples = NULL,
+  return_mat = FALSE,
   verbose = FALSE
 )
 }
@@ -46,6 +49,10 @@ consensusSeqMIDAS2(
 
 \item{site_prev}{parameter for filtering}
 
+\item{locus_type}{locus type to be included, default to CDS}
+
+\item{site_list}{site list to be included}
+
 \item{cl}{cluster, if plot cladogram}
 
 \item{max_sites}{default to Inf}
@@ -59,6 +66,8 @@ consensusSeqMIDAS2(
 \item{exclude_samples}{currently not implemented}
 
 \item{rand_samples}{currently not implemented}
+
+\item{return_mat}{return matrix of characters}
 
 \item{verbose}{output current status}
 }

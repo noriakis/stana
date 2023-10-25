@@ -17,11 +17,13 @@ consensusSeqMIDAS1(
   cl = NULL,
   max_sites = Inf,
   tree = FALSE,
+  locus_type = "CDS",
   max_samples = Inf,
   keep_samples = NULL,
   exclude_samples = NULL,
   rand_samples = NULL,
   verbose = FALSE,
+  return_mat = FALSE,
   output_seq = FALSE
 )
 }
@@ -51,6 +53,8 @@ consensusSeqMIDAS1(
 \item{tree}{if perform tree inference using dist.ml()
 and NJ() in default parameters}
 
+\item{locus_type}{locus type to be included}
+
 \item{max_samples}{currently not implemented}
 
 \item{keep_samples}{currently not implemented}
@@ -60,6 +64,8 @@ and NJ() in default parameters}
 \item{rand_samples}{currently not implemented}
 
 \item{verbose}{print output}
+
+\item{return_mat}{return character matrix}
 
 \item{output_seq}{output the FASTA file}
 }
