@@ -14,9 +14,10 @@
 #' @export
 #' @return ggplot
 #' 
-compareGenes <- function(stana, species, geneID=NULL, cl=NULL, argList=list(),
+compareGenes <- function(stana, species=NULL, geneID=NULL, cl=NULL, argList=list(),
 	verbose_zero=FALSE) {
 	if (is.null(cl)) { cl <- stana@cl}
+	if (is.null(species)) {species <- stana@clearGenes[1]}
 	midas_merge_dir <- stana@mergeDir
 	geneDf <- stana@genes[[species]]
 	incSamples <- intersect(colnames(geneDf), unlist(cl))

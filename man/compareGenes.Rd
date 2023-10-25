@@ -6,7 +6,7 @@
 \usage{
 compareGenes(
   stana,
-  species,
+  species = NULL,
   geneID = NULL,
   cl = NULL,
   argList = list(),
