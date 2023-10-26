@@ -108,6 +108,10 @@ loadMIDAS2 <- function(midas_merge_dir,
       snpRet$species_name <- nmdic[as.character(snpRet$species_id)]
       geneRet$species_name <- nmdic[as.character(geneRet$species_id)]
     }
+    
+    snpRet$species_id <- as.character(snpRet$species_id)
+    geneRet$species_id <- as.character(geneRet$species_id)
+
     return(
       list("snps"=snpRet,
       "genes"=geneRet)
@@ -270,7 +274,11 @@ loadMIDAS2 <- function(midas_merge_dir,
   stana@snpsInfo <- snpInfoList
   stana@snpsDepth <- snpDepthList
   stana@genes <- geneList
-  stana@ids <- union(names(geneList),names(snpList))
+  if (!is.null(candSp)) {
+  	stana@ids <- candSp |> as.character()
+  } else {
+  	stana@ids <- union(names(geneList),names(snpList))
+  }
   stana <- initializeStana(stana,cl)
   if (!is.null(taxtbl)){
     if (!is.null(clearSnSp)) stana@clearSnpsSpecies <- clearSnSp
