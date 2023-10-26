@@ -6,7 +6,7 @@
 \usage{
 loadMIDAS(
   midas_merge_dir,
-  cl,
+  cl = NULL,
   filtType = "group",
   candSp = NULL,
   only_stat = FALSE,

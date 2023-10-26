@@ -6,7 +6,7 @@
 \usage{
 loadMIDAS2(
   midas_merge_dir,
-  cl,
+  cl = NULL,
   filtNum = 2,
   db = "gtdb",
   only_stat = FALSE,

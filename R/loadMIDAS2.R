@@ -22,7 +22,7 @@
 #' @export
 #' 
 loadMIDAS2 <- function(midas_merge_dir,
-                        cl,
+                        cl=NULL,
                         filtNum=2,
                         db="gtdb",
                         only_stat=FALSE,
@@ -38,7 +38,9 @@ loadMIDAS2 <- function(midas_merge_dir,
   if (only_stat) loadSummary <- TRUE
   stana@type <- "MIDAS2"
   stana@db <- db
-  stana@cl <- cl
+  if (is.null(cl)) {loadSummary <- TRUE} else {
+  	stana@cl <- cl
+  }
 
   if (db=="gtdb") {
     tblCol <- "GTDB species"
@@ -54,11 +56,15 @@ loadMIDAS2 <- function(midas_merge_dir,
     filePath <- paste0(midas_merge_dir,"/snps/snps_summary.tsv")
     snpsSummary <- read.table(filePath, header=1)
     stana@snpsSummary <- snpsSummary
-  }
-  if (only_stat) {
     filePath <- paste0(midas_merge_dir,"/genes/genes_summary.tsv")
     genesSummary <- read.table(filePath, header=1)
 
+    if (is.null(cl)) {
+    	cl <- list("no_group"=unique(c(genesSummary$sample_name, snpsSummary$sample_name)))
+    	stana@cl <- cl
+    }
+  }
+  if (only_stat) {
     grnm <- NULL
     for (sn in snpsSummary$sample_name) {
       tmpgr <- NULL

@@ -20,7 +20,7 @@
 #' @import GetoptLong
 #' @export
 loadMIDAS <- function(midas_merge_dir,
-  cl, filtType="group", candSp=NULL,
+  cl=NULL, filtType="group", candSp=NULL,
   only_stat=FALSE,
   filtNum=2, filtPer=0.8,
   loadSummary=TRUE,
@@ -33,13 +33,41 @@ loadMIDAS <- function(midas_merge_dir,
   stana@sampleFilter <- filtType
   stana@sampleFilterVal <- filtNum
   stana@sampleFilterPer <- filtPer
-  stana@cl <- cl
+  if (is.null(cl)) {
+  	## If grouping is not provided,
+  	## Load all the samples beforehand and assign the no group label.
+  	## If candSp is provided, only the samples in the species are included.
+  	## (calc_sample)
+  	calc_sample <- TRUE
+  } else {
+  	stana@cl <- cl
+  	calc_sample <- FALSE
+  }
   dirLs <- list.files(midas_merge_dir)
   specNames <- NULL
   for (d in dirLs) {
     if (dir.exists(paste0(midas_merge_dir,"/",d))){
       specNames <- c(specNames, d)
     }
+  }
+  if (calc_sample) {
+  		for (sp in candSp) {
+			ret <- NULL;
+			ret2 <- NULL;
+  			if ("snps_summary.txt" %in% list.files(paste0(midas_merge_dir,"/",sp))){
+				snp_df <- read.table(paste0(midas_merge_dir,"/",sp,"/snps_summary.txt"),
+					row.names=1, sep="\t", header=1)
+				ret <- c(ret, row.names(snp_df))
+  			}
+  			if ("genes_summary.txt" %in% list.files(paste0(midas_merge_dir,"/",sp))){
+				gene_df <- read.table(paste0(midas_merge_dir,"/",sp,"/genes_summary.txt"),
+				row.names=1, sep="\t", header=1)
+				genessmp <- row.names(gene_df)
+				ret2 <- c(ret2, genessmp)
+			}
+  		}
+  		cl <- list("no_group"=unique(c(ret2, ret)))
+  		stana@cl <- cl
   }
   if (only_stat) {
   		statssnps <- NULL
