@@ -116,6 +116,8 @@ loadMIDAS <- function(midas_merge_dir,
     if (loadInfo & "snps_info.txt" %in% cont) {
       info <- read.table(paste0(midas_merge_dir,"/",sp,"/snps_info.txt"),
                          sep="\t",header=1,row.names=1)
+      ## Rename the ID row.names
+      row.names(info) <- paste0(info$ref_id, "_", info$ref_pos)
       snpInfoList[[sp]] <- info
 
     }

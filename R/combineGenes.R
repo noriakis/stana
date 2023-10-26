@@ -22,6 +22,11 @@ combineGenes <- function(stana_list, species, argList=list(), output_seq=FALSE) 
   new_stana@genes[[species]] <- merged
   cls <- lapply(stana_list, function(x) x@cl)
   cls <- do.call(c, cls)
+  
+  ## Warning if same label
+  ovlgr <- length(Reduce(intersect, lapply(stana_list, function(x) names(x@cl))))
+  if (ovlgr>0) {qqcat("Duplicate label found in group\n")}
+
   new_stana@ids <- species
   new_stana@type <- stana@type
   new_stana@cl <- cls

@@ -19,3 +19,14 @@ setTree <- function(stana, species, tre) {
 	stana@treeList[[species]] <- tre
 	return(stana)
 }
+
+
+#' setGroup
+#' @param stana stana object
+#' @param cl grouping list
+#' @export
+#' @return stana
+setGroup <- function(stana, cl) {
+	stana@cl <- cl
+	return(stana)
+}

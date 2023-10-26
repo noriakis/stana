@@ -23,6 +23,7 @@ consensusSeqMIDAS1(
   exclude_samples = NULL,
   rand_samples = NULL,
   verbose = FALSE,
+  site_list = NULL,
   return_mat = FALSE,
   output_seq = FALSE
 )
@@ -64,6 +65,8 @@ and NJ() in default parameters}
 \item{rand_samples}{currently not implemented}
 
 \item{verbose}{print output}
+
+\item{site_list}{site list to be included}
 
 \item{return_mat}{return character matrix}
 

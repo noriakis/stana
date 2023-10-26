@@ -49,8 +49,12 @@ combineSeqs <- function(stana_list, species, argList=list(), output_seq=FALSE) {
   ## Metadata
   cls <- lapply(stana_list, function(x) x@cl)
   cls <- do.call(c, cls)
+  
+  ## Warning if same label
+  ovlgr <- length(Reduce(intersect, lapply(stana_list, function(x) names(x@cl))))
+  if (ovlgr>0) {qqcat("Duplicate label found in group\n")}
   new_stana@ids <- species
-  new_stana@type <- stana@type
+  new_stana@type <- stana_list[[1]]@type
   new_stana@cl <- cls
   new_stana@colors <- getColors(cls)
   if (!output_seq) {

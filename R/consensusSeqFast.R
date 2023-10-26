@@ -278,6 +278,7 @@ consensusSeqMIDAS2 <- function(
 #' @param output_seq output the FASTA file
 #' @param return_mat return character matrix
 #' @param locus_type locus type to be included
+#' @param site_list site list to be included
 #' @importFrom phangorn read.phyDat dist.ml NJ
 #' @import ggtree ggplot2
 #' @importFrom phangorn read.phyDat
@@ -301,6 +302,7 @@ consensusSeqMIDAS1 <- function(
     exclude_samples=NULL,
     rand_samples=NULL,
     verbose=FALSE,
+    site_list=NULL,
     return_mat=FALSE,
     output_seq=FALSE) {
     ## site-list is currently not supported.
@@ -410,26 +412,51 @@ consensusSeqMIDAS1 <- function(
         }) |> unlist()
         
         ## 5 is good in MIDAS1
-        positions <- which(keep_site_filter_list==5)
-        if (!is.infinite(max_sites)) {positions <- positions[1:max_sites]}
-        
-        allele_list <- lapply(positions, function(i) {
-	    	per_sample_allele <- lapply(names(site_filters), function(sample) {
-	    		if (site_filters[[sample]][["flag"]][i]!=3) {
-	    			ap <- "-"
-	    		} else if (site_filters[[sample]][["depths"]][i]==0) {
-	    			ap <- "-"
-	    		} else if (site_filters[[sample]][["freqs"]][i]==-1) {
-	    		    ap <- "-"	
-	    		} else if (site_filters[[sample]][["freqs"]][i]>=0.5) {
-	    			ap <- sp_minor_allele[i]
-	    		} else {
-	    			ap <- sp_major_allele[i]
-	    		}
-	    		return(ap)
-	    	})
+        if (!is.null(site_list)) {
+        	positions <- which(row.names(SPECIES[["info"]]) %in% site_list)
+        	## Ignoring max_sites if site_list is provided.
+        	## All the site in site_list is included, and filtered positions are 
+        	## denoted as "-"
+            allele_list <- lapply(positions, function(i) {
+		    	per_sample_allele <- lapply(names(site_filters), function(sample) {
+		    		if (site_filters[[sample]][["flag"]][i]!=3) {
+		    			ap <- "-"
+		    		} else if (site_filters[[sample]][["depths"]][i] == 0) {
+		    			ap <- "-"
+		    		} else if (site_filters[[sample]][["freqs"]][i] == -1) {
+		    		    ap <- "-"	
+		    		} else if (keep_site_filter_list[i]!=5) {
+		    			ap <- "-"
+		    		} else if (site_filters[[sample]][["freqs"]][i] >= 0.5) {
+		    			ap <- sp_minor_allele[i]
+                    } else {
+		    			ap <- sp_major_allele[i]
+		    		}
+		    		return(ap)
+		    	})
 	    	unlist(per_sample_allele)        	
-        })
+            })
+        } else {
+	        positions <- which(keep_site_filter_list==5)
+	        if (!is.infinite(max_sites)) {positions <- positions[1:max_sites]}
+            allele_list <- lapply(positions, function(i) {
+		    	per_sample_allele <- lapply(names(site_filters), function(sample) {
+		    		if (site_filters[[sample]][["flag"]][i]!=3) {
+		    			ap <- "-"
+		    		} else if (site_filters[[sample]][["depths"]][i] == 0) {
+		    			ap <- "-"
+		    		} else if (site_filters[[sample]][["freqs"]][i] == -1) {
+		    		    ap <- "-"	
+		    		} else if (site_filters[[sample]][["freqs"]][i] >= 0.5) {
+		    			ap <- sp_minor_allele[i]
+		    		} else {
+		    			ap <- sp_major_allele[i]
+		    		}
+		    		return(ap)
+		    	})
+	    	unlist(per_sample_allele)        	
+            })
+        }
 
         if (return_mat) {
         	mat <- do.call(cbind, allele_list)
