@@ -4,7 +4,7 @@
 #' @param cutoff cutoff value, default to 0.35
 #' @export
 cnDiscretize <- function(stana, species, cutoff=0.35) {
-	df <- stana@genes[["100224"]]
+	df <- stana@genes[[species]]
 	apply(df, 2, function(x) ifelse(x>cutoff, 1, 0)) |> data.frame()
 }
 
@@ -29,4 +29,22 @@ setTree <- function(stana, species, tre) {
 setGroup <- function(stana, cl) {
 	stana@cl <- cl
 	return(stana)
+}
+
+
+#' returnGenes
+#' return corresponding genes queried by  SNV position
+#' @param stana stana object
+#' @param species species name
+#' @param snvs snv name
+#' @export
+#' @return named vector
+returnGenes <- function(stana, species, snvs) {
+  check <- stana@snpsInfo[[species]][snvs, ]
+  check <- check[check$gene_id!="None",]
+  if (dim(check)[1]>0) {
+    return(check$gene_id |> setNames(row.names(check)))
+  } else {
+    stop("No genes mapped")
+  }
 }

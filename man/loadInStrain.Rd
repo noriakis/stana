@@ -33,4 +33,6 @@ For InStrain, you should provide `compare` output
 It can import outputs with --bams options implmented from version 1.6.
 It computes MAF of var_base per position and return the frequency matrix.
 Note it considers con_base and var_base in info table for calculation.
+The function assumes the reads mapped to the default database of inStrain.
+`skip_pool` option, which loads SNV data, is set to FALSE by default.
 }

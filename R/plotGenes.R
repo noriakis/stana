@@ -13,7 +13,6 @@
 #' 
 plotGenes <- function(stana, species, geneID, cl=NULL) {
 	if (is.null(cl)) { cl <- stana@cl}
-	midas_merge_dir <- stana@mergeDir
 	geneDf <- stana@genes[[species]]
 	if (intersect(geneID,row.names(geneDf)) |> length() > 0) {
 		geneDf <- geneDf[intersect(geneID,row.names(geneDf)), ]

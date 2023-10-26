@@ -5,6 +5,8 @@
 #' It can import outputs with --bams options implmented from version 1.6.
 #' It computes MAF of var_base per position and return the frequency matrix.
 #' Note it considers con_base and var_base in info table for calculation.
+#' The function assumes the reads mapped to the default database of inStrain.
+#' `skip_pool` option, which loads SNV data, is set to FALSE by default.
 #' 
 #' @param compare_out_dir output directory of compare.
 #' need `output` in the directory
@@ -53,7 +55,10 @@ loadInStrain <- function(compare_out_dir,
         if (!just_species) {
           qqcat("Loading allele count table\n")
           path <- paste0(compare_out_dir,"/output/",output_list[grepl("pooled_SNV_data.tsv.gz",output_list)])
-          tbl <- data.table::fread(path)                      
+          qqcat("Loading the large table...\n")
+          tbl <- data.table::fread(path)
+          # qqcat("Filtering all-zero positions...\n")
+          # tbl <- tbl[apply(tbl, 1, function(x) sum(x[4:7] |> as.numeric())!=0), ]         
         }
 
         keys_path <- paste0(compare_out_dir,"/output/",output_list[grepl("pooled_SNV_data_keys.tsv",output_list)])
@@ -64,8 +69,8 @@ loadInStrain <- function(compare_out_dir,
         info <- data.table::fread(info_path)
 
         info$scaffold_position <- paste0(info$scaffold,"|",info$position)
-
-
+        info$scaffold_position_convar <- paste0(info$scaffold,"|",info$position,"|",info$con_base,">",info$var_base)
+        
         varBase <- info$var_base
         names(varBase) <- info$scaffold_position
         conBase <- info$con_base
