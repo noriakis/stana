@@ -69,6 +69,49 @@ setMethod("show",
   })
 
 
+
+#' @export
+setGeneric("getSlot",
+    function(x, ...) standardGeneric("getSlot"))
+
+setMethod("getSlot", "stana",
+    function(x, slot) attr(x, slot))
+
+#' @export
+setGeneric("getFasta",
+    function(x) standardGeneric("getFasta"))
+
+setMethod("getFasta", "stana",
+    function(x) attr(x, "fastaList"))
+
+#' @export
+setGeneric("getTree",
+    function(x) standardGeneric("getTree"))
+
+setMethod("getTree", "stana",
+    function(x) attr(x, "treeList"))
+
+#' @export
+setGeneric("getID",
+    function(x) standardGeneric("getID"))
+
+setMethod("getID", "stana",
+    function(x) attr(x, "ids"))
+
+#' @export
+setGeneric("getAdonis",
+    function(x) standardGeneric("getAdonis"))
+
+setMethod("getAdonis", "stana",
+    function(x) attr(x, "adonisList"))
+
+#' @export
+setGeneric("getCl",
+    function(x) standardGeneric("getCl"))
+
+setMethod("getCl", "stana",
+    function(x) attr(x, "cl"))
+
 #' initializeStana
 #' @noRd
 initializeStana <- function(stana,cl) {

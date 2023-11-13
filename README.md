@@ -37,7 +37,17 @@ devtools::install_github("noriakis/stana")
 ## Using example data
 library(stana)
 load("inst/extdata/sysdata.rda")
-stana@ids
+stana
+#> Type: MIDAS2
+#> Directory: midas2_sample_merge_uhgg
+#> Species number: 1
+#> Filter type: group, number: 1, proportion: 0.8
+#> Loaded SNV table: 1
+#>   Species cleared SNV filter: 1
+#> Loaded gene table (copynum): 1
+#>   Species cleared gene filter: 1
+#> 7.2 Mb
+getID(stana)
 #> [1] "100003"
 stana <- stana |>
   consensusSeq(argList=list(site_prev=0.95)) |>
@@ -46,10 +56,10 @@ stana <- stana |>
 #>   Site number: 5019
 #>   Profiled samples: 11
 #>   Included samples: 11
-stana@fastaList[[1]]
+getFasta(stana)[[1]]
 #> 11 sequences with 896 character and 625 different site patterns.
 #> The states are a c g t
-stana@treeList[[1]]
+getTree(stana)[[1]]
 #> 
 #> Phylogenetic tree with 11 tips and 9 internal nodes.
 #> 

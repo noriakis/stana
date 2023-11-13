@@ -46,12 +46,13 @@ devtools::install_github("noriakis/stana")
 ## Using example data
 library(stana)
 load("inst/extdata/sysdata.rda")
-stana@ids
+stana
+getID(stana)
 stana <- stana |>
   consensusSeq(argList=list(site_prev=0.95)) |>
   plotTree()
-stana@fastaList[[1]]
-stana@treeList[[1]]
+getFasta(stana)[[1]]
+getTree(stana)[[1]]
 ```
 
 ## Interactive inspection
