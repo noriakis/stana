@@ -11,6 +11,7 @@
 setClass("stana", slots=list(
                             type="character",
                             cl="list",
+                            meta="data.frame",
                             mergeDir="character",
                             db="character",
                             ids="character",
