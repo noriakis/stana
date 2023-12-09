@@ -14,9 +14,11 @@ software like [MIDAS](https://github.com/snayfach/MIDAS),
 [MIDAS2](https://github.com/czbiohub/MIDAS2), [metaSNV v1, metaSNV
 v2](https://github.com/metasnv-tool/metaSNV) and
 [inStrain](https://github.com/MrOlm/inStrain). Primarly developed for
-`MIDAS` and `MIDAS2`. The documentation is available using `pkgdown` at
+`MIDAS` and `MIDAS2`.
+
+The documentation is available using `pkgdown` at
 <https://noriakis.github.io/software/stana_pkgdown>. The detailed usage
-is available [here](https://noriakis.github.io/software/stana), using
+is available at <https://noriakis.github.io/software/stana>, using
 `bookdown`.
 
 ## Installation
@@ -36,7 +38,8 @@ devtools::install_github("noriakis/stana")
 ``` r
 ## Using example data
 library(stana)
-load("inst/extdata/sysdata.rda")
+load(system.file("extdata", "sysdata.rda", package = "stana"))
+
 stana
 #> Type: MIDAS2
 #> Directory: midas2_sample_merge_uhgg
@@ -49,9 +52,24 @@ stana
 #> 7.2 Mb
 getID(stana)
 #> [1] "100003"
+
+## Make example metadata
+samples <- getSlot(stana, "snps")[[1]] |> colnames()
+metadata <- data.frame(
+    row.names=samples,
+    treatment=sample(1:3, length(samples), replace=TRUE),
+    marker=runif(length(samples))
+)
+
+
+## Set metadata
+stana <- setMetadata(stana, metadata)
+
+## Call consensus sequence
+## Infer and plot tree based on metadata
 stana <- stana |>
   consensusSeq(argList=list(site_prev=0.95)) |>
-  plotTree()
+  plotTree(meta=c("treatment","marker"))
 #> Beginning calling for 100003
 #>   Site number: 5019
 #>   Profiled samples: 11
@@ -67,7 +85,10 @@ getTree(stana)[[1]]
 #>   ERR1711593, ERR1711594, ERR1711596, ERR1711598, ERR1711603, ERR1711605, ...
 #> 
 #> Unrooted; includes branch lengths.
+getSlot(stana, "treePlotList")[[1]]
 ```
+
+<img src="man/figures/README-unnamed-chunk-2-1.png" width="1800" style="display: block; margin: auto;" />
 
 ## Interactive inspection
 

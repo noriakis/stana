@@ -32,6 +32,7 @@ genomeHeatmap <- function(stana, species, column="conANI", cl=NULL, heatmapArgs=
   heatmapArgs[["matrix"]] <- m
   heatmapArgs[["name"]] <- column
   heatmapArgs[["column_split"]] <- gr[colnames(m)]
+  heatmapArgs[["rect_gp"]] <- gpar(col = "white", lwd = 2)
   do.call(Heatmap, heatmapArgs)
 }
 
@@ -71,5 +72,7 @@ strainClusterHeatmap <- function(stana, species, cl=NULL, heatmapArgs=list()) {
   heatmapArgs[["matrix"]] <- edge_mat
   heatmapArgs[["name"]] <- "cluster_present"
   heatmapArgs[["column_split"]] <- gr[colnames(edge_mat)]
+  heatmapArgs[["rect_gp"]] <- gpar(col = "white", lwd = 2)
+
   do.call(Heatmap, heatmapArgs)
 }

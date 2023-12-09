@@ -9,8 +9,11 @@ plotTree(
   species = NULL,
   cl = NULL,
   dist_method = "dist.ml",
+  meta = NULL,
+  layout = "circular",
   tree_args = list(),
-  branch.length = "none"
+  branch.length = "none",
+  point_size = 2
 )
 }
 \arguments{
@@ -23,13 +26,20 @@ If NULL, first species in fasta list is assigned}
 
 \item{dist_method}{dist method in phangorn, default to dist.ml}
 
+\item{meta}{default to NULL, column name in `meta` slot}
+
+\item{layout}{layout to be used in ggtree}
+
 \item{tree_args}{passed to dist function in phangorn}
 
 \item{branch.length}{branch length, default to "none", cladogram}
+
+\item{point_size}{point size}
 
 \item{model}{dist.ml model}
 }
 \description{
 infer the tree and plot
-use dist.ml and NJ for inference
+The function uses dist.ml and NJ for inference
+if metadata is available, use them to plot metadata around the tree.
 }
