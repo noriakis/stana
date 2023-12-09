@@ -10,15 +10,14 @@ exportInteractive(
   db = "uhgg",
   calcko = TRUE,
   calctree = TRUE,
+  dataset_name = NULL,
   species = NULL
 )
 }
 \arguments{
-\item{stana}{stana object}
+\item{stana}{stana object of type MIDAS2}
 
-\item{out}{output directory
-export the stana results for the inspection in interactive
-application}
+\item{out}{output directory}
 
 \item{db}{db used to profile 'uhgg' or 'gtdb'}
 
@@ -26,11 +25,14 @@ application}
 
 \item{calctree}{calculate consensus tree}
 
-\item{species}{calk}
+\item{dataset_name}{dataset name}
+
+\item{species}{candidate species, default to all the species}
 }
 \value{
 output the results to specified directory
 }
 \description{
-exportInteractive
+export the current stana object to interactive application 
+for the convenient analysis and visualization
 }

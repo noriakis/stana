@@ -9,11 +9,18 @@
 #' @param calcko calculate KO abundance
 #' @param calctree calculate consensus tree
 #' @param species candidate species, default to all the species
+#' @param dataset_name dataset name
 #' @export
 #' @return output the results to specified directory
 exportInteractive <- function(stana, out=".", db="uhgg", calcko=TRUE,
-	calctree=TRUE,
+	calctree=TRUE, dataset_name=NULL,
 	species=NULL) {
+	if (is.null(dataset_name)) {
+		dataset_name <- gsub(":", "-", gsub(" ", "-", as.character(Sys.time())))
+	}
+	dir.create(paste0(out,"/data"))
+	dir.create(paste0(out,"/data/",dataset_name))
+
 	if (stana@type!="MIDAS2") {stop("This feature is for MIDAS2 only")}
 	if (is.null(species)) {
 		species <- stana@ids	
@@ -57,22 +64,22 @@ exportInteractive <- function(stana, out=".", db="uhgg", calcko=TRUE,
 	if (!dir.exists(out)) {
 		dir.create(out)
 	}
-	dir.create(paste0(out,"/tree"))
+	dir.create(paste0(out,"/data/",dataset_name,"/tree"))
 	for (i in names(stana@treeList)) {
 		if (i %in% species) {
 			tre <- stana@treeList[[i]]
 			if (!is.null(tre)) {
-				ape::write.tree(tre, paste0(out,"/tree/",i,".cons.tree"))
+				ape::write.tree(tre, paste0(out,"/data/",dataset_name,"/tree/",i,".cons.tree"))
 			}			
 		}
 	}
-	dir.create(paste0(out,"/KOs"))
+	dir.create(paste0(out,"/data/",dataset_name,"/KOs"))
 	for (i in names(stana@kos)) {
 		if (i %in% species) {
 			ko <- stana@kos[[i]]
-			write.table(ko, paste0(out, "/KOs/", i, ".txt"), sep="\t", quote=FALSE)			
+			write.table(ko, ppaste0(out,"/data/",dataset_name,"/KOs/", i, ".txt"), sep="\t", quote=FALSE)			
 		}
 	}
-	write.table(meta, paste0(out, "metadata.tsv"), sep="\t", quote=FALSE)
+	write.table(meta, paste0(out,"/data/",dataset_name,"/metadata.tsv"), sep="\t", quote=FALSE)
 	return(stana)
 }
