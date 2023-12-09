@@ -1,13 +1,14 @@
 #' exportInteractive
 #' 
-#' @param stana stana object
+#' export the current stana object to interactive application 
+#' for the convenient analysis and visualization
+#' 
+#' @param stana stana object of type MIDAS2
 #' @param out output directory
-#' export the stana results for the inspection in interactive
-#' application
 #' @param db db used to profile 'uhgg' or 'gtdb'
 #' @param calcko calculate KO abundance
 #' @param calctree calculate consensus tree
-#' @param species calk
+#' @param species candidate species, default to all the species
 #' @export
 #' @return output the results to specified directory
 exportInteractive <- function(stana, out=".", db="uhgg", calcko=TRUE,
