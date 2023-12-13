@@ -28,12 +28,14 @@ exportInteractive <- function(stana, out=".", db="uhgg", calcko=TRUE,
 	if (calcko) {
 		for (sp in species) {
 	        if (is.null(stana@kos[[sp]])) {
-	        	qqcat("Summarizing abundances @{sp}\n")
-	            ko_tbl <- summariseAbundance(stana,sp = sp,
-	                        checkEGGNOG(annot_file=stana@eggNOG[[sp]],
-	                        	"KEGG_ko"),
-	                        how="mean")
-	            stana@kos[[sp]] <- ko_tbl      
+	        	if (!is.null(stana@eggNOG[[sp]])) {
+		        	qqcat("Summarizing abundances @{sp}\n")
+		            ko_tbl <- summariseAbundance(stana,sp = sp,
+		                        checkEGGNOG(annot_file=stana@eggNOG[[sp]],
+		                        	"KEGG_ko"),
+		                        how="mean")
+		            stana@kos[[sp]] <- ko_tbl	        		
+	        	}
 	        } else {
 	            qqcat("Using pre-computed KO table\n")
 	        }
@@ -52,6 +54,8 @@ exportInteractive <- function(stana, out=".", db="uhgg", calcko=TRUE,
 	}
 	treLen <- sum(sapply(stana@treeList, function(x) !is.null(x)))
 	koLen <- length(stana@kos)
+	
+	## If no metadata is available in meta slot:
 	meta <- NULL
 	for (i in names(stana@cl)) {
 		meta <- rbind(meta,
@@ -59,6 +63,8 @@ exportInteractive <- function(stana, out=".", db="uhgg", calcko=TRUE,
 				rep(i, length(stana@cl[[i]]))))
 	}
 	meta <- meta |> data.frame() |> `colnames<-`(c("label","group"))
+	row.names(meta) <- meta[["label"]]
+	
 	qqcat("Tree number: @{treLen}, KO number: @{koLen}\n")
 	qqcat("Exporting ... \n")
 	if (!dir.exists(out)) {
@@ -77,7 +83,9 @@ exportInteractive <- function(stana, out=".", db="uhgg", calcko=TRUE,
 	for (i in names(stana@kos)) {
 		if (i %in% species) {
 			ko <- stana@kos[[i]]
-			write.table(ko, ppaste0(out,"/data/",dataset_name,"/KOs/", i, ".txt"), sep="\t", quote=FALSE)			
+			if (!is.null(ko)) {
+				write.table(ko, ppaste0(out,"/data/",dataset_name,"/KOs/", i, ".txt"), sep="\t", quote=FALSE)						
+			}
 		}
 	}
 	write.table(meta, paste0(out,"/data/",dataset_name,"/metadata.tsv"), sep="\t", quote=FALSE)
