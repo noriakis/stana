@@ -4,7 +4,7 @@
 \alias{summariseAbundance}
 \title{summariseAbundance}
 \usage{
-summariseAbundance(stana, sp, anno, how = mean)
+summariseAbundance(stana, sp, anno, how = mean, verbose = FALSE)
 }
 \arguments{
 \item{stana}{stana object}
@@ -14,6 +14,8 @@ summariseAbundance(stana, sp, anno, how = mean)
 \item{anno}{annotation tibble obtained by checkEGGNOG}
 
 \item{how}{summarising function, default to mean}
+
+\item{verbose}{output messages}
 }
 \value{
 data.frame

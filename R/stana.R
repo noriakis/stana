@@ -24,6 +24,7 @@ setClass("stana", slots=list(
                             snpsInfo="list",
                             snpsDepth="list",
                             snpsSummary="data.frame",
+                            genesSummary="data.frame",
                             relab="data.frame",
                             geneType="character",
                             genes="list",

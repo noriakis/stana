@@ -206,19 +206,21 @@ checkEGGNOG <- function(annot_file, ret="all", checkIDs=NULL, fill=TRUE) {
 #' @param sp candidate species
 #' @param anno annotation tibble obtained by checkEGGNOG
 #' @param how summarising function, default to mean
+#' @param verbose output messages
 #' @return data.frame
 #' @export
 #' 
-summariseAbundance <- function(stana, sp, anno, how=mean) {
+summariseAbundance <- function(stana, sp, anno, how=mean, verbose=FALSE) {
   geneDf <- stana@genes[[sp]]
-  merged <- list()
   annoval <- anno$value |> unique()
-  for (i in annoval) {
+  merged <-  lapply(annoval, function(i) {
     candID <- (anno |> dplyr::filter(anno$value==i))$ID
     ints <- intersect(row.names(geneDf), candID)
     if (length(ints)>0) {
-      merged[[i]] <- apply(geneDf[ints,], 2, how)
+      return(apply(geneDf[ints,], 2, how))
+    } else {
+      return(NULL)
     }
-  }
+  })
   do.call(rbind, merged)
 }

@@ -1,6 +1,6 @@
-#' loadMIDAS2
+#' loadMIDAS2Legacy
 #' 
-#' load the MIDAS2 merge command output.
+#' load the MIDAS2 merge command output (outdated).
 #' The location to lz4 binary must be added to PATH.
 #' Taxonomy table can be loaded from downloaded MIDAS2 db directory (metadata.tsv).
 #' If provided, additionally show tax names.
@@ -21,7 +21,7 @@
 #' @param only_stat only samples per species is returned (snpStat and geneStat)
 #' @export
 #' 
-loadMIDAS2 <- function(midas_merge_dir,
+loadMIDAS2Legacy <- function(midas_merge_dir,
                         cl=NULL,
                         filtNum=2,
                         db="gtdb",

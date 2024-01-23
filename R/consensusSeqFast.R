@@ -44,7 +44,7 @@ consensusSeqMIDAS2 <- function(
     rand_samples=NULL,
     return_mat=FALSE,
     verbose=FALSE) {
-    ## site-list is currently not supported.
+    
     if (is.null(species)) {species <- stana@clearSnps}
     if (length(species)==0) {stop("No species available")}
 	files <- c("depth","info")
