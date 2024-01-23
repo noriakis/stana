@@ -67,39 +67,10 @@ loadMIDAS2 <- function(midas_merge_dir,
         stana@cl <- cl
     }
 
-    grnm <- NULL
-    for (sn in snpsSummary$sample_name) {
-        tmpgr <- NULL
-        for (i in names(cl)) {
-            if (sn %in% cl[[i]]) {
-                tmpgr <- c(tmpgr, i)
-            }
-        }
-        if (length(tmpgr)>1) {
-            stop("Sample in multiple groups")
-        } else {
-            grnm <- c(grnm, tmpgr)
-        }
-    }
-
-    snpsSummary$group <- grnm
-
-    grnm <- NULL
-    for (sn in genesSummary$sample_name) {
-        tmpgr <- NULL
-        for (i in names(cl)) {
-            if (sn %in% cl[[i]]) {
-                tmpgr <- c(tmpgr, i)
-            }
-        }
-        if (length(tmpgr)>1) {
-            stop("Sample in multiple groups")
-        } else {
-            grnm <- c(grnm, tmpgr)
-        }
-    }
-
-    genesSummary$group <- grnm
+    changer <- listToNV(cl)
+    ## error in duplicate
+    snpsSummary$group <- changer[snpsSummary$sample_name]
+    genesSummary$group <- changer[genesSummary$sample_name]
     snpRet <- snpsSummary |> dplyr::group_by(species_id) |>
         dplyr::count(group)
     geneRet <- genesSummary |> dplyr::group_by(species_id) |>

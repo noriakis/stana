@@ -48,3 +48,15 @@ returnGenes <- function(stana, species, snvs) {
     stop("No genes mapped")
   }
 }
+
+
+listToNV <- function(l) {
+    nm <- NULL
+    val <- NULL
+    for (i in names(l)) {
+        val <- c(val, l[[i]])
+        nm <- c(nm, rep(i, length(l[[i]])))
+    }
+    names(nm) <- val
+    return(nm)
+}

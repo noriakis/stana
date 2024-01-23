@@ -222,5 +222,6 @@ summariseAbundance <- function(stana, sp, anno, how=mean, verbose=FALSE) {
       return(NULL)
     }
   })
+  names(merged) <- annoval
   do.call(rbind, merged)
 }

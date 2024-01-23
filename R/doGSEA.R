@@ -1,6 +1,7 @@
 #' doGSEA
 #' @export
-doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean) {
+doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean,
+    zeroPerc=0) {
     if (is.null(candSp)) {candSp <- stana@ids[1]}
     if (is.null(cl)) {cl <- stana@cl}
     if (length(cl)!=2) {stop("Only the two group is supported")}
@@ -22,6 +23,11 @@ doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean) {
         ko_df_filt <- stana@kos[[candSp]]
     }
 
+    ## If filter based on number of zero per KOs
+    ko_df_filt <- data.frame(ko_df_filt[!rowSums(ko_df_filt==0)>dim(ko_df_filt)[2] * zeroPerc, ]) |>
+        `colnames<-`(colnames(ko_df_filt))
+
+
     ## eps values
     ko_df_filt <- ko_df_filt + 1e-2
     ko_sum <- log2(apply(ko_df_filt[,intersect(inSample, aa)],1,mean) /
@@ -32,7 +38,7 @@ doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean) {
     ## KO to PATHWAY mapping
     url <- "https://rest.kegg.jp/link/ko/pathway"
     kopgsea <- data.frame(data.table::fread(url, header = FALSE, sep = "\t"))
-    kopgsea <- kopgsea |> filter(startsWith(V1, "path:ko"))
+    kopgsea <- kopgsea |> dplyr::filter(startsWith(V1, "path:ko"))
     kopgsea$V1 <- kopgsea$V1 |> strsplit(":") |>
       vapply("[",2,FUN.VALUE="a")
     enr <- clusterProfiler::GSEA(ko_sum,
@@ -44,6 +50,7 @@ doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean) {
 #' @export
 calcKO <- function(stana, candSp=NULL, how=mean) {
     if (is.null(candSp)) {candSp <- stana@ids[1]}
+    if (is.null(stana@eggNOG[[candSp]])) {stop("Please provide list of path to annotation file by `setAnnotation` function.")}
     ko_df_filt <- summariseAbundance(stana, sp = candSp,
         checkEGGNOG(annot_file=stana@eggNOG[[candSp]], "KEGG_ko"),
         how=how)
@@ -53,7 +60,7 @@ calcKO <- function(stana, candSp=NULL, how=mean) {
 
 #' reverse_annot
 #' @export
-reverse_annot <- function(stana, candSp, candidate, col="KEGG_ko") {
+reverseAnnot <- function(stana, candSp, candidate, col="KEGG_ko") {
     annot <- checkEGGNOG(annot_file=stana@eggNOG[[candSp]], col)
     annot %>% filter(.data[["value"]] %in% candidate) %>%
         pull(ID) %>% unique()
@@ -62,7 +69,7 @@ reverse_annot <- function(stana, candSp, candidate, col="KEGG_ko") {
 
 #' obtain_positions
 #' @export
-obtain_positions <- function(stana, candSp, geneID) {
+obtainPositions <- function(stana, candSp, geneID) {
     tmp <- stana@snpsInfo[[candSp]]
     tmp[tmp$gene_id %in% geneID, ] %>% row.names()
 }
