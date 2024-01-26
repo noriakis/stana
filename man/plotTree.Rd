@@ -11,6 +11,9 @@ plotTree(
   dist_method = "dist.ml",
   meta = NULL,
   layout = "circular",
+  target = "fasta",
+  IDs = NULL,
+  use_point = FALSE,
   tree_args = list(),
   branch.length = "none",
   point_size = 2
@@ -24,11 +27,20 @@ If NULL, first species in fasta list is assigned}
 
 \item{cl}{optional, cluster to plot}
 
-\item{dist_method}{dist method in phangorn, default to dist.ml}
+\item{dist_method}{dist method in phangorn, default to dist.ml
+if target is not fasta, ordinally `dist` method wil be used.}
 
 \item{meta}{default to NULL, column name in `meta` slot}
 
 \item{layout}{layout to be used in ggtree}
+
+\item{target}{fasta, snp, or gene. default to fasta.}
+
+\item{IDs}{if IDs is provided and target is snps or genes,
+subset the matrix to this ID.}
+
+\item{use_point}{use geom_point for plotting discrete metadata,
+instead of geom_star.}
 
 \item{tree_args}{passed to dist function in phangorn}
 

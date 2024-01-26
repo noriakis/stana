@@ -11,10 +11,16 @@
 #' @param model dist.ml model
 #' @param tree_args passed to dist function in phangorn
 #' @param dist_method dist method in phangorn, default to dist.ml
+#' if target is not fasta, ordinally `dist` method wil be used.
 #' @param branch.length branch length, default to "none", cladogram
 #' @param meta default to NULL, column name in `meta` slot
 #' @param point_size point size
 #' @param layout layout to be used in ggtree
+#' @param target fasta, snp, or gene. default to fasta.
+#' @param IDs if IDs is provided and target is snps or genes,
+#' subset the matrix to this ID.
+#' @param use_point use geom_point for plotting discrete metadata,
+#' instead of geom_star.
 #' @importFrom ggtreeExtra geom_fruit
 #' @importFrom ggnewscale new_scale_fill
 #' @importFrom ggstar geom_star
@@ -23,20 +29,38 @@
 #' @export
 plotTree <- function(stana, species=NULL, cl=NULL,
 	dist_method="dist.ml", meta=NULL, layout="circular",
+	target="fasta", IDs=NULL, use_point=FALSE,
 	tree_args=list(), branch.length="none", point_size=2) {
 	if (is.null(cl)) {cl <- stana@cl}
 	if (!is.null(meta)) {
 		meta <- checkMeta(stana, meta)
 	}
 	if (is.null(species)) {species <- names(stana@fastaList)}
+	if (!(target %in% c("fasta","snp","gene"))) {stop("Please specify appropriate target")}
 	for (sp in species) {
-		tre <- stana@fastaList[[sp]]
-		
-		## Infer tree
-		tree_args[["x"]] <- tre
-		dm <- do.call(dist_method, tree_args)
+		if (target=="fasta") {
+			tre <- stana@fastaList[[sp]]
+			
+			## Infer tree
+			tree_args[["x"]] <- tre
+			dm <- do.call(dist_method, tree_args)
+		} else if (target=="gene") {
+			mat <- stana@genes[[sp]]
+			if (!is.null(IDs)) {
+				mat <- mat[intersect(row.names(mat),IDs), ]
+			}
+			tree_args[["x"]] <- t(mat)
+			dm <- do.call(dist, tree_args)
+		} else {
+			mat <- stana@snps[[sp]]
+			if (!is.null(IDs)) {
+				mat <- mat[intersect(row.names(mat),IDs), ]
+			}
+			tree_args[["x"]] <- t(mat)
+			dm <- do.call(dist, tree_args)			
+		}
 		tre <- NJ(dm)
-		stana@treeList[[sp]] <- tre
+		stana@treeList[[sp]] <- tre			
 		
 		## Plot tree		
 		if (!is.null(meta)) {
@@ -60,7 +84,7 @@ plotTree <- function(stana, species=NULL, cl=NULL,
                 change_cv[change_cv=="-"] <- NA
                 change_cv[is.infinite(change_cv)] <- NA
 
-                if (tmp_class=="numeric") {
+                if (tmp_class %in% c("integer","numeric")) {
                     meta[[tmp_show_cv]] <- as.numeric(change_cv)
                 } else {
                     meta[[tmp_show_cv]] <- as.factor(change_cv)
@@ -99,15 +123,24 @@ plotTree <- function(stana, species=NULL, cl=NULL,
                     scale_fill_scico(palette = scp[tmp_show_cv]) +
                     new_scale_fill()
                 } else {
-
+                	if (use_point) {
+	                    p <- p + geom_fruit(
+	                        data = meta,
+	                        geom = geom_point,
+	                        size = point_size, shape=21, 
+	                        mapping = aes(y=id, x=0.5, fill=.data[[tmp_show_cv]])
+	                    )                	
+	                } else {
+	                    p <- p + geom_fruit(
+	                        data = meta,
+	                        geom = geom_star,
+	                        size = point_size,
+	                        mapping = aes(y=id, x=0.5, fill=.data[[tmp_show_cv]]),
+	                        starshape = starsh[tmp_show_cv]
+	                    )
+	                }
                     ## If is discrete
-                    p <- p + geom_fruit(
-                        data = meta,
-                        geom = geom_star,
-                        size = point_size,
-                        mapping = aes(y=id, x=0.5, fill=.data[[tmp_show_cv]]),
-                        starshape = starsh[tmp_show_cv]
-                    ) + 
+					p <- p + 
                     scale_fill_scico_d(palette = scp[tmp_show_cv], begin=0, end=0.5) +
                     new_scale_fill()
                 }
