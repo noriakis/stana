@@ -76,17 +76,13 @@ plotKEGGPathway <- function(stana, species, pathway_id,
     if (summarize) {
         commons <- Reduce(intersect, lapply(stana@kos[species], function(x) row.names(x)))
         commoncol <- Reduce(intersect, lapply(stana@kos[species], function(x) colnames(x)))
-        ko_tbl <- Reduce("+", lapply(stana@kos[c("101346","102438")], function(x) x[commons,commoncol]))
+        ko_tbl <- Reduce("+", lapply(stana@kos[species], function(x) x[commons,commoncol]))
 
         if (sum_flag) {
           lfcs[["Sum"]] <- apply(ko_tbl, 1, sum)
         } else {
             qqcat("@{sp}: @{names(cl)[1]} / @{names(cl)[2]}\n")
-            ko_tbl <- ko_tbl + eps
-            inc1 <- intersect(colnames(ko_tbl), cl[[1]])
-            inc2 <- intersect(colnames(ko_tbl), cl[[2]])
-            lfcs[["Sum"]] <- log2((apply(ko_tbl[,inc1], 1, how)) / 
-                                 (apply(ko_tbl[,inc2], 1, how)))
+            lfc[[sp]] <- L2FC(ko_tbl, cl[[1]], cl[[2]])
         }
     } else {
         for (sp in species) {
@@ -95,11 +91,7 @@ plotKEGGPathway <- function(stana, species, pathway_id,
                 lfcs[[sp]] <- apply(ko_tbl, 1, sum)
             } else {
                 qqcat("@{sp}: @{names(cl)[1]} / @{names(cl)[2]}\n")
-                ko_tbl <- ko_tbl + eps
-                inc1 <- intersect(colnames(ko_tbl), cl[[1]])
-                inc2 <- intersect(colnames(ko_tbl), cl[[2]])
-                lfcs[[sp]] <- log2((apply(ko_tbl[,inc1], 1, how)) / 
-                                (apply(ko_tbl[,inc2], 1, how)))
+                lfcs[[sp]] <- lL2FC(ko_tbl, cl[[1]], cl[[2]])
             }
         }        
     }

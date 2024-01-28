@@ -1,4 +1,5 @@
 #' doGSEA
+#' @return GSEA results from clusterProfiler
 #' @export
 doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean,
     zeroPerc=0) {
@@ -27,11 +28,8 @@ doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean,
     ko_df_filt <- data.frame(ko_df_filt[!rowSums(ko_df_filt==0)>dim(ko_df_filt)[2] * zeroPerc, ]) |>
         `colnames<-`(colnames(ko_df_filt))
 
-
     ## eps values
-    ko_df_filt <- ko_df_filt + 1e-2
-    ko_sum <- log2(apply(ko_df_filt[,intersect(inSample, aa)],1,mean) /
-                   apply(ko_df_filt[,intersect(inSample, bb)],1,mean))
+    ko_sum <- L2FC(ko_df_filt, aa, bb, method="t", eps=eps)
     ## Perform GSEA (it will take time)?
     ko_sum <- ko_sum[order(ko_sum, decreasing=TRUE)]
 
@@ -45,6 +43,29 @@ doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean,
         TERM2GENE = kopgsea, pvalueCutoff=1)
     return(enr)
 }
+
+#' @param mat row corresponds to gene, and column samples
+#' @noRd
+L2FC <- function(mat, l1, l2, method="t", eps=0) {
+    if (method == "gmean") {
+        l1_mean <- apply(log2(mat[, intersect(colnames(mat), l1)] + eps), 1, mean)
+        l2_mean <- apply(log2(mat[, intersect(colnames(mat), l2)] + eps), 1, mean)
+        return(l1_mean - l2_mean)
+    } else if (method == "t") {
+        res <- lapply(row.names(mat), function(m) {
+            tres <- t.test(mat[m, intersect(colnames(mat), l1)],
+                mat[m, intersect(colnames(mat), l2)])
+            as.numeric(tres$statistic)
+        }) %>% unlist()
+        names(res) <- row.names(mat)
+        return(res)
+    } else {
+        l1_mean <- apply(mat[, intersect(colnames(mat), l1)], 1, mean)
+        l2_mean <- apply(mat[, intersect(colnames(mat), l2)], 1, mean)
+        return(log2((l1_mean+eps) / (l2_mean+eps)))
+    }
+}
+
 
 #' calcKO
 #' @export

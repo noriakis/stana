@@ -59,7 +59,8 @@ plotTree <- function(stana, species=NULL, cl=NULL,
 			tree_args[["x"]] <- t(mat)
 			dm <- do.call(dist, tree_args)			
 		}
-		tre <- NJ(dm)
+        tre <- NJ(dm)
+
 		stana@treeList[[sp]] <- tre			
 		
 		## Plot tree		
@@ -90,9 +91,7 @@ plotTree <- function(stana, species=NULL, cl=NULL,
                     meta[[tmp_show_cv]] <- as.factor(change_cv)
                 }
             }
-
             meta <- meta[tre$tip.label,]
-
 
             if (layout=="rectangular") {
                 qqcat("Force setting layout to 'circular'\n")
@@ -128,14 +127,14 @@ plotTree <- function(stana, species=NULL, cl=NULL,
 	                        data = meta,
 	                        geom = geom_point,
 	                        size = point_size, shape=21, 
-	                        mapping = aes(y=id, x=0.5, fill=.data[[tmp_show_cv]])
+	                        mapping = aes(y=id, fill=.data[[tmp_show_cv]])
 	                    )                	
 	                } else {
 	                    p <- p + geom_fruit(
 	                        data = meta,
 	                        geom = geom_star,
 	                        size = point_size,
-	                        mapping = aes(y=id, x=0.5, fill=.data[[tmp_show_cv]]),
+	                        mapping = aes(y=id, fill=.data[[tmp_show_cv]]),
 	                        starshape = starsh[tmp_show_cv]
 	                    )
 	                }

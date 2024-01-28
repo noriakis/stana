@@ -6,6 +6,9 @@
 \usage{
 doGSEA(stana, candSp = NULL, cl = NULL, eps = 0.01, how = mean, zeroPerc = 0)
 }
+\value{
+GSEA results from clusterProfiler
+}
 \description{
 doGSEA
 }
