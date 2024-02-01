@@ -10,5 +10,5 @@ doGSEA(stana, candSp = NULL, cl = NULL, eps = 0.01, how = mean, zeroPerc = 0)
 GSEA results from clusterProfiler
 }
 \description{
-doGSEA
+By default this uses t-statistics for ranking of the genes.
 }

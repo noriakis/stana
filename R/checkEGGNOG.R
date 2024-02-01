@@ -210,7 +210,7 @@ checkEGGNOG <- function(annot_file, ret="all", checkIDs=NULL, fill=TRUE) {
 #' @return data.frame
 #' @export
 #' 
-summariseAbundance <- function(stana, sp, anno, how=mean, verbose=FALSE) {
+summariseAbundance <- function(stana, sp, anno, how=sum, verbose=FALSE) {
   geneDf <- stana@genes[[sp]]
   annoval <- anno$value |> unique()
   merged <-  lapply(annoval, function(i) {

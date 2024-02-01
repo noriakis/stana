@@ -94,6 +94,13 @@ setMethod("getTree", "stana",
     function(x) attr(x, "treeList"))
 
 #' @export
+setGeneric("getTreePlot",
+    function(x) standardGeneric("getTreePlot"))
+
+setMethod("getTreePlot", "stana",
+    function(x) attr(x, "treePlotList"))
+
+#' @export
 setGeneric("getID",
     function(x) standardGeneric("getID"))
 

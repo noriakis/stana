@@ -4,7 +4,7 @@
 \alias{summariseAbundance}
 \title{summariseAbundance}
 \usage{
-summariseAbundance(stana, sp, anno, how = mean, verbose = FALSE)
+summariseAbundance(stana, sp, anno, how = sum, verbose = FALSE)
 }
 \arguments{
 \item{stana}{stana object}

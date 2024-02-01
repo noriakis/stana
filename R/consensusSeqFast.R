@@ -127,7 +127,7 @@ consensusSeqMIDAS2 <- function(
         	site_depth_filter <- depths >= site_depth
         	depth_ratio_filter <- (depths / SAMPLES[[sample]]$mean_depth) <= site_ratio
         	## freqs == -1 in allele_support        	        	
-        	allele_support <- apply(cbind(freqs, 1-freqs), 1, max) >= allele_support
+        	allele_support <- apply(cbind(freqs, 1-freqs), 1, max) >= allele_support ## BOTTLENECK [1]
         	allele_support[which(freqs==-1)] <- FALSE
         	summed <- site_depth_filter + depth_ratio_filter + allele_support
         	list(freqs, depths, site_depth_filter, depth_ratio_filter, allele_support, summed) |>
@@ -141,7 +141,7 @@ consensusSeqMIDAS2 <- function(
         sp_major_allele <- SPECIES[["info"]]$major_allele
         
         keep_site_filter_list <- lapply(seq_len(nrow(SPECIES[["freqs"]])), function(i) {
-        	keep_samples <- lapply(names(site_filters), function(sample) {
+        	keep_samples <- lapply(names(site_filters), function(sample) { ## BOTTLENECK [2]
         	    if (site_filters[[sample]][["flag"]][i]==3) {
         	    	list(sample, site_filters[[sample]][["freqs"]][i])
         	    } else {
@@ -194,19 +194,21 @@ consensusSeqMIDAS2 <- function(
 	        positions <- which(keep_site_filter_list==4)
 	        if (!is.infinite(max_sites)) {positions <- positions[1:max_sites]}
             allele_list <- lapply(positions, function(i) {
-		    	per_sample_allele <- lapply(names(site_filters), function(sample) {
+		    	per_sample_allele <- lapply(names(site_filters), function(sample) { ## BOTTLENECK [3]
 		    		if (site_filters[[sample]][["flag"]][i]!=3) {
-		    			ap <- "-"
-		    		} else if (site_filters[[sample]][["depths"]][i] == 0) {
-		    			ap <- "-"
-		    		} else if (site_filters[[sample]][["freqs"]][i] == -1) {
-		    		    ap <- "-"	
-		    		} else if (site_filters[[sample]][["freqs"]][i] >= 0.5) {
-		    			ap <- sp_minor_allele[i]
-		    		} else {
-		    			ap <- sp_major_allele[i]
+		    			return("-")
+                    }
+		    		if (site_filters[[sample]][["depths"]][i] == 0) {
+		    			return("-")
+                    }
+		    		if (site_filters[[sample]][["freqs"]][i] == -1) {
+		    		    return("-")
 		    		}
-		    		return(ap)
+                    if (site_filters[[sample]][["freqs"]][i] >= 0.5) {
+		    			return(sp_minor_allele[i])
+		    		} else {
+		    			return(sp_major_allele[i])
+		    		}
 		    	})
 	    	unlist(per_sample_allele)        	
             })

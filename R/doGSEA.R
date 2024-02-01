@@ -1,4 +1,7 @@
 #' doGSEA
+#' 
+#' By default this uses t-statistics for ranking of the genes.
+#' 
 #' @return GSEA results from clusterProfiler
 #' @export
 doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean,
@@ -44,7 +47,52 @@ doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean,
     return(enr)
 }
 
+
+#' addGeneAbundance
+#' 
+#' Add the specified gene copy number to metadata
+#' 
+#' @param disc discretize the abundance by the threshold. function for calculating
+#' threshold, like {median}
+#' @export
+addGeneAbundance <- function(stana, candSp, IDs,
+    target="KO", how=sum, newCol="gene",
+    disc=NULL, discNumeric=TRUE) {
+    if (target=="KO") {
+        subMat <- stana@kos[[candSp]][IDs, ]
+    } else {
+        subMat <- stana@genes[[candSp]][IDs, ]
+    }
+    if (length(IDs)>1) {
+        adda <- apply(subMat, 2, how)    
+    } else {
+        adda <- subMat
+    }
+    nm <- names(adda)
+    if (!is.null(disc)) {
+        thresh <- do.call(disc, list("x"=adda))
+        if (discNumeric) {
+            adda <- as.numeric(adda > thresh)        
+        } else {
+            adda <- adda > thresh
+        }
+        names(adda) <- nm
+    }
+    meta <- stana@meta
+    meta[[newCol]] <- adda[row.names(stana@meta)]
+    stana@meta <- meta
+    return(stana)
+}
+
+#' L2FC
+#' 
+#' Report various statistics for use in GSEA or visualization
+#' 
 #' @param mat row corresponds to gene, and column samples
+#' @param l1 level1
+#' @param l2 level2
+#' @param method gmean, amean, or t
+#' @param eps pseudocount added when calculating log
 #' @noRd
 L2FC <- function(mat, l1, l2, method="t", eps=0) {
     if (method == "gmean") {
@@ -68,8 +116,11 @@ L2FC <- function(mat, l1, l2, method="t", eps=0) {
 
 
 #' calcKO
+#' @param stana stana object
+#' @param candSp candidate species ID
+#' @param how how to summarize multiple gene CN assigned to the same KO
 #' @export
-calcKO <- function(stana, candSp=NULL, how=mean) {
+calcKO <- function(stana, candSp=NULL, how=sum) {
     if (is.null(candSp)) {candSp <- stana@ids[1]}
     if (is.null(stana@eggNOG[[candSp]])) {stop("Please provide list of path to annotation file by `setAnnotation` function.")}
     ko_df_filt <- summariseAbundance(stana, sp = candSp,

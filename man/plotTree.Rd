@@ -14,9 +14,11 @@ plotTree(
   target = "fasta",
   IDs = NULL,
   use_point = FALSE,
+  branch_col = "black",
   tree_args = list(),
   branch.length = "none",
-  point_size = 2
+  point_size = 2,
+  deleteZeroDepth = TRUE
 )
 }
 \arguments{
@@ -47,6 +49,8 @@ instead of geom_star.}
 \item{branch.length}{branch length, default to "none", cladogram}
 
 \item{point_size}{point size}
+
+\item{deleteZeroDepth}{delete zero depth position}
 
 \item{model}{dist.ml model}
 }

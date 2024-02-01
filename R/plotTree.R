@@ -21,16 +21,18 @@
 #' subset the matrix to this ID.
 #' @param use_point use geom_point for plotting discrete metadata,
 #' instead of geom_star.
+#' @param deleteZeroDepth delete zero depth position
 #' @importFrom ggtreeExtra geom_fruit
 #' @importFrom ggnewscale new_scale_fill
 #' @importFrom ggstar geom_star
-#' @importFrom scico scale_fill_scico_d scale_fill_scico
+#' @importFrom scico scale_fill_scico_d scale_fill_scico scale_color_scico scale_color_scico_d
 #' 
 #' @export
 plotTree <- function(stana, species=NULL, cl=NULL,
 	dist_method="dist.ml", meta=NULL, layout="circular",
-	target="fasta", IDs=NULL, use_point=FALSE,
-	tree_args=list(), branch.length="none", point_size=2) {
+	target="fasta", IDs=NULL, use_point=FALSE, branch_col="black",
+	tree_args=list(), branch.length="none", point_size=2,
+    deleteZeroDepth=TRUE) {
 	if (is.null(cl)) {cl <- stana@cl}
 	if (!is.null(meta)) {
 		meta <- checkMeta(stana, meta)
@@ -53,6 +55,10 @@ plotTree <- function(stana, species=NULL, cl=NULL,
 			dm <- do.call(dist, tree_args)
 		} else {
 			mat <- stana@snps[[sp]]
+            if (deleteZeroDepth) {
+                mat <- mat[rowSums(mat==-1)==0, ]
+                cat("Position number:", dim(mat)[1], "\n")      
+            }
 			if (!is.null(IDs)) {
 				mat <- mat[intersect(row.names(mat),IDs), ]
 			}
@@ -108,8 +114,23 @@ plotTree <- function(stana, species=NULL, cl=NULL,
             ## Select random shape from ggstar
             starsh <- sample(1:30, length(colnames(meta)), replace=FALSE)
             names(starsh) <- colnames(meta)
-
-            p <- ggtree(tre, layout=flyt, branch.length=branch.length)
+            
+            
+            if (branch_col %in% colnames(stana@meta)) {
+                ## NA value is fixed
+                tmp_class <- class(stana@meta[[branch_col]])
+                stana@meta$label <- stana@meta$id
+                addNow <- stana@meta[,c(branch_col, "label")]
+                tre <- full_join(tre, addNow, by="label")
+                p <- ggtree(tre, layout=flyt, branch.length=branch.length, mapping=aes(color=.data[[branch_col]]))
+                if (tmp_class %in% c("integer","numeric","logical")) { ## T/F is treated as numeric
+                    p <- p + scico::scale_color_scico(na.value="grey", palette=sample(scico::scico_palette_names(), 1))
+                } else {
+                    p <- p + scico::scale_color_scico_d(na.value="grey", palette=sample(scico::scico_palette_names(), 1))
+                }
+            } else {
+                p <- ggtree(tre, layout=flyt, branch.length=branch.length, color=branch_col)            
+            }
             for (tmp_show_cv in show_meta) {
                 if (is.numeric(meta[[tmp_show_cv]])) {
                     ## If is numeric

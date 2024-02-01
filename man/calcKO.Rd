@@ -4,7 +4,14 @@
 \alias{calcKO}
 \title{calcKO}
 \usage{
-calcKO(stana, candSp = NULL, how = mean)
+calcKO(stana, candSp = NULL, how = sum)
+}
+\arguments{
+\item{stana}{stana object}
+
+\item{candSp}{candidate species ID}
+
+\item{how}{how to summarize multiple gene CN assigned to the same KO}
 }
 \description{
 calcKO
