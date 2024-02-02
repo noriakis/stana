@@ -11,8 +11,12 @@ doGSEA(
   eps = 0.01,
   how = mean,
   zeroPerc = 0,
-  rankMethod = "t"
+  rankMethod = "modt"
 )
+}
+\arguments{
+\item{zeroPerc}{genes >= the percentage of count zero sample will be excluded.
+Default to zero, not recommended in GSEA}
 }
 \value{
 GSEA results from clusterProfiler

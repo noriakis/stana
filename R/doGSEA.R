@@ -1,13 +1,15 @@
 #' doGSEA
 #' 
-#' By default this uses t-statistics for ranking of the genes.
+#' Based on KEGG database, GSEA will be performed by the function.
+#' clusterProfiler::GSEA is used.
+#' By default this uses moderated t-statistics for ranking of the genes.
 #' 
 #' @param zeroPerc genes >= the percentage of count zero sample will be excluded.
 #' Default to zero, not recommended in GSEA
 #' @return GSEA results from clusterProfiler
 #' @export
 doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean,
-    zeroPerc=0, rankMethod="modt") {
+    zeroPerc=0, rankMethod="modt", target="pathway") {
     if (is.null(candSp)) {candSp <- stana@ids[1]}
     if (is.null(cl)) {cl <- stana@cl}
     if (length(cl)!=2) {stop("Only the two group is supported")}
@@ -40,11 +42,19 @@ doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean,
     ko_sum <- ko_sum[order(ko_sum, decreasing=TRUE)]
 
     ## KO to PATHWAY mapping
+    
     url <- "https://rest.kegg.jp/link/ko/pathway"
+    if (target!="pathway") {
+	    url <- "https://rest.kegg.jp/link/ko/module"	
+    }
+
     kopgsea <- data.frame(data.table::fread(url, header = FALSE, sep = "\t"))
-    kopgsea <- kopgsea |> dplyr::filter(startsWith(V1, "path:ko"))
+    if (target=="pathway") {
+	    kopgsea <- kopgsea |> dplyr::filter(startsWith(V1, "path:ko"))	
+    }
     kopgsea$V1 <- kopgsea$V1 |> strsplit(":") |>
       vapply("[",2,FUN.VALUE="a")
+    ## Return all the value regardless of P
     enr <- clusterProfiler::GSEA(ko_sum,
         TERM2GENE = kopgsea, pvalueCutoff=1)
     return(enr)
