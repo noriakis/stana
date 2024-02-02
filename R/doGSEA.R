@@ -2,17 +2,19 @@
 #' 
 #' By default this uses t-statistics for ranking of the genes.
 #' 
+#' @param zeroPerc genes >= the percentage of count zero sample will be excluded.
+#' Default to zero, not recommended in GSEA
 #' @return GSEA results from clusterProfiler
 #' @export
 doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean,
-    zeroPerc=0) {
+    zeroPerc=0, rankMethod="modt") {
     if (is.null(candSp)) {candSp <- stana@ids[1]}
     if (is.null(cl)) {cl <- stana@cl}
     if (length(cl)!=2) {stop("Only the two group is supported")}
 
     aa <- cl[[1]]
     bb <- cl[[2]]
-
+    cat(names(cl)[1], "/", names(cl)[2], "\n");
     geneMat <- stana@genes[[candSp]]
     inSample <- colnames(geneMat)
     if (length(intersect(inSample, aa))==0) {stop("No sample available")}
@@ -28,12 +30,13 @@ doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean,
     }
 
     ## If filter based on number of zero per KOs
-    ko_df_filt <- data.frame(ko_df_filt[!rowSums(ko_df_filt==0)>dim(ko_df_filt)[2] * zeroPerc, ]) |>
+    ko_df_filt <- data.frame(ko_df_filt[ rowSums(ko_df_filt!=0) >= (dim(ko_df_filt)[2] * zeroPerc), ]) |>
         `colnames<-`(colnames(ko_df_filt))
 
     ## eps values
-    ko_sum <- L2FC(ko_df_filt, aa, bb, method="t", eps=eps)
+    ko_sum <- L2FC(ko_df_filt, aa, bb, method=rankMethod, eps=eps)
     ## Perform GSEA (it will take time)?
+    # print(ko_sum)
     ko_sum <- ko_sum[order(ko_sum, decreasing=TRUE)]
 
     ## KO to PATHWAY mapping
@@ -107,10 +110,18 @@ L2FC <- function(mat, l1, l2, method="t", eps=0) {
         }) %>% unlist()
         names(res) <- row.names(mat)
         return(res)
-    } else {
+    } else if (method == "amean" ) {
         l1_mean <- apply(mat[, intersect(colnames(mat), l1)], 1, mean)
         l2_mean <- apply(mat[, intersect(colnames(mat), l2)], 1, mean)
         return(log2((l1_mean+eps) / (l2_mean+eps)))
+    } else {
+    	## Moderated t.test (limma)
+    	ordered.mat <- mat[, c( intersect(colnames(mat), l1), intersect(colnames(mat), l2) )]
+    	gr <- c( rep("l1", length(intersect(colnames(mat), l1))), rep("l2", length(intersect(colnames(mat), l2))) )
+    	res <- MKmisc::mod.t.test(as.matrix(ordered.mat), gr)
+    	modt <- res$t
+    	names(modt) <- row.names(res)
+    	return(modt)
     }
 }
 
@@ -121,7 +132,10 @@ L2FC <- function(mat, l1, l2, method="t", eps=0) {
 #' @param how how to summarize multiple gene CN assigned to the same KO
 #' @export
 calcKO <- function(stana, candSp=NULL, how=sum) {
-    if (is.null(candSp)) {candSp <- stana@ids[1]}
+	checkID(stana, candSp)
+    if (is.null(candSp)) {cat("Species not specified, the first ID will be used:", stana@ids[1]);
+        candSp <- stana@ids[1]
+    }
     if (is.null(stana@eggNOG[[candSp]])) {stop("Please provide list of path to annotation file by `setAnnotation` function.")}
     ko_df_filt <- summariseAbundance(stana, sp = candSp,
         checkEGGNOG(annot_file=stana@eggNOG[[candSp]], "KEGG_ko"),
@@ -144,4 +158,13 @@ reverseAnnot <- function(stana, candSp, candidate, col="KEGG_ko") {
 obtainPositions <- function(stana, candSp, geneID) {
     tmp <- stana@snpsInfo[[candSp]]
     tmp[tmp$gene_id %in% geneID, ] %>% row.names()
+}
+
+
+
+#' @noRd
+checkID <- function(stana, candSp) {
+	if (!(candSp %in% stana@ids)) {
+		stop("No specified species available in this stana object.")
+	}
 }

@@ -4,7 +4,15 @@
 \alias{doGSEA}
 \title{doGSEA}
 \usage{
-doGSEA(stana, candSp = NULL, cl = NULL, eps = 0.01, how = mean, zeroPerc = 0)
+doGSEA(
+  stana,
+  candSp = NULL,
+  cl = NULL,
+  eps = 0.01,
+  how = mean,
+  zeroPerc = 0,
+  rankMethod = "t"
+)
 }
 \value{
 GSEA results from clusterProfiler
