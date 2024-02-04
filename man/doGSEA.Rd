@@ -11,7 +11,8 @@ doGSEA(
   eps = 0.01,
   how = mean,
   zeroPerc = 0,
-  rankMethod = "modt"
+  rankMethod = "modt",
+  target = "pathway"
 )
 }
 \arguments{
@@ -22,5 +23,7 @@ Default to zero, not recommended in GSEA}
 GSEA results from clusterProfiler
 }
 \description{
-By default this uses t-statistics for ranking of the genes.
+Based on KEGG database, GSEA will be performed by the function.
+clusterProfiler::GSEA is used.
+By default this uses moderated t-statistics for ranking of the genes.
 }

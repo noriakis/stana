@@ -6,6 +6,7 @@
 #' 
 #' @param zeroPerc genes >= the percentage of count zero sample will be excluded.
 #' Default to zero, not recommended in GSEA
+#' @importFrom MKmisc mod.t.test
 #' @return GSEA results from clusterProfiler
 #' @export
 doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean,
@@ -47,6 +48,12 @@ doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean,
     if (target!="pathway") {
 	    url <- "https://rest.kegg.jp/link/ko/module"	
     }
+    
+    bfc <- BiocFileCache()
+    path <- bfcrpath(bfc, url)
+  
+    ## Load, transparent and rasterize
+    magick_image <- image_read(path)
 
     kopgsea <- data.frame(data.table::fread(url, header = FALSE, sep = "\t"))
     if (target=="pathway") {
