@@ -1,8 +1,9 @@
-#' plotTree
+#' inferAndPlotTree
 #' 
-#' infer the tree and plot
-#' The function uses dist.ml and NJ for inference
-#' if metadata is available, use them to plot metadata around the tree.
+#' infer the tree and plot.
+#' If there is already a tree in the list from `treeList` slot, inferring will not be performed.
+#' The function uses dist.ml and NJ for inference from FASTA format, and otherwise uses dist and NJ
+#' for the inference. if metadata is available, use them to plot metadata around the tree.
 #' 
 #' @param stana stana object
 #' @param species species to plot
@@ -28,7 +29,7 @@
 #' @importFrom scico scale_fill_scico_d scale_fill_scico scale_color_scico scale_color_scico_d
 #' 
 #' @export
-plotTree <- function(stana, species=NULL, cl=NULL,
+inferAndPlotTree <- function(stana, species=NULL, cl=NULL,
 	dist_method="dist.ml", meta=NULL, layout="circular",
 	target="fasta", IDs=NULL, use_point=FALSE, branch_col="black",
 	tree_args=list(), branch.length="none", point_size=2,
@@ -40,34 +41,39 @@ plotTree <- function(stana, species=NULL, cl=NULL,
 	if (is.null(species)) {species <- names(stana@fastaList)}
 	if (!(target %in% c("fasta","snp","gene"))) {stop("Please specify appropriate target")}
 	for (sp in species) {
-		if (target=="fasta") {
-			tre <- stana@fastaList[[sp]]
-			
-			## Infer tree
-			tree_args[["x"]] <- tre
-			dm <- do.call(dist_method, tree_args)
-		} else if (target=="gene") {
-			mat <- stana@genes[[sp]]
-			if (!is.null(IDs)) {
-				mat <- mat[intersect(row.names(mat),IDs), ]
+		## If tree slot is filled, use the existing tree.
+		if (is.null(stana@treeList[[sp]])) {
+			if (target=="fasta") {
+				tre <- stana@fastaList[[sp]]
+				
+				## Infer tree
+				tree_args[["x"]] <- tre
+				dm <- do.call(dist_method, tree_args)
+			} else if (target=="gene") {
+				mat <- stana@genes[[sp]]
+				if (!is.null(IDs)) {
+					mat <- mat[intersect(row.names(mat),IDs), ]
+				}
+				tree_args[["x"]] <- t(mat)
+				dm <- do.call(dist, tree_args)
+			} else {
+				mat <- stana@snps[[sp]]
+	            if (deleteZeroDepth) {
+	                mat <- mat[rowSums(mat==-1)==0, ]
+	                cat("Position number:", dim(mat)[1], "\n")      
+	            }
+				if (!is.null(IDs)) {
+					mat <- mat[intersect(row.names(mat),IDs), ]
+				}
+				tree_args[["x"]] <- t(mat)
+				dm <- do.call(dist, tree_args)			
 			}
-			tree_args[["x"]] <- t(mat)
-			dm <- do.call(dist, tree_args)
-		} else {
-			mat <- stana@snps[[sp]]
-            if (deleteZeroDepth) {
-                mat <- mat[rowSums(mat==-1)==0, ]
-                cat("Position number:", dim(mat)[1], "\n")      
-            }
-			if (!is.null(IDs)) {
-				mat <- mat[intersect(row.names(mat),IDs), ]
-			}
-			tree_args[["x"]] <- t(mat)
-			dm <- do.call(dist, tree_args)			
-		}
-        tre <- NJ(dm)
+	        tre <- NJ(dm)
 
-		stana@treeList[[sp]] <- tre			
+			stana@treeList[[sp]] <- tre
+		} else {
+			tre <- stana@treeList[[sp]]
+		}
 		
 		## Plot tree		
 		if (!is.null(meta)) {
