@@ -68,7 +68,7 @@ stana <- setMetadata(stana, metadata)
 ## Infer and plot tree based on metadata
 stana <- stana |>
   consensusSeq(argList=list(site_prev=0.95)) |>
-  plotTree(meta=c("treatment","marker"))
+  inferAndPlotTree(meta=c("treatment","marker"))
 getFasta(stana)[[1]]
 getTree(stana)[[1]]
 getSlot(stana, "treePlotList")[[1]]
