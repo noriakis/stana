@@ -52,10 +52,7 @@ doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean,
     bfc <- BiocFileCache()
     path <- bfcrpath(bfc, url)
   
-    ## Load, transparent and rasterize
-    magick_image <- image_read(path)
-
-    kopgsea <- data.frame(data.table::fread(url, header = FALSE, sep = "\t"))
+    kopgsea <- data.frame(data.table::fread(path, header = FALSE, sep = "\t"))
     if (target=="pathway") {
 	    kopgsea <- kopgsea |> dplyr::filter(startsWith(V1, "path:ko"))	
     }
