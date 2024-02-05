@@ -23,9 +23,11 @@
 #' @param use_point use geom_point for plotting discrete metadata,
 #' instead of geom_star.
 #' @param deleteZeroDepth delete zero depth position
+#' @param treeFun tree inferring function in phangorn
 #' @importFrom ggtreeExtra geom_fruit
 #' @importFrom ggnewscale new_scale_fill
 #' @importFrom ggstar geom_star
+#' @import phangorn
 #' @importFrom scico scale_fill_scico_d scale_fill_scico scale_color_scico scale_color_scico_d
 #' 
 #' @export
@@ -33,47 +35,48 @@ inferAndPlotTree <- function(stana, species=NULL, cl=NULL,
 	dist_method="dist.ml", meta=NULL, layout="circular",
 	target="fasta", IDs=NULL, use_point=FALSE, branch_col="black",
 	tree_args=list(), branch.length="none", point_size=2,
-    deleteZeroDepth=TRUE) {
+    deleteZeroDepth=TRUE, treeFun="upgma") {
 	if (is.null(cl)) {cl <- stana@cl}
 	if (!is.null(meta)) {
 		meta <- checkMeta(stana, meta)
 	}
 	if (is.null(species)) {species <- names(stana@fastaList)}
-	if (!(target %in% c("fasta","snp","gene"))) {stop("Please specify appropriate target")}
+	if (!(target %in% c("fasta","snp","gene"))) {stop("Please specify appropriate target (snp, gene, fasta)")}
 	for (sp in species) {
-		## If tree slot is filled, use the existing tree.
-		if (is.null(stana@treeList[[sp]])) {
-			if (target=="fasta") {
-				tre <- stana@fastaList[[sp]]
-				
-				## Infer tree
-				tree_args[["x"]] <- tre
-				dm <- do.call(dist_method, tree_args)
-			} else if (target=="gene") {
-				mat <- stana@genes[[sp]]
-				if (!is.null(IDs)) {
-					mat <- mat[intersect(row.names(mat),IDs), ]
-				}
-				tree_args[["x"]] <- t(mat)
-				dm <- do.call(dist, tree_args)
-			} else {
-				mat <- stana@snps[[sp]]
-	            if (deleteZeroDepth) {
-	                mat <- mat[rowSums(mat==-1)==0, ]
-	                cat("Position number:", dim(mat)[1], "\n")      
-	            }
-				if (!is.null(IDs)) {
-					mat <- mat[intersect(row.names(mat),IDs), ]
-				}
-				tree_args[["x"]] <- t(mat)
-				dm <- do.call(dist, tree_args)			
+		if (target=="fasta") {
+			tre <- stana@fastaList[[sp]]
+			
+			## Infer tree
+			tree_args[["x"]] <- tre
+			dm <- do.call(dist_method, tree_args)
+		} else if (target=="gene") {
+			mat <- stana@genes[[sp]]
+			if (!is.null(IDs)) {
+				mat <- mat[intersect(row.names(mat),IDs), ]
 			}
-	        tre <- NJ(dm)
-
-			stana@treeList[[sp]] <- tre
+			tree_args[["x"]] <- t(mat)
+			dm <- do.call(dist, tree_args)
 		} else {
-			tre <- stana@treeList[[sp]]
+			mat <- stana@snps[[sp]]
+            if (deleteZeroDepth) {
+                mat <- mat[rowSums(mat==-1)==0, ]
+                cat("Position number:", dim(mat)[1], "\n")      
+            }
+			if (!is.null(IDs)) {
+				mat <- mat[intersect(row.names(mat),IDs), ]
+			}
+			tree_args[["x"]] <- t(mat)
+			dm <- do.call(dist, tree_args)			
 		}
+        ## Difficult to call do.call
+        if (treeFun=="upgma") {
+            tre <- upgma(dm)   
+        } else {
+            tre <- NJ(dm)
+        }
+        ## Negative edge length would be present in NJ
+        ## Reference: https://boopsboops.blogspot.com/2010/10/negative-branch-lengths-in-neighbour.html
+		stana@treeList[[sp]] <- tre
 		
 		## Plot tree		
 		if (!is.null(meta)) {

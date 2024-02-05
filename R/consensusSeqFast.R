@@ -110,7 +110,7 @@ consensusSeqMIDAS2 <- function(
         		return(NULL)
         	} else {
         		if (verbose) {
-	        		qqcat("  ... included, mean_coverage: @{info$mean_coverage}, fraction_covered: @{info$fraction_covered}\n")
+	        		qqcat("  @{x} ... included, mean_coverage: @{info$mean_coverage}, fraction_covered: @{info$fraction_covered}\n")
         		}
 	        	return(list(mean_depth=info$mean_coverage,
 	        		fract_cov=info$fraction_covered))
@@ -121,6 +121,9 @@ consensusSeqMIDAS2 <- function(
         SAMPLES <- SAMPLES[vapply(SAMPLES, function(x) !is.null(x), FUN.VALUE=TRUE)]
         qqcat("  Included samples: @{length(SAMPLES)}\n")
         
+        if (verbose) {
+            qqcat("Beginning site-wise filtering\n")
+        }
         site_filters <- lapply(names(SAMPLES), function(sample) {
         	freqs <- SPECIES[["freqs"]][sample][,1] |> as.numeric()
         	depths <- SPECIES[["depth"]][sample][,1] |> as.numeric()
@@ -134,7 +137,7 @@ consensusSeqMIDAS2 <- function(
         	setNames(c("freqs","depths","site_depth","depth_ratio","allele_support","flag"))
         })
         names(site_filters) <- names(SAMPLES)
-                
+
         sp_site_type <- SPECIES[["info"]]$site_type
         sp_locus_type <- SPECIES[["info"]]$locus_type
         sp_minor_allele <- SPECIES[["info"]]$minor_allele

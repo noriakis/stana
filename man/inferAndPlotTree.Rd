@@ -18,7 +18,8 @@ inferAndPlotTree(
   tree_args = list(),
   branch.length = "none",
   point_size = 2,
-  deleteZeroDepth = TRUE
+  deleteZeroDepth = TRUE,
+  treeFun = "upgma"
 )
 }
 \arguments{
@@ -51,6 +52,8 @@ instead of geom_star.}
 \item{point_size}{point size}
 
 \item{deleteZeroDepth}{delete zero depth position}
+
+\item{treeFun}{tree inferring function in phangorn}
 
 \item{model}{dist.ml model}
 }
