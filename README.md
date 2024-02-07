@@ -69,7 +69,7 @@ stana <- setMetadata(stana, metadata)
 ## Infer and plot tree based on metadata
 stana <- stana |>
   consensusSeq(argList=list(site_prev=0.95)) |>
-  plotTree(meta=c("treatment","marker"))
+  inferAndPlotTree(meta=c("treatment","marker"))
 #> Beginning calling for 100003
 #>   Site number: 5019
 #>   Profiled samples: 11
@@ -85,7 +85,7 @@ getTree(stana)[[1]]
 #>   ERR1711593, ERR1711594, ERR1711596, ERR1711598, ERR1711603, ERR1711605, ...
 #> 
 #> Unrooted; includes branch lengths.
-getSlot(stana, "treePlotList")[[1]]
+getTreePlot(stana)[[1]]
 ```
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="1800" style="display: block; margin: auto;" />

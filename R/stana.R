@@ -8,6 +8,7 @@
 #' @slot kos stores ko table
 #' @slot type type of pipeline, such as `MIDAS`
 #' @slot eggNOG list of path for eggNOG mapper v2 results for species
+#' @slot map slot storing the mapping data.frame for gene ID and orthology
 setClass("stana", slots=list(
                             type="character",
                             cl="list",
@@ -45,7 +46,8 @@ setClass("stana", slots=list(
                             colors="vector",
                             geneCluster="list",
                             paFilterUp="numeric",
-                            paFilterDown="numeric"))
+                            paFilterDown="numeric",
+                            map="list"))
 setMethod("show",
   signature(object="stana"),
   function(object) {
@@ -154,6 +156,23 @@ setAnnotation <- function(stana, annotList) {
 	stana@eggNOG <- annotList
 	return(stana)
 }
+
+
+#' setMap
+#' @param stana stana object
+#' @param candSp species ID
+#' @param map mapping data.frame, two column consisting of ID and value.
+#' The function internally changes the column name.
+#' ID is gene ID in `genes` slot, and value indicates orthology ID (like K00001)
+#' @export
+#' @return stana object
+setMap <- function(stana, candSp, map) {
+	if (dim(map)[2]!=2) {stop("Please provide two-column data.frame")}
+	colnames(map) <- c("ID", "value")
+	stana@map[[candSp]] <- map
+	return(stana)
+}
+
 
 #' getColors
 #' @import RColorBrewer

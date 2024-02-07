@@ -71,9 +71,12 @@ stana <- stana |>
   inferAndPlotTree(meta=c("treatment","marker"))
 getFasta(stana)[[1]]
 getTree(stana)[[1]]
-getSlot(stana, "treePlotList")[[1]]
+getTreePlot(stana)[[1]]
 ```
+
+If the gene copy number table is available like in `MIDAS` series and `inStrain`, one can compare the functional implications of these gene contents.
+
 
 ## Interactive inspection
 
-The users can inspect metagenotyping results interactively using Shiny based on the variables such as disease conditions (`exportInteractive()`).
+The users can inspect metagenotyping results interactively using Shiny based on the variables such as disease conditions (`exportInteractive()`). One can publish the results in the hosting services for sharing the research findings.
