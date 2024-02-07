@@ -35,4 +35,5 @@ output the results to specified directory
 \description{
 export the current stana object to interactive application 
 for the convenient analysis and visualization
+if `cl` and `meta` slot is filled, `meta` slot is exported.
 }

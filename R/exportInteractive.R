@@ -2,6 +2,7 @@
 #' 
 #' export the current stana object to interactive application 
 #' for the convenient analysis and visualization
+#' if `cl` and `meta` slot is filled, `meta` slot is exported.
 #' 
 #' @param stana stana object of type MIDAS2
 #' @param out output directory
@@ -47,23 +48,35 @@ exportInteractive <- function(stana, out=".", db="uhgg", calcko=TRUE,
 			qqcat("No tree for @{tre}\n")
 			if (calctree) {
 				qqcat("Calculating ... \n")
-				stana <- consensusSeqMIDAS2(stana, tre, tree=TRUE,
-					max_sites=50) # temp	
+				stana <- consensusSeqMIDAS2(stana, tre)
+                stana <- inferAndPlotTree(stana, tre)
 			}
 		}
 	}
 	treLen <- sum(sapply(stana@treeList, function(x) !is.null(x)))
 	koLen <- length(stana@kos)
+
+    all_samples_in_dataset <- unique(lapply(stana@treeList, function(x) {x$tip.label}) %>% unlist())
 	
 	## If no metadata is available in meta slot:
-	meta <- NULL
-	for (i in names(stana@cl)) {
-		meta <- rbind(meta,
-			cbind(stana@cl[[i]],
-				rep(i, length(stana@cl[[i]]))))
-	}
-	meta <- meta |> data.frame() |> `colnames<-`(c("label","group"))
-	row.names(meta) <- meta[["label"]]
+    if (dim(stana@meta)[1]==0) {
+        if (length(stana@cl)==0) {
+            meta <- data.frame(all_samples_in_dataset) %>% `colnames<-`(c("samples"))
+            meta[["label"]] <- meta[,1]
+            row.names(meta) <- meta[,1]
+        } else {
+            meta <- NULL
+            for (i in names(stana@cl)) {
+                meta <- rbind(meta,
+                    cbind(stana@cl[[i]],
+                        rep(i, length(stana@cl[[i]]))))
+            }
+            meta <- meta |> data.frame() |> `colnames<-`(c("label","group"))
+            row.names(meta) <- meta[["label"]]            
+        }
+    } else {
+        meta <- stana@meta
+    }
 	
 	qqcat("Tree number: @{treLen}, KO number: @{koLen}\n")
 	qqcat("Exporting ... \n")
@@ -84,10 +97,15 @@ exportInteractive <- function(stana, out=".", db="uhgg", calcko=TRUE,
 		if (i %in% species) {
 			ko <- stana@kos[[i]]
 			if (!is.null(ko)) {
-				write.table(ko, ppaste0(out,"/data/",dataset_name,"/KOs/", i, ".txt"), sep="\t", quote=FALSE)						
+				write.table(ko, paste0(out,"/data/",dataset_name,"/KOs/", i, ".txt"), sep="\t", quote=FALSE)						
 			}
 		}
 	}
+
 	write.table(meta, paste0(out,"/data/",dataset_name,"/metadata.tsv"), sep="\t", quote=FALSE)
+
+    ## Copy the main script and run the app
+    # file.copy(system.file("extdata", "app.R", package = "stana"), out)
+    # shiny::runApp(paste0(out,"/app.R"))
 	return(stana)
 }
