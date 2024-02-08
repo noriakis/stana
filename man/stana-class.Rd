@@ -21,5 +21,7 @@ Note that gene summary and depth is not loaded in MIDAS and MIDAS2.
 \item{\code{type}}{type of pipeline, such as `MIDAS`}
 
 \item{\code{eggNOG}}{list of path for eggNOG mapper v2 results for species}
+
+\item{\code{map}}{slot storing the mapping data.frame for gene ID and orthology}
 }}
 

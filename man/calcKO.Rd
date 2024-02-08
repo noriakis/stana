@@ -4,7 +4,7 @@
 \alias{calcKO}
 \title{calcKO}
 \usage{
-calcKO(stana, candSp = NULL, how = sum)
+calcKO(stana, candSp = NULL, how = sum, annot = "eggNOG")
 }
 \arguments{
 \item{stana}{stana object}
@@ -12,6 +12,8 @@ calcKO(stana, candSp = NULL, how = sum)
 \item{candSp}{candidate species ID}
 
 \item{how}{how to summarize multiple gene CN assigned to the same KO}
+
+\item{annot}{eggNOG or manual}
 }
 \description{
 calcKO

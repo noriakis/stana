@@ -8,5 +8,5 @@ Authors@R: person("Noriaki", "Sato", email = "nori@hgc.jp", role = c("cre", "aut
 Depends: ggplot2, ggstar, ggraph, igraph
 Imports: GetoptLong, BiocFileCache, RCurl, igraph, vegan, methods, data.table, phangorn, RColorBrewer, ggtree, circlize, ComplexHeatmap, ggkegg, ape, dplyr, exactRankTests, ggblend, ggh4x, scales, tidygraph, ggplotify, ggtreeExtra, ggnewscale, scico, MKmisc
 Suggests: simplifyEnrichment, stringr, tidyr, Boruta, knitr, ggrepel
-RoxygenNote: 7.3.0
+RoxygenNote: 7.3.1
 VignetteBuilder: knitr

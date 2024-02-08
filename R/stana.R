@@ -123,6 +123,45 @@ setGeneric("getCl",
 setMethod("getCl", "stana",
     function(x) attr(x, "cl"))
 
+#' @export
+setGeneric("getGeneID",
+    function(x, candSp) standardGeneric("getGeneID"))
+
+setMethod("getGeneID", "stana",
+    function(x, candSp) {
+        if (is.null(stana@genes[[candSp]])) {
+            stop("No gene table available")
+        } else {
+            return(row.names(stana@genes[[candSp]]))
+        }
+})
+
+#' @export
+setGeneric("getSNVID",
+    function(x, candSp) standardGeneric("getSNVID"))
+
+setMethod("getSNVID", "stana",
+    function(x, candSp) {
+        if (is.null(stana@snps[[candSp]])) {
+            stop("No SNV table available")
+        } else {
+            return(row.names(stana@snps[[candSp]]))
+        }
+})
+
+#' @export
+setGeneric("getKOID",
+    function(x, candSp) standardGeneric("getKOID"))
+
+setMethod("getKOID", "stana",
+    function(x, candSp) {
+        if (is.null(stana@kos[[candSp]])) {
+            stop("No KO table available")
+        } else {
+            return(row.names(stana@kos[[candSp]]))
+        }
+})
+
 #' initializeStana
 #' @noRd
 initializeStana <- function(stana,cl) {
