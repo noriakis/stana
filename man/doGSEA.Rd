@@ -12,12 +12,15 @@ doGSEA(
   how = mean,
   zeroPerc = 0,
   rankMethod = "modt",
-  target = "pathway"
+  target = "pathway",
+  bg_filter = TRUE
 )
 }
 \arguments{
 \item{zeroPerc}{genes >= the percentage of count zero sample will be excluded.
 Default to zero, not recommended in GSEA}
+
+\item{bg_filter}{filter the background for those in table}
 }
 \value{
 GSEA results from clusterProfiler

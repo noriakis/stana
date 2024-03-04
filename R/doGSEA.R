@@ -6,11 +6,12 @@
 #' 
 #' @param zeroPerc genes >= the percentage of count zero sample will be excluded.
 #' Default to zero, not recommended in GSEA
+#' @param bg_filter filter the background for those in table
 #' @importFrom MKmisc mod.t.test
 #' @return GSEA results from clusterProfiler
 #' @export
 doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean,
-    zeroPerc=0, rankMethod="modt", target="pathway") {
+    zeroPerc=0, rankMethod="modt", target="pathway", bg_filter=TRUE) {
     if (is.null(candSp)) {candSp <- stana@ids[1]}
     if (is.null(cl)) {cl <- stana@cl}
     if (length(cl)!=2) {stop("Only the two group is supported")}
@@ -33,6 +34,7 @@ doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean,
     }
 
     ## If filter based on number of zero per KOs
+    sub <- unique(row.names(ko_df_filt))
     ko_df_filt <- data.frame(ko_df_filt[ rowSums(ko_df_filt!=0) >= (dim(ko_df_filt)[2] * zeroPerc), ]) |>
         `colnames<-`(colnames(ko_df_filt))
 
@@ -58,6 +60,11 @@ doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean,
     }
     kopgsea$V1 <- kopgsea$V1 |> strsplit(":") |>
       vapply("[",2,FUN.VALUE="a")
+
+    if (bg_filter) {
+        kopgsea <- kopgsea[kopgsea$V2 %in% sub, ]
+    }
+    print(dim(kopgsea))
     ## Return all the value regardless of P
     enr <- clusterProfiler::GSEA(ko_sum,
         TERM2GENE = kopgsea, pvalueCutoff=1)
