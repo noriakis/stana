@@ -35,5 +35,12 @@ alphaDiversityWithinSpecies <- function(stana, species) {
     res <- stana@NMF[[species]]
     W <- coef(res)
     div <- vegan::diversity(t(W))
+    
+    if (!is.null(stana@cl)) {
+        nm <- listToNV(cl)
+        div <- data.frame(div)
+        colnames(div) <- "alpha_diversity"
+        div[["group"]] <- nm[row.names(div)]
+    }
     return(div)
 }
