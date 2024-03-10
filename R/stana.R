@@ -21,6 +21,7 @@ setClass("stana", slots=list(
                             strainClusters="data.table",
                             snps="list",
                             eggNOG="list",
+                            NMF = "list",
                             kos="list",
                             snpsInfo="list",
                             snpsDepth="list",
@@ -236,6 +237,39 @@ getColors <- function(cl){
 changeColors <- function(stana, colors) {
 	stana@colors <- colors
 	return(stana)
+}
+
+#' snv
+#' @param dfs named list of dfs
+#' @export
+snv <- function(dfs) {
+    stana <- new("stana")
+    stana@type <- "manual"
+
+    if (is.null(names(dfs))) {
+        ids <- paste0("species", seq_len(length(dfs)))
+    } else {
+        ids <- names(dfs)
+    }
+    stana@snps <- dfs
+    stana@ids <- ids
+    return(stana)
+}
+
+#' gene
+#' @param dfs named list of dfs
+#' @export
+gene <- function(dfs) {
+    stana <- new("stana")
+    stana@type <- "manual"
+    if (is.null(names(dfs))) {
+        ids <- paste0("species", seq_len(length(dfs)))
+    } else {
+        ids <- names(dfs)
+    }
+    stana@genes <- dfs
+    stana@ids <- ids
+    return(stana)
 }
 
 #' getGenes (concatenated to checkProfile)
