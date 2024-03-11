@@ -7,12 +7,13 @@
 NMF(
   stana,
   species,
-  rank = 10,
+  rank = 5,
   target = "KO",
   seed = 53,
   method = "snmf/r",
   deleteZeroDepth = TRUE,
-  beta = 0.01
+  beta = 0.01,
+  plotHeatmap = TRUE
 )
 }
 \arguments{
@@ -27,7 +28,10 @@ NMF(
 \item{seed}{random seed}
 
 \item{method}{NMF method, default to snmf/r}
+
+\item{plotHeatmap}{plot the heatmap of presence of strain across sample}
 }
 \description{
-NMF
+decompose SNV, gene content, or gene family abundance to
+strain x sample and strain x feature matrix.
 }
