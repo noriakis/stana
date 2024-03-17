@@ -4,7 +4,7 @@
 \alias{alphaDiversityWithinSpecies}
 \title{alphaDiversityWithinSpecies}
 \usage{
-alphaDiversityWithinSpecies(stana, species)
+alphaDiversityWithinSpecies(stana, species, method = "shannon", rank = 5)
 }
 \description{
 alphaDiversityWithinSpecies

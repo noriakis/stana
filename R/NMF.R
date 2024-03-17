@@ -55,9 +55,9 @@ NMF <- function(stana, species, rank=5, target="KO", seed=53, method="snmf/r",
 
 #' alphaDiversityWithinSpecies
 #' @export
-alphaDiversityWithinSpecies <- function(stana, species, method="shannon") {
+alphaDiversityWithinSpecies <- function(stana, species, method="shannon", rank=5) {
     if (is.null(stana@NMF[[species]])) {
-        stana <- NMF(stana, species)
+        stana <- NMF(stana, species, rank=rank)
     }
     res <- stana@NMF[[species]]
     W <- coef(res)
@@ -68,10 +68,36 @@ alphaDiversityWithinSpecies <- function(stana, species, method="shannon") {
     }
     
     if (!is.null(stana@cl)) {
-        nm <- listToNV(cl)
+        nm <- listToNV(stana@cl)
         div <- data.frame(div)
         colnames(div) <- "alpha_diversity"
         div[["group"]] <- nm[row.names(div)]
     }
     return(div)
+}
+
+#' plotAbundanceWithinSpecies
+plotAbundanceWithinSpecies <- function(stana, species, tss=TRUE, return_data=FALSE) {
+    if (is.null(stana@NMF[[species]])) {
+        stana <- NMF(stana, species)
+    }
+    res <- stana@NMF[[species]]
+    W <- coef(res)
+    if (tss) {
+        W <- apply(W, 2, function(x) x / sum(x))
+    }
+    W <- data.frame(t(W))
+    if (!is.null(stana@cl)) {
+        nm <- listToNV(stana@cl)
+        W[["group"]] <- nm[row.names(W)]
+    }
+    colnames(W) <- c(as.character(seq_len(ncol(W)-1)),"group")
+
+    if (return_data) {
+        return(W)
+    }
+    W %>% tidyr::pivot_longer(1:(ncol(W)-1)) %>%
+        ggplot(aes(x=group, y=value))+
+        geom_boxplot()+
+        facet_wrap(.~name)
 }
