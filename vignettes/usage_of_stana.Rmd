@@ -47,8 +47,8 @@ stana
 The species that satisfies the filtering criteria specified can be accessed by the slot `clearSnps` storing species ID. If `taxtbl` was provided on `load*` functions, `clearSnpsSpecies` has species name.
 
 ```{r filt}
-stana@clearSnps
-stana@clearSnpsSpecies
+getSlot(stana, "clearSnps")
+getSlot(stana, "clearSnpsSpecies")
 ```
 
 ## Calling consensus sequence
@@ -58,24 +58,19 @@ You can call the consensus sequence based on SNV frequency table. The implementa
 ```{r cons, eval=TRUE, fig.width=5, fig.height=5}
 library(phangorn)
 library(ggtree)
-stana <- consensusSeqMIDAS2(stana, species="100003", verbose=FALSE)
+stana <- consensusSeq(stana, species="100003")
 
 ## Tree estimation and visualization by `phangorn` and `ggtree`
-dm <- dist.ml(stana@fastaList$`100003`)
-tre <- NJ(dm)
-stana@treeList[["100003"]] <- tre
-tre <- groupOTU(tre, stana@cl)
-tp <- ggtree(tre, aes(color=.data$group),
-             layout='circular') +
-        geom_tippoint(size=3)
-tp
+getFasta(stana)
+stana <- inferAndPlotTree(stana)
+getTree(stana)
 ```
 
 ## Perform PERMANOVA based on the groups
 
 ```{r permanova, eval=TRUE}
 stana <- doAdonis(stana, specs = "100003",target="tree")
-stana@adonisList[["100003"]]
+getSlot(stana, "adonisList")
 ```
 
 ## Compare gene abundances
@@ -128,20 +123,11 @@ plotCoverage(stana, "100003")+ ## grouping is already set
 
 ### Plotting gene abundances
 ```{r genes, fig.width=8}
-plotGenes(stana, "100003", geneID=stana@genes[[1]] |> row.names() |> head(3))
+plotGenes(stana, "100003",
+    geneID=getSlot(stana, "genes")[[1]] |> row.names() |> head(3))
 ```
 
-### Plotting `circlize` plot
 
-In this example, mean minor allele frequency of SNV on genes in the genome `UHGG000008` per group is plotted per track.
-
-```{r circ, warning=FALSE, message=FALSE}
-library(circlize)
-plotCirclize(stana, "100003",
-            genomeId="UHGG000008",
-            thresh_snp_gene = 20,
-            MAF=TRUE)
-```
 
 ```{r sess}
 sessionInfo()

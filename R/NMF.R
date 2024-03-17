@@ -77,6 +77,8 @@ alphaDiversityWithinSpecies <- function(stana, species, method="shannon", rank=5
 }
 
 #' plotAbundanceWithinSpecies
+#' @param stana stana object
+#' @export
 plotAbundanceWithinSpecies <- function(stana, species, tss=TRUE, return_data=FALSE) {
     if (is.null(stana@NMF[[species]])) {
         stana <- NMF(stana, species)

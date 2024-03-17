@@ -66,7 +66,7 @@ doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean,
     }
     print(dim(kopgsea))
     ## Return all the value regardless of P
-    enr <- clusterProfiler::GSEA(ko_sum,
+    enr <- GSEA(ko_sum,
         TERM2GENE = kopgsea, pvalueCutoff=1)
     return(enr)
 }
