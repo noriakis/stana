@@ -11,6 +11,9 @@
 #' @param seed random seed
 #' @param method NMF method, default to snmf/r
 #' @param plotHeatmap plot the heatmap of presence of strain across sample
+#' @param beta argument to be passed to NMF function
+#' @param deleteZeroDepth when snv matrix is used, this option filters the
+#' positions with zero-depth (indicated by -1)
 #' @import NMF
 #' @export
 NMF <- function(stana, species, rank=5, target="KO", seed=53, method="snmf/r",
@@ -117,18 +120,16 @@ plotAbundanceWithinSpecies <- function(stana, species, tss=TRUE, return_data=FAL
 #' @param stana stana boject
 #' @param species species ID
 #' @param tss perform total sum scaling to the resulting matrix
+#' @param change_name change pathway names to description
 #' @export
-pathwayWithFactor <- function(stana, species, tss=FALSE) {
+pathwayWithFactor <- function(stana, species, tss=FALSE, change_name=FALSE) {
   dat <- stana@NMF[[species]]
   dat <- basis(dat)
 
   bfc <- BiocFileCache()
   url <- bfcrpath(bfc,"https://rest.kegg.jp/link/ko/pathway")
-  url2 <- bfcrpath(bfc,"https://rest.kegg.jp/list/pathway")
 
   summed <- data.frame(data.table::fread(url, header=FALSE))
-  namec <- data.frame(data.table::fread(url2, header=FALSE))
-  namec <- namec$V2 %>% setNames(namec$V1)
   summed <- summed[grepl("ko", summed$V1),]
   ## No global map
   summed <- summed[!grepl("ko011", summed$V1),]
@@ -154,6 +155,11 @@ pathwayWithFactor <- function(stana, species, tss=FALSE) {
   if (tss) {
     pathdf <- apply(pathdf, 2, function(x) x / sum(x))
   }
-  row.names(pathdf) <- namec[gsub("path:ko","map",row.names(pathdf))]
+  if (change_name) {
+  	  url2 <- bfcrpath(bfc,"https://rest.kegg.jp/list/pathway")
+      namec <- data.frame(data.table::fread(url2, header=FALSE))
+      namec <- namec$V2 %>% setNames(namec$V1)
+      row.names(pathdf) <- namec[gsub("path:ko","map",row.names(pathdf))]
+  }
   return(pathdf)
 }

@@ -6,7 +6,7 @@
 convert KO matrix per factor obtained by NMF function
 to pathway to factor matrix by summing the KOs in the pathway.}
 \usage{
-pathwayWithFactor(stana, species, tss = FALSE)
+pathwayWithFactor(stana, species, tss = FALSE, change_name = FALSE)
 }
 \arguments{
 \item{stana}{stana boject}
@@ -14,6 +14,8 @@ pathwayWithFactor(stana, species, tss = FALSE)
 \item{species}{species ID}
 
 \item{tss}{perform total sum scaling to the resulting matrix}
+
+\item{change_name}{change pathway names to description}
 }
 \description{
 pathwayWithFactor

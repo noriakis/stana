@@ -29,6 +29,11 @@ NMF(
 
 \item{method}{NMF method, default to snmf/r}
 
+\item{deleteZeroDepth}{when snv matrix is used, this option filters the
+positions with zero-depth (indicated by -1)}
+
+\item{beta}{argument to be passed to NMF function}
+
 \item{plotHeatmap}{plot the heatmap of presence of strain across sample}
 }
 \description{
