@@ -163,6 +163,20 @@ setMethod("getKOID", "stana",
         }
 })
 
+
+
+#' @export
+setGeneric("setSlot",
+    function(x, y, z) standardGeneric("setSlot"))
+
+setMethod("setSlot", "stana",
+    function(x, y, z) {
+        attr(x, y) <- z
+        x
+})
+
+
+
 #' initializeStana
 #' @noRd
 initializeStana <- function(stana,cl) {
@@ -271,6 +285,9 @@ gene <- function(dfs) {
     stana@ids <- ids
     return(stana)
 }
+
+
+
 
 #' getGenes (concatenated to checkProfile)
 #' 

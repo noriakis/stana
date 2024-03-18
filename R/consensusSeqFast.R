@@ -1,4 +1,115 @@
 
+#' consensusSeqGeneral
+#' @param stana stana obj
+#' @param species candidate species vector
+#' @param mean_depth parameter for filtering
+#' @param fract_cov parameter for filtering
+#' @param site_depth parameter for filtering
+#' @param site_ratio parameter for filtering
+#' @param site_maf parameter for filtering
+#' @param allele_support parameter for filtering
+#' @param site_prev parameter for filtering
+#' @param cl cluster, if plot cladogram
+#' @param max_sites default to Inf
+#' @param keep_samples currently not implemented
+#' @param exclude_samples currently not implemented
+#' @param rand_samples currently not implemented
+#' @param tree if perform tree inference
+#' @param max_samples currently not implemented
+#' @param verbose output current status
+#' @param output_seq whether to output actual FASTA file
+#' @param locus_type locus type to be included, default to CDS
+#' @param site_list site list to be included
+#' @param return_mat return matrix of characters
+#' @export
+consensusSeqGeneral <- function(
+	stana,
+	species=NULL,
+	output_seq=FALSE,
+	tree=FALSE,
+    return_mat=FALSE,
+    verbose=FALSE) {
+    
+    if (is.null(species)) {species <- stana@clearSnps}
+    if (length(species)==0) {stop("No species available")}
+	retList <- list()
+	for (sp in species) {
+		qqcat("Beginning calling for @{sp}\n")
+		SPECIES <- list()
+		SPECIES[["freqs"]] <- stana@snps[[sp]]
+		siteNum <- dim(SPECIES[["freqs"]])[1]
+		qqcat("  Site number: @{siteNum}\n")
+		
+		
+		if (is.null(stana@snpsInfo[[sp]])) {
+			stop("Please provide data frame for snpsInfo slot")
+		} else {
+			if (length(intersect(c("major_allele", "minor_allele"), colnames(stana@snpsInfo[[sp]])))<2) {
+				stop("Snps info data frame has to have major_allele and minor_allele column")
+			}
+    		SPECIES[["info"]] <- stana@snpsInfo[[sp]]
+		}
+
+        sp_minor_allele <- SPECIES[["info"]]$minor_allele
+        sp_major_allele <- SPECIES[["info"]]$major_allele
+        
+
+        allele_list <- lapply(seq_len(nrow(SPECIES[["freqs"]])), function(i) {
+		    	per_sample_allele <- lapply(colnames(SPECIES[["freqs"]]), function(sample) { ## BOTTLENECK [3]
+
+		    		if (SPECIES[["freqs"]][[sample]][i] == -1) {
+		    		    return("-")
+		    		}
+                    if (SPECIES[["freqs"]][[sample]][i] >= 0.5) {
+		    			return(sp_minor_allele[i])
+		    		} else {
+		    			return(sp_major_allele[i])
+		    		}
+		    	})
+	    	unlist(per_sample_allele)        	
+            })
+        
+        if (return_mat) {
+        	mat <- do.call(cbind, allele_list)
+        	row.names(mat) <- names(site_filters)
+	        return(mat) 
+        }
+        
+        allele_list <- apply(do.call(cbind, allele_list), 1, function(x) paste0(x, collapse="")) |>
+        setNames(colnames(SPECIES[["freqs"]]))
+        faName <- paste0(sp,"_consensus.fasta")
+        if (output_seq) {
+            qqcat("  Outputting consensus sequence to @{faName}\n")    	
+        }
+        
+        fileConn<-file(faName, open="w")
+        for (sample in colnames(SPECIES[["freqs"]])) {
+			cat(paste0(">",sample), file=fileConn, append=TRUE, sep="\n")
+			cat(allele_list[sample], file=fileConn, append=TRUE, sep="\n")
+		}
+		close(fileConn)
+		tre <- read.phyDat(faName, format = "fasta")
+		stana@fastaList[[sp]] <- tre
+		if (!output_seq) {
+			unlink(faName)
+		}
+		if (tree) {
+			dm <- dist.ml(tre, "F81")
+			tre <- NJ(dm)
+			stana@treeList[[sp]] <- tre
+			if (!is.null(cl)) {
+			    tre <- groupOTU(tre, cl)
+			    tp <- ggtree(tre, aes(color=.data$group),
+		               layout='circular',branch.length = "none") + # Return cladogram by default
+			           geom_tippoint(size=3) + ggtitle(sp)+scale_color_manual(values=stana@colors)
+			    stana@treePlotList[[sp]] <- tp
+			}
+		}
+	}
+	stana
+}
+
+
 #' consensusSeqMIDAS2Fast
 #' @param stana stana obj
 #' @param species candidate species vector
