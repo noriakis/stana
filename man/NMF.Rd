@@ -7,13 +7,15 @@
 NMF(
   stana,
   species,
-  rank = 5,
+  rank = 3,
   target = "KO",
   seed = 53,
   method = "snmf/r",
   deleteZeroDepth = TRUE,
   beta = 0.01,
-  plotHeatmap = TRUE
+  plotHeatmap = TRUE,
+  estimate = FALSE,
+  estimate_range = 2:6
 )
 }
 \arguments{
@@ -35,8 +37,12 @@ positions with zero-depth (indicated by -1)}
 \item{beta}{argument to be passed to NMF function}
 
 \item{plotHeatmap}{plot the heatmap of presence of strain across sample}
+
+\item{estimate}{estimate rank}
+
+\item{estimate_range}{range of ranks for the estimation}
 }
 \description{
 decompose SNV, gene content, or gene family abundance to
-strain x sample and strain x feature matrix.
+factor x sample and factor x feature matrix.
 }

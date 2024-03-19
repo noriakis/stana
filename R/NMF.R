@@ -2,7 +2,7 @@
 #' NMF
 #'
 #' decompose SNV, gene content, or gene family abundance to
-#' strain x sample and strain x feature matrix.
+#' factor x sample and factor x feature matrix.
 #'
 #' @param stana stana object
 #' @param species candidate species ID
@@ -14,10 +14,12 @@
 #' @param beta argument to be passed to NMF function
 #' @param deleteZeroDepth when snv matrix is used, this option filters the
 #' positions with zero-depth (indicated by -1)
+#' @param estimate estimate rank
+#' @param estimate_range range of ranks for the estimation
 #' @import NMF
 #' @export
-NMF <- function(stana, species, rank=5, target="KO", seed=53, method="snmf/r",
-    deleteZeroDepth=TRUE, beta=0.01, plotHeatmap=TRUE) {
+NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
+    deleteZeroDepth=TRUE, beta=0.01, plotHeatmap=TRUE, estimate=FALSE, estimate_range=2:6) {
     if (length(species)>1) {stop("NMF accepts only one species per run")}
     if (target=="KO") {
         mat <- stana@kos[[species]]
@@ -39,6 +41,25 @@ NMF <- function(stana, species, rank=5, target="KO", seed=53, method="snmf/r",
     cat("Filtered samples:", dim(mat)[2], "\n")
 
     ## Test multiple ranks
+    if (estimate_rank) {
+    	test <- nmfEstimateRank(mat, range=estimate_range, method=method)
+    	val <- test$measures[, "cophenetic"]
+        b <- -1
+		for (i in seq_along(val)) {
+		  if (is.na(val[i])) {
+		    next
+		  } else {
+		    if (val[i] > b) {
+		      b <- val[i]
+		    } else {
+		      break
+		    }
+		  }
+		}
+	    rank <- estimate_range[i]
+		cat("Chosen rank:", rank, "\n")
+    }
+    
     cat("Rank", rank, "\n")
     if (method %in% c("snmf/l", "snmf/r")) {
         res <- NMF::nmf(mat, rank = rank, seed = seed, method=method, beta=beta)

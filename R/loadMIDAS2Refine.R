@@ -20,6 +20,7 @@
 #' @param loadInfo default to FALSE, load info information.
 #' @param loadDepth default to FALSE, load depth information.
 #' @param only_stat only samples per species is returned (snpStat and geneStat)
+#' @importFrom dplyr mutate
 #' @export
 #' 
 loadMIDAS2 <- function(midas_merge_dir,
@@ -87,9 +88,10 @@ loadMIDAS2 <- function(midas_merge_dir,
     geneRet$species_id <- as.character(geneRet$species_id)
 
     if (only_stat) {
+    	dics <- loadDic()
         return(
-            list("snps"=snpRet,
-                "genes"=geneRet)
+            list("snps"=snpRet %>% mutate(species_description=dics[[db]][species_id]),
+                "genes"=geneRet %>% mutate(species_description=dics[[db]][species_id]))
         )        
     }
 

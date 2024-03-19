@@ -49,36 +49,148 @@ setClass("stana", slots=list(
                             paFilterUp="numeric",
                             paFilterDown="numeric",
                             map="list"))
+
+#' cat_subtle
+#' @noRd
+cat_subtle <- function(...) cat(pillar::style_subtle(paste0(...)))
+#' show
+#' print the description of stana
+#' @importFrom dplyr group_by mutate summarise
+#' @noRd
 setMethod("show",
   signature(object="stana"),
   function(object) {
-    qqcat("Type: @{object@type}\n")
-    qqcat("Directory: @{object@mergeDir}\n")
-    qqcat("Species number: @{length(object@ids)}\n")
-    if (object@type %in% c("MIDAS","MIDAS2")) {
-      qqcat("Filter type: @{object@sampleFilter}, number: @{object@sampleFilterVal}, proportion: @{object@sampleFilterPer}\n")
+  	cat_subtle("# A stana: ", object@type, "\n", sep="")
+  	if (!identical(object@db, character(0))) {
+  		cat_subtle("# Database: ", object@db, "\n", sep="")
+  	}
+    cat_subtle("# Loaded directory: ", object@mergeDir, "\n", sep="")
+    cat_subtle("# Species number: ", length(object@ids), "\n", sep="")
+    if (length(object@cl)!=0) {
+        cat_subtle("# Group info (list): ", paste0(names(cl), collapse="/"), "\n", sep="")	
     }
+    if (dim(object@meta)[1]!=0) {
+        cat_subtle("# Group column (DF): ", paste0(colnames(object@meta), collapse="/"), "\n", sep="")	
+    }
+    # if (object@type %in% c("MIDAS","MIDAS2")) {
+    #   qqcat("Filter type: @{object@sampleFilter}, number: @{object@sampleFilterVal}, proportion: @{object@sampleFilterPer}\n")
+    # }
     if (length(object@snps)!=0) {
-      qqcat("Loaded SNV table: @{length(object@snps)}\n")      
+      cat_subtle("# Loaded SNV table: ", length(object@snps), " ID: ", paste0(names(object@snps)[1], collapse="/"), "\n", sep="")
     }
-    if (object@type %in% c("MIDAS","MIDAS2")) {
-      qqcat("  Species cleared SNV filter: @{length(object@clearSnps)}\n")
-    }
+    # if (object@type %in% c("MIDAS","MIDAS2")) {
+    #   qqcat("  Species cleared SNV filter: @{length(object@clearSnps)}\n")
+    # }
     if (length(object@genes)!=0) {
-      qqcat("Loaded gene table (@{object@geneType}): @{length(object@genes)}\n")
+      cat_subtle("# Loaded gene table: ", length(object@genes), " ID: ", paste0(names(object@genes)[1], collapse="/"), "\n", sep="")
     }
-    if (object@type %in% c("MIDAS","MIDAS2")) {
-      qqcat("  Species cleared gene filter: @{length(object@clearGenes)}\n")
+    # if (object@type %in% c("MIDAS","MIDAS2")) {
+    #   qqcat("  Species cleared gene filter: @{length(object@clearGenes)}\n")
+    # }
+    if (length(object@kos)!=0) {
+      cat_subtle("# Loaded KO table: ", length(object@kos), " ID: ", paste0(names(object@kos)[1], collapse="/"), "\n", sep="")
     }
-    print(object.size(object), units="auto")
+    if (length(object@fastaList)!=0) {
+      cat_subtle("# Inferred fasta: ", length(object@kos), " ID: ", paste0(names(object@kos)[1], collapse="/"), "\n", sep="")
+    }
+    cat_subtle("# Size:", object.size(object), " B\n", sep="")
+    cat_subtle("# \n")
+    cat_subtle("# SNV description\n")
+    if (object@type %in% c("MIDAS", "MIDAS2")) {
+    	df <- stana@snpsSummary %>%
+    	    dplyr::filter(species_id %in% names(object@snps))
+    	if (object@type=="MIDAS2") {
+    		df$species_id <- loadDic()[[object@db]][as.character(df$species_id)]
+    	}
+    	if (length(stana@cl)!=0) {
+    		print(df %>% mutate(group=listToNV(object@cl)[sample_name]) %>%
+    		group_by(group, species_id) %>%
+    		summarise(n=n()))
+    	} else {
+    		print(df %>%
+    		group_by(species_id) %>%
+    		summarise(n=n()))
+    	}
+    }
   })
 
+#' loadDic
+#' @noRd
+loadDic <- function() {
+    uhgg <- readRDS(system.file("extdata", "uhggdic.rds", package = "stana"))
+    gtdb <- readRDS(system.file("extdata", "gtdbdic.rds", package = "stana"))
+    list("uhgg"=uhgg, "gtdb"=gtdb)
+}
 
 
+#' check
+#' check and output statistics based on conditional formulas
+#' @export
+setGeneric("check", function(x, exp, target="snps") standardGeneric("check"))
+setMethod("check", "stana",
+    function(x, exp, target) {
+    	if (target=="snps") {
+        	if (dim(x@snpsSummary)[1]==0) {
+        		stop("Please provide SNPs summary for filtering")
+        	}
+        	ret <- x@snpsSummary %>% 
+        	    dplyr::filter(!!enquo(exp)) %>% dplyr::group_by(species_id) %>%
+        	    dplyr::summarize(n=dplyr::n())
+    	}
+    	if (target=="genes") {
+        	if (dim(x@genesSummary)[1]==0) {
+        		stop("Please provide genes summary for filtering")
+        	}
+        	ret <- x@genesSummary %>% 
+        	    dplyr::filter(!!enquo(exp)) %>% dplyr::group_by(species_id) %>%
+        	    dplyr::summarize(n=dplyr::n())
+    	}
+    	if (x@type=="MIDAS2") {
+    		ret <- ret %>% dplyr::mutate(species_description=loadDic()[[x@db]][as.character(species_id)])    		
+    	}
+    	return(ret)
+    })
+
+
+#' filter
+#' filter the stana object based on species ID
+#' @param x stana object
+#' @param ids species ID
+#' @param target snps or genes
+#' @export
+setGeneric("filter", function(x, ids, target="snps") standardGeneric("filter"))
+
+#' filter
+#' filter the stana object based on species ID
+#' @param x stana object
+#' @param ids species ID
+#' @param target snps or genes
+#' @export
+setMethod("filter", "stana",
+    function(x, ids, target) {
+    	if (target=="snps") {
+    		stana@snps <- stana@snps[ids]
+    	}
+    	if (target=="genes") {
+    		stana@genes <- stana@genes[ids]    		
+    	}
+    	return(stana)
+    })
+
+
+#' getSlot 
+#' get the slot values
+#' @param x stana object
+#' @param slot slot name
 #' @export
 setGeneric("getSlot",
-    function(x, ...) standardGeneric("getSlot"))
+    function(x, slot) standardGeneric("getSlot"))
 
+#' getSlot 
+#' get the slot values
+#' @param x stana object
+#' @param slot slot name
+#' @export
 setMethod("getSlot", "stana",
     function(x, slot) attr(x, slot))
 
