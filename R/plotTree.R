@@ -10,7 +10,7 @@
 #' If NULL, first species in fasta list is assigned
 #' @param cl optional, cluster to plot
 #' @param model dist.ml model
-#' @param tree_args passed to dist function in phangorn
+#' @param tree_args passed to dist function
 #' @param dist_method dist method in phangorn, default to dist.ml
 #' if target is not fasta, ordinally `dist` method wil be used.
 #' @param branch.length branch length, default to "none", cladogram
@@ -24,6 +24,8 @@
 #' instead of geom_star.
 #' @param deleteZeroDepth delete zero depth position
 #' @param treeFun tree inferring function in phangorn
+#' @param tree_only return tree only instead of stana object
+#' @param subset_samples subset samples (for matrix only)
 #' @importFrom ggtreeExtra geom_fruit
 #' @importFrom ggnewscale new_scale_fill
 #' @importFrom ggstar geom_star
@@ -35,13 +37,14 @@ inferAndPlotTree <- function(stana, species=NULL, cl=NULL,
 	dist_method="dist.ml", meta=NULL, layout="circular",
 	target="fasta", IDs=NULL, use_point=FALSE, branch_col="black",
 	tree_args=list(), branch.length="none", point_size=2,
-    deleteZeroDepth=TRUE, treeFun="upgma") {
+    subset_samples=NULL,
+    deleteZeroDepth=TRUE, treeFun="upgma", tree_only=FALSE) {
 	if (is.null(cl)) {cl <- stana@cl}
 	if (!is.null(meta)) {
 		meta <- checkMeta(stana, meta)
 	}
 	if (is.null(species)) {species <- names(stana@fastaList)}
-	if (!(target %in% c("fasta","snp","gene"))) {stop("Please specify appropriate target (snp, gene, fasta)")}
+	if (!(target %in% c("fasta","snp","gene","KO"))) {stop("Please specify appropriate target (snp, gene, fasta)")}
 	for (sp in species) {
 		if (target=="fasta") {
 			tre <- stana@fastaList[[sp]]
@@ -54,9 +57,22 @@ inferAndPlotTree <- function(stana, species=NULL, cl=NULL,
 			if (!is.null(IDs)) {
 				mat <- mat[intersect(row.names(mat),IDs), ]
 			}
+            if (!is.null(subset_samples)) {
+                mat <- mat[, intersect(colnames(mat),subset_samples)]
+            }
 			tree_args[["x"]] <- t(mat)
 			dm <- do.call(dist, tree_args)
-		} else {
+		} else if (target=="KO") {
+            mat <- stana@kos[[sp]]
+            if (!is.null(IDs)) {
+                mat <- mat[intersect(row.names(mat),IDs), ]
+            }
+            if (!is.null(subset_samples)) {
+                mat <- mat[, intersect(colnames(mat),subset_samples)]
+            }
+            tree_args[["x"]] <- t(mat)
+            dm <- do.call(dist, tree_args)      
+        } else {
 			mat <- stana@snps[[sp]]
             if (deleteZeroDepth) {
                 mat <- mat[rowSums(mat==-1)==0, ]
@@ -65,6 +81,9 @@ inferAndPlotTree <- function(stana, species=NULL, cl=NULL,
 			if (!is.null(IDs)) {
 				mat <- mat[intersect(row.names(mat),IDs), ]
 			}
+            if (!is.null(subset_samples)) {
+                mat <- mat[, intersect(colnames(mat),subset_samples)]
+            }
 			tree_args[["x"]] <- t(mat)
 			dm <- do.call(dist, tree_args)			
 		}
@@ -73,6 +92,9 @@ inferAndPlotTree <- function(stana, species=NULL, cl=NULL,
             tre <- upgma(dm)   
         } else {
             tre <- NJ(dm)
+        }
+        if (tree_only) {
+            return(tre)
         }
         ## Negative edge length would be present in NJ
         ## Reference: https://boopsboops.blogspot.com/2010/10/negative-branch-lengths-in-neighbour.html

@@ -21,7 +21,8 @@ consensusSeq <- function(stana,
 	} else if (stana@type=="MIDAS1"){
 		do.call("consensusSeqMIDAS1", argList)
 	} else {
-		stop("currently not supported for this type")
+        cat("Calling general function\n")
+		do.call("consensusSeqGeneral", argList)
 	}
 }
 

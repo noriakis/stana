@@ -55,7 +55,7 @@ setClass("stana", slots=list(
 cat_subtle <- function(...) cat(pillar::style_subtle(paste0(...)))
 #' show
 #' print the description of stana
-#' @importFrom dplyr group_by mutate summarise
+#' @importFrom dplyr group_by mutate summarise n
 #' @noRd
 setMethod("show",
   signature(object="stana"),
@@ -67,7 +67,7 @@ setMethod("show",
     cat_subtle("# Loaded directory: ", object@mergeDir, "\n", sep="")
     cat_subtle("# Species number: ", length(object@ids), "\n", sep="")
     if (length(object@cl)!=0) {
-        cat_subtle("# Group info (list): ", paste0(names(cl), collapse="/"), "\n", sep="")	
+        cat_subtle("# Group info (list): ", paste0(names(object@cl), collapse="/"), "\n", sep="")	
     }
     if (dim(object@meta)[1]!=0) {
         cat_subtle("# Group column (DF): ", paste0(colnames(object@meta), collapse="/"), "\n", sep="")	

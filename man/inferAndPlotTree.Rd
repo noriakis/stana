@@ -18,8 +18,10 @@ inferAndPlotTree(
   tree_args = list(),
   branch.length = "none",
   point_size = 2,
+  subset_samples = NULL,
   deleteZeroDepth = TRUE,
-  treeFun = "upgma"
+  treeFun = "upgma",
+  tree_only = FALSE
 )
 }
 \arguments{
@@ -45,15 +47,19 @@ subset the matrix to this ID.}
 \item{use_point}{use geom_point for plotting discrete metadata,
 instead of geom_star.}
 
-\item{tree_args}{passed to dist function in phangorn}
+\item{tree_args}{passed to dist function}
 
 \item{branch.length}{branch length, default to "none", cladogram}
 
 \item{point_size}{point size}
 
+\item{subset_samples}{subset samples (for matrix only)}
+
 \item{deleteZeroDepth}{delete zero depth position}
 
 \item{treeFun}{tree inferring function in phangorn}
+
+\item{tree_only}{return tree only instead of stana object}
 
 \item{model}{dist.ml model}
 }
