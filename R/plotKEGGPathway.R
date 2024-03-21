@@ -32,7 +32,7 @@ plotKEGGPathway <- function(stana, species, pathway_id,
                             only_ko=FALSE, summarize=FALSE, nudge_y=0,
                             point_mode=FALSE, sp_colors=NULL,
                             point_size=1){
-    sum_flag <- FALSE
+    sum_flag <- FALSE	
     if (is.null(sp_colors)) {
     	## Assign random colors
     	sp_colors <- scales::brewer_pal(palette="RdBu")(length(species)) |>
@@ -91,7 +91,7 @@ plotKEGGPathway <- function(stana, species, pathway_id,
                 lfcs[[sp]] <- apply(ko_tbl, 1, sum)
             } else {
                 qqcat("@{sp}: @{names(cl)[1]} / @{names(cl)[2]}\n")
-                lfcs[[sp]] <- lL2FC(ko_tbl, cl[[1]], cl[[2]])
+                lfcs[[sp]] <- L2FC(ko_tbl, cl[[1]], cl[[2]], method="mod.t")
             }
         }        
     }

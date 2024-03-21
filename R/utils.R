@@ -82,3 +82,23 @@ plotSNVInfo <- function(stana, sp) {
         cowplot::theme_cowplot()+
         ggtitle(title)
 }
+
+#' plotSNVSummary
+#' @param stana stana object
+#' @param sp species_id
+#' @param param parameter to plot
+#' @export 
+#' @return ggplot object
+plotSNVSummary <- function(stana, sp, param="mean_coverage") {
+    df <- stana@snpsSummary
+    if (dim(df)[1]==0) {stop("SNV summary not available")}
+    df <- df %>% dplyr::filter(species_id == sp)
+    if (length(stana@cl)!=0) {
+        df[["group"]] <- listToNV(stana@cl)[df$sample_name]
+        ggplot(df, aes(x=group, y=.data[[param]])) +
+            geom_boxplot() + cowplot::theme_cowplot()
+    } else {
+        ggplot(df, aes(y=.data[[param]])) +
+            geom_boxplot() + cowplot::theme_cowplot()
+    }
+}
