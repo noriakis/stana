@@ -41,7 +41,7 @@ NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
     cat("Filtered samples:", dim(mat)[2], "\n")
 
     ## Test multiple ranks
-    if (estimate_rank) {
+    if (estimate) {
     	test <- nmfEstimateRank(mat, range=estimate_range, method=method)
     	val <- test$measures[, "cophenetic"]
         b <- -1
@@ -142,8 +142,10 @@ plotAbundanceWithinSpecies <- function(stana, species, tss=TRUE, return_data=FAL
 #' @param species species ID
 #' @param tss perform total sum scaling to the resulting matrix
 #' @param change_name change pathway names to description
+#' @param summarize summarizing function, default to base::sum
 #' @export
-pathwayWithFactor <- function(stana, species, tss=FALSE, change_name=FALSE) {
+pathwayWithFactor <- function(stana, species, tss=FALSE, change_name=FALSE,
+	summarize=sum) {
   dat <- stana@NMF[[species]]
   dat <- basis(dat)
 
@@ -161,7 +163,7 @@ pathwayWithFactor <- function(stana, species, tss=FALSE, change_name=FALSE) {
     tmp <- summed[summed$V1==i, ]
     int <- length(intersect(row.names(dat), tmp$V2))
     if (int>1) {
-      tmpsum <- apply(dat[intersect(row.names(dat), tmp$V2),], 2, sum)
+      tmpsum <- apply(dat[intersect(row.names(dat), tmp$V2),], 2, summarize)
       return(c(i, tmpsum))
     } else if (int==1) {
       return(c(i, dat[intersect(row.names(dat), tmp$V2),]))

@@ -49,7 +49,7 @@ returnGenes <- function(stana, species, snvs) {
   }
 }
 
-
+#' @noRd
 listToNV <- function(l) {
     nm <- NULL
     val <- NULL
@@ -59,4 +59,26 @@ listToNV <- function(l) {
     }
     names(nm) <- val
     return(nm)
+}
+
+
+#' plotSNVinfo
+#' 
+#' @param stana stana object
+#' @param sp candidate species
+#' @export
+#' @return ggplot
+plotSNVInfo <- function(stana, sp) {
+    d <- stana@snpsInfo[[sp]]
+    tbl <- data.frame(table(paste0(d$major_allele,"/",d$minor_allele)))
+    if ("locus_type" %in% colnames(d)) {
+        cdsc <- data.frame(table(d$locus_type))
+        cdsc <- paste(paste0(cdsc$Var1, " ", cdsc$Freq), collapse=" ")
+        title <- paste0("Total: ",dim(d)," (", cdsc, ")")
+    }
+    ggplot(tbl, aes(x=Var1, y=Freq)) +
+        geom_col()+
+        xlab("major_allele/minor_allele")+
+        cowplot::theme_cowplot()+
+        ggtitle(title)
 }

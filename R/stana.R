@@ -53,6 +53,7 @@ setClass("stana", slots=list(
 #' cat_subtle
 #' @noRd
 cat_subtle <- function(...) cat(pillar::style_subtle(paste0(...)))
+
 #' show
 #' print the description of stana
 #' @importFrom dplyr group_by mutate summarise n
@@ -94,15 +95,15 @@ setMethod("show",
       cat_subtle("# Inferred fasta: ", length(object@kos), " ID: ", paste0(names(object@kos)[1], collapse="/"), "\n", sep="")
     }
     cat_subtle("# Size:", object.size(object), " B\n", sep="")
-    cat_subtle("# \n")
-    cat_subtle("# SNV description\n")
     if (object@type %in% c("MIDAS", "MIDAS2")) {
-    	df <- stana@snpsSummary %>%
-    	    dplyr::filter(species_id %in% names(object@snps))
+	    cat_subtle("# \n")
+	    cat_subtle("# SNV description\n")
+    	df <- object@snpsSummary %>%
+    	    dplyr::filter(.data$species_id %in% names(object@snps))
     	if (object@type=="MIDAS2") {
     		df$species_id <- loadDic()[[object@db]][as.character(df$species_id)]
     	}
-    	if (length(stana@cl)!=0) {
+    	if (length(object@cl)!=0) {
     		print(df %>% mutate(group=listToNV(object@cl)[sample_name]) %>%
     		group_by(group, species_id) %>%
     		summarise(n=n()))

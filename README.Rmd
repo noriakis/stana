@@ -56,7 +56,7 @@ getID(stana)
 samples <- getSlot(stana, "snps")[[1]] |> colnames()
 metadata <- data.frame(
     row.names=samples,
-    treatment=sample(1:3, length(samples), replace=TRUE),
+    treatment=factor(sample(1:3, length(samples), replace=TRUE)),
     marker=runif(length(samples))
 )
 

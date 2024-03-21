@@ -25,9 +25,11 @@ doBoruta <- function(stana, sp, cl=NULL, doFix=TRUE,
     qqcat("Using grouping from the slot\n")
     cl <- stana@cl
   }
-  if (target!="snps" & is.null(mat)){
+  if (target=="genes" & is.null(mat)){
     qqcat("If needed, please provide preprocessed matrix of genes to `mat`\n")
     filtDf <- stana@genes[[sp]]
+  } else if (target=="kos") {
+    filtDf <- stana@kos[[sp]]  	
   } else if (target=="snps"){
     filtDf <- stana@snps[[sp]]
     if (deleteZeroDepth) {

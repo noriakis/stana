@@ -57,7 +57,7 @@ doAdonis <- function(stana, specs, cl=NULL,
             snps <- stana@genes[[sp]]          
         }
 
-        if (!target %in% c("tree","fasta")) {
+        if (!(target %in% c("tree","fasta"))) {
           if (maj & target=="snps" & stana@type=="MIDAS1") {
               chk <- read.table(paste0(stana@mergeDir,
                 "/",sp,"/snps_info.txt"),
@@ -85,22 +85,30 @@ doAdonis <- function(stana, specs, cl=NULL,
           distArg[["method"]] <- distMethod
           d <- do.call(dist, distArg)
           gr <- NULL
-          for (cn in colnames(snps)){
-            for (clm in seq_along(cl)){
-              if (cn %in% cl[[clm]]) {
-                gr <- c(gr, names(cl)[clm])
-              }
-            }
+          for (cn in sn){
+          	if (cn %in% unlist(cl)) {
+	            for (clm in seq_along(cl)){
+	              if (cn %in% cl[[clm]]) {
+	                gr <- c(gr, names(cl)[clm])
+	              }
+	            }          		
+          	} else {
+          		gr <- c(gr, NA)
+          	}
           }       
         } else {
           gr <- NULL
           for (cn in sn){
-            for (clm in seq_along(cl)){
-              if (cn %in% cl[[clm]]) {
-                gr <- c(gr, names(cl)[clm])
-              }
-            }
-          }  
+          	if (cn %in% unlist(cl)) {
+	            for (clm in seq_along(cl)){
+	              if (cn %in% cl[[clm]]) {
+	                gr <- c(gr, names(cl)[clm])
+	              }
+	            }          		
+          	} else {
+          		gr <- c(gr, NA)
+          	}
+          }
           d <- as.dist(d)         
         }
 
@@ -111,7 +119,7 @@ doAdonis <- function(stana, specs, cl=NULL,
             formulaPass <- as.formula(formula)
             pr <- FALSE
         }
-
+        argList[["na.action"]] <- na.omit
         argList[["formula"]] <- formulaPass
         adores <- do.call("adonis2", argList)
         
@@ -119,7 +127,7 @@ doAdonis <- function(stana, specs, cl=NULL,
             pr <- adores$`Pr(>F)`
             pr <- pr[!is.na(pr)]
             r2 <- adores$R2[1]
-            qqcat("  R2: @{r2}, Pr: @{pr}\n")
+            qqcat("  F: @{adores$F[1]}, R2: @{r2}, Pr: @{pr}\n")
         }
         stana@adonisList[[sp]] <- adores
       }
