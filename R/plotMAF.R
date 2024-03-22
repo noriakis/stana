@@ -22,11 +22,11 @@ plotMAF <- function(stana, species, SNV, cl=NULL, deleteZeroDepth=TRUE) {
 	}
 	snvDf$snvID <- row.names(snvDf)
 	df <- snvDf |> tidyr::pivot_longer(1:ncol(snvDf)-1)
-	ids <- df$name
-	for (nm in names(cl)){
-		ids[ids %in% cl[[nm]]] <- nm
-	}
-	df$group <- ids
+	# ids <- df$name
+	# for (nm in names(cl)){
+	# 	ids[ids %in% cl[[nm]]] <- nm
+	# }
+	df$group <- listToNV(stana@cl)[df$name]
 	if (deleteZeroDepth) {
 		df <- df |> dplyr::filter(df$value!=-1)
 	}
