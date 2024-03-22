@@ -82,7 +82,7 @@ plotKEGGPathway <- function(stana, species, pathway_id,
           lfcs[["Sum"]] <- apply(ko_tbl, 1, sum)
         } else {
             qqcat("@{sp}: @{names(cl)[1]} / @{names(cl)[2]}\n")
-            lfc[[sp]] <- L2FC(ko_tbl, cl[[1]], cl[[2]])
+            lfcs[[sp]] <- L2FC(ko_tbl, cl[[1]], cl[[2]])
         }
     } else {
         for (sp in species) {

@@ -72,6 +72,8 @@ plotCirclize <- function(stana, candSp, genomeId, include_gene=NULL,
       info$genome_id <- sapply(strsplit(row.names(info),"\\|"),"[",3)
     } else if (stana@type=="InStrain") {
       info$genome_id <- info$scaffold
+    } else {
+      cat("Assuming SNV info has genome_id column ...\n")
     }
 
     qqcat("Genome ID in SNV information:\n")

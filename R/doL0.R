@@ -24,9 +24,11 @@ doL0 <- function(stana, species, cl=NULL, doFix=TRUE,
         qqcat("Using grouping from the slot\n")
         cl <- stana@cl
     }
-    if (target!="snps" & is.null(mat)){
+    if (target=="genes" & is.null(mat)){
         qqcat("If needed, please provide preprocessed matrix of genes to `mat`\n")
         filtDf <- stana@genes[[species]]
+    } else if (target=="ko") {
+    	filtDf <- stana@kos[[species]]
     } else if (target=="snps"){
         filtDf <- stana@snps[[species]]
         if (deleteZeroDepth) {
