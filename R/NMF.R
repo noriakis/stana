@@ -42,7 +42,8 @@ NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
 
     ## Test multiple ranks
     if (estimate) {
-    	test <- nmfEstimateRank(mat, range=estimate_range, method=method)
+    	test <- nmfEstimateRank(as.matrix(mat),
+    		range=estimate_range, method=method)
     	val <- test$measures[, "cophenetic"]
         b <- -1
 		for (i in seq_along(val)) {

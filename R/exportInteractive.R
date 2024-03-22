@@ -13,8 +13,8 @@
 #' @param dataset_name dataset name
 #' @export
 #' @return output the results to specified directory
-exportInteractive <- function(stana, out=".", db="uhgg", calcko=TRUE,
-	calctree=TRUE, dataset_name=NULL,
+exportInteractive <- function(stana, out=".", db="uhgg", calcko=FALSE,
+	calctree=FALSE, dataset_name=NULL,
 	species=NULL) {
 	if (is.null(dataset_name)) {
 		dataset_name <- gsub(":", "-", gsub(" ", "-", as.character(Sys.time())))
@@ -22,7 +22,7 @@ exportInteractive <- function(stana, out=".", db="uhgg", calcko=TRUE,
 	dir.create(paste0(out,"/data"))
 	dir.create(paste0(out,"/data/",dataset_name))
 
-	if (stana@type!="MIDAS2") {stop("This feature is for MIDAS2 only")}
+	# if (stana@type!="MIDAS2") {stop("This feature is for MIDAS2 only")}
 	if (is.null(species)) {
 		species <- stana@ids	
 	}
@@ -41,6 +41,18 @@ exportInteractive <- function(stana, out=".", db="uhgg", calcko=TRUE,
 	            qqcat("Using pre-computed KO table\n")
 	        }
 	    }
+	} else {
+		for (sp in species) {
+			if (is.null(stana@treeList[[sp]])) {
+				if (is.null(stana@genes[[sp]])) {
+					cat("Need at least the gene copy number table if tree is not available\n")
+				}
+			}
+	        if (is.null(stana@kos[[sp]])) {
+	        	## Insert gene table instead
+	        	stana@kos[[sp]] <- stana@genes[[sp]]
+	        }
+	    }
 	}
 	
 	for (tre in species) {
@@ -53,10 +65,16 @@ exportInteractive <- function(stana, out=".", db="uhgg", calcko=TRUE,
 			}
 		}
 	}
-	treLen <- sum(sapply(stana@treeList, function(x) !is.null(x)))
+	if (length(stana@treeList)!=0) {
+		treLen <- sum(sapply(stana@treeList, function(x) !is.null(x)))	
+	} else {
+		treLen <- 0
+	}
 	koLen <- length(stana@kos)
 
-    all_samples_in_dataset <- unique(lapply(stana@treeList, function(x) {x$tip.label}) %>% unlist())
+    all_samples_in_dataset1 <- unique(lapply(stana@treeList, function(x) {x$tip.label}) %>% unlist())
+    all_samples_in_dataset2 <- unique(lapply(stana@kos, function(x) {colnames(x)}) %>% unlist())
+    all_samples_in_dataset <- union(all_samples_in_dataset1, all_samples_in_dataset2)
 	
 	## If no metadata is available in meta slot:
     if (dim(stana@meta)[1]==0) {
@@ -78,7 +96,7 @@ exportInteractive <- function(stana, out=".", db="uhgg", calcko=TRUE,
         meta <- stana@meta
     }
 	
-	qqcat("Tree number: @{treLen}, KO number: @{koLen}\n")
+	qqcat("Tree number: @{treLen}, KO (or gene) number: @{koLen}\n")
 	qqcat("Exporting ... \n")
 	if (!dir.exists(out)) {
 		dir.create(out)
