@@ -161,7 +161,7 @@ plotKEGGPathway <- function(stana, species, pathway_id,
         graphList <- list()
         for (pid in pathway_id) {
             g <- ggkegg::pathway(pid)
-            g <- g |> dplyr::mutate(Sum := ggkegg::node_numeric(lfcs[["Sum"]], name="name",how=kegg_name_match))
+            g <- g |> dplyr::mutate(Sum := ggkegg::node_numeric(lfcs[[sp]], name="name",how=kegg_name_match))
         }
         V(g)$space <- V(g)$width
         nds <- g |> tidygraph::activate("nodes") |> data.frame()
