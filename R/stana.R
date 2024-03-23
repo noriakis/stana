@@ -94,7 +94,7 @@ setMethod("show",
     if (length(object@fastaList)!=0) {
       cat_subtle("# Inferred fasta: ", length(object@kos), " ID: ", paste0(names(object@kos)[1], collapse="/"), "\n", sep="")
     }
-    cat_subtle("# Size:", object.size(object), " B\n", sep="")
+    cat_subtle("# Size: ", object.size(object), " B\n", sep="")
     if (object@type %in% c("MIDAS", "MIDAS2")) {
 	    cat_subtle("# \n")
 	    cat_subtle("# SNV description\n")
