@@ -8,8 +8,8 @@ exportInteractive(
   stana,
   out = ".",
   db = "uhgg",
-  calcko = TRUE,
-  calctree = TRUE,
+  calcko = FALSE,
+  calctree = FALSE,
   dataset_name = NULL,
   species = NULL
 )

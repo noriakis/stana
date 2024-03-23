@@ -34,7 +34,7 @@ plotCirclize <- function(stana, candSp, genomeId, include_gene=NULL,
                          returnRawDf=FALSE, only_genome_id=FALSE,
                          featThresh=0, cex=0.3, textCex=0.5,bar_width=10,
                          contPalette=c("steelblue",
-                          "tomato"), discPalette="Dark2") {
+                          "tomato"), discPalette="Dark2",convertGeneID=FALSE) {
     qqcat("Type is @{stana@type}\n")
     if (is.null(stana@snpsInfo[[candSp]])) {stop("No SNV info available")}
     info <- stana@snpsInfo[[candSp]]
@@ -99,6 +99,20 @@ plotCirclize <- function(stana, candSp, genomeId, include_gene=NULL,
     }
     ## Sector will be gene_id
     circ_plot <- subset(circ_plot, circ_plot$gene_id!="None")
+    
+    ## Change the name of gene_id if available to KO
+    if (convertGeneID) {
+    	if (!is.null(stana@eggNOG[[candSp]])) {
+			chk <- stana:::checkEGGNOG(stana@eggNOG[[candSp]], "KEGG_ko")
+			col <- chk %>% group_by(ID) %>% summarise(paste0(value,collapse=",")) %>% `colnames<-`(c("ID","collapse"))
+			changed <- as.character(col$collapse) %>% setNames(col$ID)
+			circ_plot$gene_id <- changed[circ_plot$gene_id] 
+			circ_plot <- circ_plot[!is.na(circ_plot$gene_id),]
+			cat("After conversion:", dim(circ_plot)[1], "\n")
+			if (dim(circ_plot)[1]==0) { stop("Conversion failed.")}		
+    	}
+    }
+    
     gene_num <- table(circ_plot$gene_id)
     if (is.null(include_gene)) {
       circ_plot <- subset(circ_plot, !circ_plot$gene_id %in% names(gene_num[gene_num<thresh_snp_gene]))
