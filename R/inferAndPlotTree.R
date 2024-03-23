@@ -24,6 +24,8 @@
 #' instead of geom_star.
 #' @param deleteZeroDepth delete zero depth position
 #' @param treeFun tree inferring function in phangorn
+#' if `FastTree` is specified, FastTree will be called.
+#' In this case, FastTree should be in PATH.
 #' @param tree_only return tree only instead of stana object
 #' @param subset_samples subset samples (for matrix only)
 #' @importFrom ggtreeExtra geom_fruit
@@ -45,6 +47,9 @@ inferAndPlotTree <- function(stana, species=NULL, cl=NULL,
 	}
 	if (is.null(species)) {species <- names(stana@fastaList)}
 	if (!(target %in% c("fasta","snp","gene","KO"))) {stop("Please specify appropriate target (snp, gene, fasta)")}
+	if (target!="fasta" & treeFun=="FastTree") {
+		stop("FastTree should be used with FASTA target")
+	}
 	for (sp in species) {
 		if (target=="fasta") {
 			tre <- stana@fastaList[[sp]]
@@ -88,6 +93,14 @@ inferAndPlotTree <- function(stana, species=NULL, cl=NULL,
 			dm <- do.call(dist, tree_args)			
 		}
         ## Difficult to call do.call
+        ## If needed, FastTree can be called.
+        ## In this case, FastTree should be in PATH
+        if (treeFun=="FastTree") {
+        	## Write out the FASTA to the current dir
+        	stana@fastaList[[sp]]
+        	## Call FastTree
+        	## Read tree and save
+        }
         if (treeFun=="upgma") {
             tre <- upgma(dm)   
         } else {
