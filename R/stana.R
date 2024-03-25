@@ -9,6 +9,7 @@
 #' @slot type type of pipeline, such as `MIDAS`
 #' @slot eggNOG list of path for eggNOG mapper v2 results for species
 #' @slot map slot storing the mapping data.frame for gene ID and orthology
+#' @slot coefMat slot storing the strain (or subspecies) abundances
 setClass("stana", slots=list(
                             type="character",
                             cl="list",
@@ -44,6 +45,7 @@ setClass("stana", slots=list(
                             sampleFilterVal="numeric",
                             sampleFilterPer="numeric",
                             heatmap="list",
+                            coefMat="list",
                             colors="vector",
                             geneCluster="list",
                             paFilterUp="numeric",

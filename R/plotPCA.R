@@ -24,13 +24,17 @@ plotPCA <- function(stana, species, cl=NULL, target="snps",
 	if (is.null(cl)) {cl <- stana@cl}
 
 	for (sp in species) {
+		
 		if (target=="snps") {
 			df <- stana@snps[[sp]]
 		} else if (target=="genes") {
 			df <- stana@genes[[sp]]
+		} else if (target=="kos") {
+			df <- stana@kos[[sp]]	
 		} else {
-			stop("please specify snps or genes")
+			stop("please specify snps, genes or kos")
 		}
+		
     	if (length(cl)==0) {} else {
 			df <- df[,intersect(colnames(df),
 				as.character(unlist(cl)))]    		
@@ -39,6 +43,7 @@ plotPCA <- function(stana, species, cl=NULL, target="snps",
 			df <- df[rowSums(df==-1)==0,]
 		}
 		if (replaceZero) {
+			## [CAUTION]
 			df[df==-1] <- 0
 		}
 		qqcat("After filtering: @{dim(df)[1]} SNVs\n")

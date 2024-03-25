@@ -11,7 +11,8 @@ pathwayWithFactor(
   species,
   tss = FALSE,
   change_name = FALSE,
-  summarize = sum
+  summarize = sum,
+  mat = NULL
 )
 }
 \arguments{
@@ -24,6 +25,8 @@ pathwayWithFactor(
 \item{change_name}{change pathway names to description}
 
 \item{summarize}{summarizing function, default to base::sum}
+
+\item{mat}{other matrix than the basis of NMF}
 }
 \description{
 pathwayWithFactor

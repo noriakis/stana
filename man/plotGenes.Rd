@@ -4,7 +4,7 @@
 \alias{plotGenes}
 \title{plotGenes}
 \usage{
-plotGenes(stana, species, geneID, cl = NULL)
+plotGenes(stana, species, geneID, target = "genes", cl = NULL)
 }
 \arguments{
 \item{stana}{stana object}
@@ -12,6 +12,8 @@ plotGenes(stana, species, geneID, cl = NULL)
 \item{species}{candidate species}
 
 \item{geneID}{gene ID to be plotted}
+
+\item{target}{genes or KOs (gene families)}
 
 \item{cl}{named list of clusters}
 }

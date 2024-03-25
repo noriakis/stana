@@ -29,6 +29,9 @@ plotMAF <- function(stana, species, SNV, cl=NULL, deleteZeroDepth=TRUE) {
 	df$group <- listToNV(stana@cl)[df$name]
 	if (deleteZeroDepth) {
 		df <- df |> dplyr::filter(df$value!=-1)
+	} else {
+		ch <- df$value; ch[ch == -1] <- NA
+		df$value <- ch
 	}
 	ggplot(df, aes(x=group, y=value,
 		fill=group)) +

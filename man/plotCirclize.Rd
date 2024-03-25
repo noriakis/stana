@@ -25,7 +25,7 @@ plotCirclize(
   bar_width = 10,
   contPalette = c("steelblue", "tomato"),
   discPalette = "Dark2",
-  converGeneID = FALSE
+  convertGeneID = FALSE
 )
 }
 \arguments{

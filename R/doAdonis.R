@@ -19,27 +19,31 @@
 #' @param AAfunc if choose `fasta`, provide function for calculating distance
 #' @param AAargs provided to `AAfunc`
 #' @param argList parameters passed to adonis2
-#' @param deleteZeroDepth delete zero depth snvs (in MIDAS2, denoted as `-1`)
+#' @param deleteZeroDepth delete zero depth snvs (denoted as `-1`)
+#' Otherwise the cell is treated as NA
 #' @param distArg passed to `dist()`
+#' @param pcoa if TRUE, performs ape::pcoa on dist and plot them
 #' @importFrom vegan adonis2
 #' @importFrom stats as.formula dist
 #' @importFrom utils read.table
 #' @export
 doAdonis <- function(stana, specs, cl=NULL,
     target="snps", formula=NULL,
-    distMethod="manhattan",
+    distMethod="binary", pcoa=FALSE,
     AAfunc=dist.ml, AAargs=list(),
     maj=FALSE, deleteZeroDepth=FALSE,
     argList=list(), distArg=list()) {
       if (is.null(cl)) {cl <- stana@cl}
+      if (pcoa) {pcoaList<-list()}
       for (sp in specs){
-        qqcat("Performing adonis in @{sp}\n")
+        cat_subtle("# Performing adonis in ", sp, " target is ", target, "\n", sep="")
         if (target=="snps") {
             snps <- stana@snps[[sp]]
             if (deleteZeroDepth) {
               snps <- snps[rowSums(snps==-1)==0,]
-              qqcat("After filtering `-1`, position numbers: @{dim(snps)[1]}\n")
+              cat_subtle("After filtering `-1`, position numbers: ", dim(snps)[1], "\n", sep="")
             }
+            snps[snps == -1] <- NA
         } else if (target=="tree") {
             if (!is.null(stana@treeList[[sp]])) {
               tre <- stana@treeList[[sp]]
@@ -84,52 +88,75 @@ doAdonis <- function(stana, specs, cl=NULL,
           distArg[["x"]] <- t(snps)
           distArg[["method"]] <- distMethod
           d <- do.call(dist, distArg)
-          gr <- NULL
-          for (cn in sn){
-          	if (cn %in% unlist(cl)) {
-	            for (clm in seq_along(cl)){
-	              if (cn %in% cl[[clm]]) {
-	                gr <- c(gr, names(cl)[clm])
-	              }
-	            }          		
-          	} else {
-          		gr <- c(gr, NA)
-          	}
-          }       
+          sn <- attr(d, "Labels")
+          # gr <- as.character(listToNV(stana@cl)[sn])
+        	met <- data.frame(row.names=sn)
+        	met[["group"]] <- listToNV(stana@cl)[row.names(met)]
+          # gr <- NULL
+          # for (cn in sn){
+          # 	if (cn %in% unlist(cl)) {
+	      #       for (clm in seq_along(cl)){
+	      #         if (cn %in% cl[[clm]]) {
+	      #           gr <- c(gr, names(cl)[clm])
+	      #         }
+	      #       }          		
+          # 	} else {
+          # 		gr <- c(gr, NA)
+          # 	}
+          # }       
         } else {
-          gr <- NULL
-          for (cn in sn){
-          	if (cn %in% unlist(cl)) {
-	            for (clm in seq_along(cl)){
-	              if (cn %in% cl[[clm]]) {
-	                gr <- c(gr, names(cl)[clm])
-	              }
-	            }          		
-          	} else {
-          		gr <- c(gr, NA)
-          	}
-          }
+        	met <- data.frame(row.names=sn)
+        	met[["group"]] <- listToNV(stana@cl)[row.names(met)]
+          # gr <- NULL
+          # for (cn in sn){
+          # 	if (cn %in% unlist(cl)) {
+	      #       for (clm in seq_along(cl)){
+	      #         if (cn %in% cl[[clm]]) {
+	      #           gr <- c(gr, names(cl)[clm])
+	      #         }
+	      #       }          		
+          # 	} else {
+          # 		gr <- c(gr, NA)
+          # 	}
+          # }
           d <- as.dist(d)         
         }
 
         if (is.null(formula)){
-            formulaPass <- as.formula("d ~ gr")
+            formulaPass <- as.formula("d ~ .")
             pr <- TRUE
         } else {
             formulaPass <- as.formula(formula)
             pr <- FALSE
         }
-        argList[["na.action"]] <- na.omit
         argList[["formula"]] <- formulaPass
+        argList[["data"]] <- met
+
         adores <- do.call("adonis2", argList)
         
         if (pr) {
             pr <- adores$`Pr(>F)`
             pr <- pr[!is.na(pr)]
             r2 <- adores$R2[1]
-            qqcat("  F: @{adores$F[1]}, R2: @{r2}, Pr: @{pr}\n")
+            cat_subtle("#  F: ",adores$F[1],", R2: ",r2,", Pr: ",pr,"\n",sep="")
         }
         stana@adonisList[[sp]] <- adores
+        
+        if (pcoa) {
+        	pco <- ape::pcoa(d)
+        	dat <- data.frame(pco$vector[, 1:2])
+        	relei <- pco$values$Relative_eig
+        	dat[["group"]] <- listToNV(stana@cl)[row.names(dat)]
+        	pcoaList[[sp]] <- ggplot(dat, aes(x=dat[,1], y=dat[,2])) +
+            	geom_point(aes(color=group))+
+            	xlab(paste0("Axis 1 (", round(relei[1], 3),")"))+
+            	ylab(paste0("Axis 2 (", round(relei[2], 3),")"))+
+            	scale_color_manual(values=stana@colors)+
+            	cowplot::theme_cowplot()
+        }
+      }
+      if (pcoa) {
+          plot(patchwork::wrap_plots(pcoaList))  	
       }
       stana
 }

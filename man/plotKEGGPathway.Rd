@@ -20,7 +20,8 @@ plotKEGGPathway(
   nudge_y = 0,
   point_mode = FALSE,
   sp_colors = NULL,
-  point_size = 1
+  point_size = 1,
+  statMethod = "t"
 )
 }
 \arguments{

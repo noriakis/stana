@@ -11,11 +11,12 @@ NMF(
   target = "KO",
   seed = 53,
   method = "snmf/r",
-  deleteZeroDepth = TRUE,
+  deleteZeroDepth = FALSE,
   beta = 0.01,
-  plotHeatmap = TRUE,
   estimate = FALSE,
-  estimate_range = 2:6
+  estimate_range = 1:6,
+  nnlm_flag = FALSE,
+  nnlm_args = list()
 )
 }
 \arguments{
@@ -36,11 +37,14 @@ positions with zero-depth (indicated by -1)}
 
 \item{beta}{argument to be passed to NMF function}
 
-\item{plotHeatmap}{plot the heatmap of presence of strain across sample}
-
 \item{estimate}{estimate rank}
 
 \item{estimate_range}{range of ranks for the estimation}
+
+\item{nnlm_flag}{if TRUE, use NNLM package which can handle missing values in the data.
+The different approach for estimating k is taken.}
+
+\item{nnlm_args}{arguments passed to NNLM functions}
 }
 \description{
 decompose SNV, gene content, or gene family abundance to

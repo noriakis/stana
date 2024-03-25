@@ -64,7 +64,6 @@ doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean,
     if (bg_filter) {
         kopgsea <- kopgsea[kopgsea$V2 %in% sub, ]
     }
-    print(dim(kopgsea))
     ## Return all the value regardless of P
     enr <- GSEA(ko_sum,
         TERM2GENE = kopgsea, pvalueCutoff=1)
@@ -147,13 +146,14 @@ L2FC <- function(mat, l1, l2, method="t", eps=0) {
 }
 
 
-#' calcKO
+#' calcGF
 #' @param stana stana object
 #' @param candSp candidate species ID
 #' @param how how to summarize multiple gene CN assigned to the same KO
 #' @param annot eggNOG or manual
+#' @param column When eggNOG, which family to summarize, default to KEGG_ko
 #' @export
-calcKO <- function(stana, candSp=NULL, how=sum, annot="eggNOG") {
+calcGF <- function(stana, candSp=NULL, how=sum, annot="eggNOG", column="KEGG_ko") {
 	checkID(stana, candSp)
     if (is.null(candSp)) {cat("Species not specified, the first ID will be used:", stana@ids[1]);
         candSp <- stana@ids[1]
@@ -161,7 +161,7 @@ calcKO <- function(stana, candSp=NULL, how=sum, annot="eggNOG") {
     if (annot=="eggNOG") {
 	    if (is.null(stana@eggNOG[[candSp]])) {stop("Please provide list of path to annotation file by `setAnnotation` function.")}
 	    ko_df_filt <- summariseAbundance(stana, sp = candSp,
-	        checkEGGNOG(annot_file=stana@eggNOG[[candSp]], "KEGG_ko"),
+	        checkEGGNOG(annot_file=stana@eggNOG[[candSp]], column),
 	        how=how)    	
     } else {
     	if (is.null(stana@map[[candSp]])) {stop("Please set mapping data.frame in map slot using `setMap`.")}

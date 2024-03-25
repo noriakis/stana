@@ -10,17 +10,31 @@
 #' @param target KO, gene or snv, default to KO
 #' @param seed random seed
 #' @param method NMF method, default to snmf/r
-#' @param plotHeatmap plot the heatmap of presence of strain across sample
 #' @param beta argument to be passed to NMF function
 #' @param deleteZeroDepth when snv matrix is used, this option filters the
 #' positions with zero-depth (indicated by -1)
 #' @param estimate estimate rank
 #' @param estimate_range range of ranks for the estimation
+#' @param nnlm_flag if TRUE, use NNLM package which can handle missing values in the data.
+#' The different approach for estimating k is taken.
+#' @param nnlm_args arguments passed to NNLM functions
 #' @import NMF
 #' @export
 NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
-    deleteZeroDepth=TRUE, beta=0.01, plotHeatmap=TRUE, estimate=FALSE, estimate_range=2:6) {
+    deleteZeroDepth=FALSE, beta=0.01, estimate=FALSE, estimate_range=1:6, nnlm_flag=FALSE,
+    nnlm_args=list()) {
+	
+	## References for the missing value handling in NMF:
+	## https://github.com/scikit-learn/scikit-learn/pull/8474
+	## https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6945623/
+	
+	cat_subtle("# NMF started ", species, ", target: ", target, ", method: ", ifelse(nnlm_flag, "NNLM::nnmf", method), "\n", sep="")
     if (length(species)>1) {stop("NMF accepts only one species per run")}
+    if (nnlm_flag) {
+    	if (!requireNamespace("NNLM")) {
+    		stop("Please install NNLM.")
+    	}
+    }
     if (target=="KO") {
         mat <- stana@kos[[species]]
     } else if (target=="genes") {
@@ -30,15 +44,20 @@ NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
         if (deleteZeroDepth) {
            mat <- mat[rowSums(mat == -1)==0,]
            qqcat("After filtering `-1`, position numbers: @{dim(mat)[1]}\n")
+        } else {
+           mat[ mat == -1 ] <- NA
+           nnlm_flag <- TRUE        	
         }
     }
     cat("Original features:", dim(mat)[1], "\n")
     cat("Original samples:", dim(mat)[2], "\n")
-    mat <- mat[apply(mat, 1, function(x) sum(x)!=0),]
-    mat <- mat[,apply(mat, 2, function(x) sum(x)!=0)]
+    if (!nnlm_flag) {
+	    mat <- mat[apply(mat, 1, function(x) sum(x)!=0),]
+	    mat <- mat[,apply(mat, 2, function(x) sum(x)!=0)]
 
-    cat("Filtered features:", dim(mat)[1], "\n")
-    cat("Filtered samples:", dim(mat)[2], "\n")
+	    cat("Filtered features:", dim(mat)[1], "\n")
+	    cat("Filtered samples:", dim(mat)[2], "\n")
+    }
 
     ## Test multiple ranks
     if (estimate) {
@@ -62,20 +81,64 @@ NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
     }
     
     cat("Rank", rank, "\n")
-    if (method %in% c("snmf/l", "snmf/r")) {
-        res <- NMF::nmf(mat, rank = rank, seed = seed, method=method, beta=beta)
+    if (nnlm_flag){
+    	nnlm_args[["A"]] <- as.matrix(mat)
+    	nnlm_args[["k"]] <- rank
+    	res <- do.call(NNLM::nnmf, nnlm_args)
+    	# res <- NNLM::nnmf(mat, rank)
+    	coefMat <- res$H
+    	basisMat <- res$W
     } else {
-        res <- NMF::nmf(mat, rank = rank, seed = seed, method=method)
+	    if (method %in% c("snmf/l", "snmf/r")) {
+	        res <- NMF::nmf(mat, rank = rank, seed = seed, method=method, beta=beta)
+	    } else {
+	        res <- NMF::nmf(mat, rank = rank, seed = seed, method=method)
+	    }
+	    coefMat <- coef(res)
+        basisMat <- basis(res) 	
     }
-    coefMat <- coef(res)
+
+    stana@coefMat[[species]] <- data.frame(coefMat)
     ## Plot by default
-    relab <- apply(coef(res), 2, function(x) x / sum(x))
+    relab <- apply(coefMat, 2, function(x) x / sum(x))
     cat("Mean relative abundances:", apply(relab, 1, mean), "\n")
 
-    basisMat <- basis(res)
     cat("Present feature per strain:", apply(basisMat!=0, 2, function(x) sum(x)), "\n")
     stana@NMF[[species]] <- res
     return(stana)
+}
+
+#' plotStackedBarPlot
+#' 
+#' plot the stacked bar plot of NMF results
+#' 
+#' @param stana stana boject
+#' @param sp species
+#' @return ggplot
+plotStackedBarPlot <- function(stana, sp, by="NMF") {
+	if (is.null(stana@NMF[[sp]]) & is.null(stana@coefMat[[sp]])) {
+		stop("NMF results or coefficient matrix should be set")
+	}
+	if (by=="NMF") {
+    	res <- stana@NMF[[sp]]
+        coefMat <- coef(res)	
+	} else {
+		coefMat <- stana@coefMat[[sp]]
+	}
+    relab <- apply(coefMat, 2, function(x) x / sum(x))
+	stb <- data.frame(t(relab))
+    stb[["sample"]] <- row.names(stb)
+    if (length(stana@cl)!=0) {
+        cols <- as.character(listToNV(stana@cl)[stb[["sample"]]])
+        cc <- stana@colors %>% setNames(unique(cols))
+        x_cols <- cc[cols]
+    }
+    melted <- reshape2::melt(stb)
+    print(melted)
+	ggplot(melted, aes(fill=variable, y=value, x=sample)) + 
+	    geom_bar(position="fill", stat="identity")+
+	    cowplot::theme_cowplot()+
+	    theme(axis.text.x = element_text(angle=90, colour=x_cols))
 }
 
 #' alphaDiversityWithinSpecies
@@ -85,11 +148,11 @@ alphaDiversityWithinSpecies <- function(stana, species, method="shannon", rank=5
         stana <- NMF(stana, species, rank=rank)
     }
     res <- stana@NMF[[species]]
-    W <- coef(res)
+    H <- coef(res)
     if (method=="spc") {
         div <- apply(coef(stana@NMF[[1]])==0, 2, function(x) sum(x))
     } else {
-        div <- vegan::diversity(t(W), index=method)
+        div <- vegan::diversity(t(H), index=method)
     }
     
     if (!is.null(stana@cl)) {
@@ -110,29 +173,35 @@ alphaDiversityWithinSpecies <- function(stana, species, method="shannon", rank=5
 #' @param tss perform total sum scaling
 #' @param return_data return only the data, not plot
 #' @export
-plotAbundanceWithinSpecies <- function(stana, species, tss=TRUE, return_data=FALSE) {
-    if (is.null(stana@NMF[[species]])) {
-        stana <- NMF(stana, species)
-    }
-    res <- stana@NMF[[species]]
-    W <- coef(res)
+plotAbundanceWithinSpecies <- function(stana, species, tss=TRUE, return_data=FALSE, by="NMF") {
+	if (by=="NMF") {
+	    if (is.null(stana@NMF[[species]])) {
+	        stana <- NMF(stana, species)
+    	}
+    	res <- stana@NMF[[species]]
+        H <- coef(res)	
+	} else {
+		H <- stana@coefMat[[species]]
+	}
+
     if (tss) {
-        W <- apply(W, 2, function(x) x / sum(x))
+        H <- apply(H, 2, function(x) x / sum(x))
     }
-    W <- data.frame(t(W))
+    H <- data.frame(t(H))
     if (!is.null(stana@cl)) {
         nm <- listToNV(stana@cl)
-        W[["group"]] <- nm[row.names(W)]
+        H[["group"]] <- nm[row.names(H)]
     }
-    colnames(W) <- c(as.character(seq_len(ncol(W)-1)),"group")
+    colnames(H) <- c(as.character(seq_len(ncol(H)-1)),"group")
 
     if (return_data) {
-        return(W)
+        return(H)
     }
-    W %>% tidyr::pivot_longer(1:(ncol(W)-1)) %>%
+    H %>% tidyr::pivot_longer(1:(ncol(H)-1)) %>%
         ggplot(aes(x=group, y=value))+
         geom_boxplot()+
-        facet_wrap(.~name)
+        facet_wrap(.~name)+
+        cowplot::theme_cowplot()
 }
 
 
@@ -144,11 +213,16 @@ plotAbundanceWithinSpecies <- function(stana, species, tss=TRUE, return_data=FAL
 #' @param tss perform total sum scaling to the resulting matrix
 #' @param change_name change pathway names to description
 #' @param summarize summarizing function, default to base::sum
+#' @param mat other matrix than the basis of NMF
 #' @export
 pathwayWithFactor <- function(stana, species, tss=FALSE, change_name=FALSE,
-	summarize=sum) {
-  dat <- stana@NMF[[species]]
-  dat <- basis(dat)
+	summarize=sum, mat=NULL) {
+	if (!is.null(mat)) {
+		dat <- mat
+	} else {
+	  dat <- stana@NMF[[species]]
+	  dat <- basis(dat)		
+	}
 
   bfc <- BiocFileCache()
   url <- bfcrpath(bfc,"https://rest.kegg.jp/link/ko/pathway")

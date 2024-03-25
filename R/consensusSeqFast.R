@@ -55,8 +55,13 @@ consensusSeqGeneral <- function(
         
 
         allele_list <- lapply(seq_len(nrow(SPECIES[["freqs"]])), function(i) {
-		    	per_sample_allele <- lapply(colnames(SPECIES[["freqs"]]), function(sample) { ## BOTTLENECK [3]
-
+	        	if (!is.null(keep_samples)) {
+	        		samples <- keep_samples
+	        	} else {
+	        		samples <- colnames(SPECIES[["freqs"]])
+	        	}
+        	    
+		    	per_sample_allele <- lapply(, function(sample) { ## BOTTLENECK [3]
 		    		if (SPECIES[["freqs"]][[sample]][i] == -1) {
 		    		    return("-")
 		    		}
@@ -215,6 +220,11 @@ consensusSeqMIDAS2 <- function(
 
         SAMPLES <- lapply(SPECIES[["summary"]]$sample_name, function(x) {
         	info <- SPECIES[["summary"]][SPECIES[["summary"]]$sample_name == x, ]
+        	if (!is.null(keep_samples)) {
+            	if (!(x %in% keep_samples)) {
+            		return(NULL)
+            	}        		
+        	}
         	if (info$fraction_covered < fract_cov) {
         		return(NULL)
         	} else if (info$mean_coverage < mean_depth) {
@@ -463,6 +473,12 @@ consensusSeqMIDAS1 <- function(
 		
         SAMPLES <- lapply(SPECIES[["summary"]]$sample_id, function(x) {
         	info <- SPECIES[["summary"]][SPECIES[["summary"]]$sample_id == x, ]
+        	if (!is.null(keep_samples)) {
+            	if (!(x %in% keep_samples)) {
+            		return(NULL)
+            	}        		
+        	}
+
         	if (info$fraction_covered < fract_cov) {
         		return(NULL)
         	} else if (info$mean_coverage < mean_depth) {

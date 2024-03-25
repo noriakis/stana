@@ -10,7 +10,8 @@ doAdonis(
   cl = NULL,
   target = "snps",
   formula = NULL,
-  distMethod = "manhattan",
+  distMethod = "binary",
+  pcoa = FALSE,
   AAfunc = dist.ml,
   AAargs = list(),
   maj = FALSE,
@@ -32,13 +33,16 @@ doAdonis(
 
 \item{distMethod}{distance method passed to dist() (default, manhattan)}
 
+\item{pcoa}{if TRUE, performs ape::pcoa on dist and plot them}
+
 \item{AAfunc}{if choose `fasta`, provide function for calculating distance}
 
 \item{AAargs}{provided to `AAfunc`}
 
 \item{maj}{major allele distance}
 
-\item{deleteZeroDepth}{delete zero depth snvs (in MIDAS2, denoted as `-1`)}
+\item{deleteZeroDepth}{delete zero depth snvs (denoted as `-1`)
+Otherwise the cell is treated as NA}
 
 \item{argList}{parameters passed to adonis2}
 

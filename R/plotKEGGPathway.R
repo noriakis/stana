@@ -31,7 +31,7 @@ plotKEGGPathway <- function(stana, species, pathway_id,
                             how=mean, eps=1e-2, color_list=NULL,
                             only_ko=FALSE, summarize=FALSE, nudge_y=0,
                             point_mode=FALSE, sp_colors=NULL,
-                            point_size=1){
+                            point_size=1, statMethod="t"){
     sum_flag <- FALSE	
     if (is.null(sp_colors)) {
     	## Assign random colors
@@ -82,7 +82,7 @@ plotKEGGPathway <- function(stana, species, pathway_id,
           lfcs[["Sum"]] <- apply(ko_tbl, 1, sum)
         } else {
             qqcat("@{sp}: @{names(cl)[1]} / @{names(cl)[2]}\n")
-            lfcs[[sp]] <- L2FC(ko_tbl, cl[[1]], cl[[2]])
+            lfcs[[sp]] <- L2FC(ko_tbl, cl[[1]], cl[[2]], method=statMethod)
         }
     } else {
         for (sp in species) {
@@ -91,7 +91,7 @@ plotKEGGPathway <- function(stana, species, pathway_id,
                 lfcs[[sp]] <- apply(ko_tbl, 1, sum)
             } else {
                 qqcat("@{sp}: @{names(cl)[1]} / @{names(cl)[2]}\n")
-                lfcs[[sp]] <- L2FC(ko_tbl, cl[[1]], cl[[2]], method="mod.t")
+                lfcs[[sp]] <- L2FC(ko_tbl, cl[[1]], cl[[2]], method=statMethod)
             }
         }        
     }

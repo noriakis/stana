@@ -4,7 +4,13 @@
 \alias{plotAbundanceWithinSpecies}
 \title{plotAbundanceWithinSpecies}
 \usage{
-plotAbundanceWithinSpecies(stana, species, tss = TRUE, return_data = FALSE)
+plotAbundanceWithinSpecies(
+  stana,
+  species,
+  tss = TRUE,
+  return_data = FALSE,
+  by = "NMF"
+)
 }
 \arguments{
 \item{stana}{stana object}

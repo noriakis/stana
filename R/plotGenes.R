@@ -7,13 +7,18 @@
 #' @param species candidate species
 #' @param geneID gene ID to be plotted
 #' @param cl named list of clusters
+#' @param target genes or KOs (gene families)
 #' @import ggplot2
 #' @export
 #' @return ggplot
 #' 
-plotGenes <- function(stana, species, geneID, cl=NULL) {
+plotGenes <- function(stana, species, geneID, target="genes", cl=NULL) {
 	if (is.null(cl)) { cl <- stana@cl}
-	geneDf <- stana@genes[[species]]
+	if (target=="genes") {
+    	geneDf <- stana@genes[[species]]
+	} else {
+		geneDf <- data.frame(stana@kos[[species]])
+	}
 	if (intersect(geneID,row.names(geneDf)) |> length() > 0) {
 		geneDf <- geneDf[intersect(geneID,row.names(geneDf)), ]
 	} else {
@@ -21,16 +26,13 @@ plotGenes <- function(stana, species, geneID, cl=NULL) {
 	}
 	geneDf$geneID <- row.names(geneDf)
 	df <- geneDf |> tidyr::pivot_longer(1:ncol(geneDf)-1)
-	ids <- df$name
-	for (nm in names(cl)){
-		ids[ids %in% cl[[nm]]] <- nm
-	}
-	df$group <- ids
+	df$group <- listToNV(stana@cl)[df$name]
+
 	ggplot(df, aes(x=group, y=value,
 		fill=group)) +
 	geom_violin()+
 	geom_jitter(shape=21, size=2)+
 	scale_fill_manual(values=stana@colors)+
 	facet_wrap(.~geneID)+
-	theme_minimal()
+	cowplot::theme_cowplot()
 }

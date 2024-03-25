@@ -82,6 +82,8 @@ inferAndPlotTree <- function(stana, species=NULL, cl=NULL,
             if (deleteZeroDepth) {
                 mat <- mat[rowSums(mat==-1)==0, ]
                 cat("Position number:", dim(mat)[1], "\n")      
+            } else {
+            	mat[ mat == -1] <- NA
             }
 			if (!is.null(IDs)) {
 				mat <- mat[intersect(row.names(mat),IDs), ]
