@@ -16,7 +16,8 @@
 #' @param estimate estimate rank
 #' @param estimate_range range of ranks for the estimation
 #' @param nnlm_flag if TRUE, use NNLM package which can handle missing values in the data.
-#' The different approach for estimating k is taken.
+#' The different approach for estimating k is taken when estimate is TRUE.
+#' When estimate is TRUE, only the error matrix is returned.
 #' @param nnlm_args arguments passed to NNLM functions
 #' @import NMF
 #' @export
@@ -49,35 +50,57 @@ NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
            nnlm_flag <- TRUE        	
         }
     }
-    cat("Original features:", dim(mat)[1], "\n")
-    cat("Original samples:", dim(mat)[2], "\n")
+    cat_subtle("# Original features: ", dim(mat)[1], "\n", sep="")
+    cat_subtle("# Original samples: ", dim(mat)[2], "\n", sep="")
     if (!nnlm_flag) {
 	    mat <- mat[apply(mat, 1, function(x) sum(x)!=0),]
 	    mat <- mat[,apply(mat, 2, function(x) sum(x)!=0)]
 
-	    cat("Filtered features:", dim(mat)[1], "\n")
-	    cat("Filtered samples:", dim(mat)[2], "\n")
+	    cat_subtle("# Filtered features:", dim(mat)[1], "\n", sep="")
+	    cat_subtle("# Filtered samples:", dim(mat)[2], "\n", sep="")
     }
 
     ## Test multiple ranks
     if (estimate) {
-    	test <- nmfEstimateRank(as.matrix(mat),
-    		range=estimate_range, method=method)
-    	val <- test$measures[, "cophenetic"]
-        b <- -1
-		for (i in seq_along(val)) {
-		  if (is.na(val[i])) {
-		    next
-		  } else {
-		    if (val[i] > b) {
-		      b <- val[i]
-		    } else {
-		      break
-		    }
-		  }
-		}
-	    rank <- estimate_range[i]
-		cat("Chosen rank:", rank, "\n")
+    	if (nnlm_flag) {
+    		cat_subtle("# NNLM flag enabled, the cross-validation error matrix only will be returned.\n")
+    		## Following the vignette procedures in NNLM
+			## Comparing the MSE and randomly assigned missing values
+    		A <- as.matrix(mat)
+			already_na <- which(is.na(A))
+			allind <- seq_len(length(A))
+			newind <- allind[!(allind %in% already_na)]
+			ind <- sample(newind, 0.1*length(newind));
+			A2 <- A;
+			A2[ind] <- NA;
+
+			err <- sapply(X = estimate_range,
+			              FUN = function(k) {
+			                z <- nnmf(A2, k);
+			                c(mean((with(z, W %*% H)[ind] - A[ind])^2), tail(z$mse, 1));
+			              }
+			);
+			return(err)
+    	} else {
+    		## Following the cophenetic correlation coefficient drop procedure
+	    	test <- nmfEstimateRank(as.matrix(mat),
+	    		range=estimate_range, method=method)
+	    	val <- test$measures[, "cophenetic"]
+	        b <- -1
+			for (i in seq_along(val)) {
+			  if (is.na(val[i])) {
+			    next
+			  } else {
+			    if (val[i] > b) {
+			      b <- val[i]
+			    } else {
+			      break
+			    }
+			  }
+			}
+		    rank <- estimate_range[i]
+			cat("Chosen rank:", rank, "\n")    		
+    	}
     }
     
     cat("Rank", rank, "\n")
@@ -142,6 +165,12 @@ plotStackedBarPlot <- function(stana, sp, by="NMF") {
 }
 
 #' alphaDiversityWithinSpecies
+#' @param stana stana object
+#' @param species species
+#' @param method method for vegan::diversity
+#' if `spc`, factor count will be returned.
+#' @param rank if NMF is not performed, this performs the NMF beforehand.
+#' rank can be specified here.
 #' @export
 alphaDiversityWithinSpecies <- function(stana, species, method="shannon", rank=5) {
     if (is.null(stana@NMF[[species]])) {
@@ -172,6 +201,7 @@ alphaDiversityWithinSpecies <- function(stana, species, method="shannon", rank=5
 #' @param species species ID
 #' @param tss perform total sum scaling
 #' @param return_data return only the data, not plot
+#' @param by NMF or coef matrix set to `coefMat` slot
 #' @export
 plotAbundanceWithinSpecies <- function(stana, species, tss=TRUE, return_data=FALSE, by="NMF") {
 	if (by=="NMF") {
@@ -180,8 +210,10 @@ plotAbundanceWithinSpecies <- function(stana, species, tss=TRUE, return_data=FAL
     	}
     	res <- stana@NMF[[species]]
         H <- coef(res)	
-	} else {
+	} else if (by=="coef") {
 		H <- stana@coefMat[[species]]
+	} else {
+		stop("NMF or coef should be specified in `by`")
 	}
 
     if (tss) {
@@ -248,7 +280,7 @@ pathwayWithFactor <- function(stana, species, tss=FALSE, change_name=FALSE,
   })) %>% data.frame()
   row.names(pathdf) <- pathdf[,1]
   pathdf[,1] <- NULL
-  colnames(pathdf) <- as.character(paste0("factor",seq_len(ncol(pathdf))))
+  # colnames(pathdf) <- as.character(paste0("factor",seq_len(ncol(pathdf))))
   pathdf <- dplyr::mutate_all(pathdf, as.numeric)  
   if (tss) {
     pathdf <- apply(pathdf, 2, function(x) x / sum(x))

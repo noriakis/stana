@@ -42,7 +42,8 @@ positions with zero-depth (indicated by -1)}
 \item{estimate_range}{range of ranks for the estimation}
 
 \item{nnlm_flag}{if TRUE, use NNLM package which can handle missing values in the data.
-The different approach for estimating k is taken.}
+The different approach for estimating k is taken when estimate is TRUE.
+When estimate is TRUE, only the error matrix is returned.}
 
 \item{nnlm_args}{arguments passed to NNLM functions}
 }
