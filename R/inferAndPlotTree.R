@@ -108,7 +108,7 @@ inferAndPlotTree <- function(stana, species=NULL, cl=NULL,
         	}
         	trenam <- paste0(sp, "_consensus_tree_stana_tmp.tree")
         	if (file.exists(trenam)) {
-        		stop("Tree file already exists!\n")
+        		cat("Tree file already exists!\n")
         	}
             system2("FastTree", args=c("-out", trenam, "-nt", nam),
                 stdout=TRUE, stderr=TRUE)
