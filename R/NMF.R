@@ -138,6 +138,7 @@ NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
 #' @param stana stana boject
 #' @param sp species
 #' @return ggplot
+#' @export
 plotStackedBarPlot <- function(stana, sp, by="NMF") {
 	if (is.null(stana@NMF[[sp]]) & is.null(stana@coefMat[[sp]])) {
 		stop("NMF results or coefficient matrix should be set")
