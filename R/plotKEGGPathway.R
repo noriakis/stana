@@ -1,6 +1,9 @@
 #' plotKEGGPathway
 #'
 #' plot the KEGG pathway
+#' The function uses `cl` slot and output statistics based on the groups.
+#' If the groups number is above two, the sum value across the group 
+#' will be used (not using grouping information).
 #'
 #' @param stana stana class object
 #' @param species candidate species

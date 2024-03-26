@@ -103,7 +103,7 @@ NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
     	}
     }
     
-    cat("Rank", rank, "\n")
+    cat_subtle("# Rank ", rank, "\n", sep="")
     if (nnlm_flag){
     	nnlm_args[["A"]] <- as.matrix(mat)
     	nnlm_args[["k"]] <- rank
@@ -145,23 +145,31 @@ plotStackedBarPlot <- function(stana, sp, by="NMF") {
 	if (by=="NMF") {
     	res <- stana@NMF[[sp]]
         coefMat <- coef(res)	
-	} else {
+	} else if (by=="coef") {
 		coefMat <- stana@coefMat[[sp]]
+	} else {
+		stop("NMF results or coefficient matrix should be set")
 	}
     relab <- apply(coefMat, 2, function(x) x / sum(x))
 	stb <- data.frame(t(relab))
     stb[["sample"]] <- row.names(stb)
     if (length(stana@cl)!=0) {
-        cols <- as.character(listToNV(stana@cl)[stb[["sample"]]])
-        cc <- stana@colors %>% setNames(unique(cols))
-        x_cols <- cc[cols]
+        stb[["group"]] <- as.character(listToNV(stana@cl)[stb[["sample"]]])
+	    melted <- reshape2::melt(stb)
+	    ## Not showing sample label, instead facet by group
+		ggplot(melted, aes(fill=variable, y=value, x=sample)) + 
+		    geom_col(position="fill")+
+		    facet_grid(. ~ group, scale="free")+
+		    cowplot::theme_cowplot()+
+		    theme(axis.text.x = element_blank())
+    } else {
+	    melted <- reshape2::melt(stb)
+		ggplot(melted, aes(fill=variable, y=value, x=sample)) + 
+		    geom_bar(position="fill", stat="identity")+
+		    cowplot::theme_cowplot()+
+		    theme(axis.text.x = element_text(angle=90))    	
     }
-    melted <- reshape2::melt(stb)
-    print(melted)
-	ggplot(melted, aes(fill=variable, y=value, x=sample)) + 
-	    geom_bar(position="fill", stat="identity")+
-	    cowplot::theme_cowplot()+
-	    theme(axis.text.x = element_text(angle=90, colour=x_cols))
+
 }
 
 #' alphaDiversityWithinSpecies

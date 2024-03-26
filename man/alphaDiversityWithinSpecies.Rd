@@ -6,6 +6,17 @@
 \usage{
 alphaDiversityWithinSpecies(stana, species, method = "shannon", rank = 5)
 }
+\arguments{
+\item{stana}{stana object}
+
+\item{species}{species}
+
+\item{method}{method for vegan::diversity
+if `spc`, factor count will be returned.}
+
+\item{rank}{if NMF is not performed, this performs the NMF beforehand.
+rank can be specified here.}
+}
 \description{
 alphaDiversityWithinSpecies
 }

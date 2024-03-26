@@ -99,7 +99,20 @@ inferAndPlotTree <- function(stana, species=NULL, cl=NULL,
         ## In this case, FastTree should be in PATH
         if (treeFun=="FastTree") {
         	## Write out the FASTA to the current dir
-        	stana@fastaList[[sp]]
+        	fa <- stana@fastaList[[sp]]
+        	nam <- paste0(sp, "_consensus_MSA_stana_tmp.fa")
+        	if (file.exists(nam)) {
+        		cat("File already exists!\n")
+        	} else {
+	        	write.phyDat(fa, nam, format="fasta")    		
+        	}
+        	trenam <- paste0(sp, "_consensus_tree_stana_tmp.tree")
+        	if (file.exists(trenam)) {
+        		stop("Tree file already exists!\n")
+        	}
+            system2("FastTree", args=c("-out", trenam, "-nt", nam),
+                stdout=TRUE, stderr=TRUE)
+            tre <- read.tree(trenam)
         	## Call FastTree
         	## Read tree and save
         }

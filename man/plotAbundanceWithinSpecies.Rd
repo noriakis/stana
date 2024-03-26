@@ -20,6 +20,8 @@ plotAbundanceWithinSpecies(
 \item{tss}{perform total sum scaling}
 
 \item{return_data}{return only the data, not plot}
+
+\item{by}{NMF or coef matrix set to `coefMat` slot}
 }
 \description{
 plot abundances using factor to sample matrix produced by NMF.

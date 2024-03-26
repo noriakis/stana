@@ -48,8 +48,8 @@ doAdonis <- function(stana, specs, cl=NULL,
             if (!is.null(stana@treeList[[sp]])) {
               tre <- stana@treeList[[sp]]
               ## cophenetic distance
-              d <- ape::cophenetic.phylo(tre)
-              sn <- row.names(d)
+              d <- as.dist(ape::cophenetic.phylo(tre))
+              sn <- attr(d, "Labels")
             } else {
               stop("No tree found in stana@treeList")
             }
@@ -119,9 +119,8 @@ doAdonis <- function(stana, specs, cl=NULL,
           # 		gr <- c(gr, NA)
           # 	}
           # }
-          d <- as.dist(d)         
+          # d <- as.dist(d)         
         }
-
         if (is.null(formula)){
             formulaPass <- as.formula("d ~ .")
             pr <- TRUE

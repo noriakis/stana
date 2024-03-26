@@ -64,4 +64,7 @@ list of plots or plot
 }
 \description{
 plot the KEGG pathway
+The function uses `cl` slot and output statistics based on the groups.
+If the groups number is above two, the sum value across the group 
+will be used (not using grouping information).
 }
