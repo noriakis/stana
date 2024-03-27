@@ -88,7 +88,7 @@ Using the profiled matrices, the `Boruta` algorithm can be run to identify the k
 library(Boruta)
 
 ## You can provide preprocessed matrix to `mat`
-doBoruta(stana, target = "gene", sp="100003")
+doBoruta(stana, target = "genes", sp="100003")
 ```
 
 ## Parsing functional annotations

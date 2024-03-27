@@ -19,7 +19,7 @@
 #' The different approach for estimating k is taken when estimate is TRUE.
 #' When estimate is TRUE, only the error matrix is returned.
 #' @param nnlm_args arguments passed to NNLM functions
-#' @import NMF
+#' @importFrom NMF nmf nmfEstimateRank
 #' @export
 NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
     deleteZeroDepth=FALSE, beta=0.01, estimate=FALSE, estimate_range=1:6, nnlm_flag=FALSE,
@@ -137,6 +137,7 @@ NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
 #' 
 #' @param stana stana boject
 #' @param sp species
+#' @param by "NMF" or "coef"
 #' @return ggplot
 #' @export
 plotStackedBarPlot <- function(stana, sp, by="NMF") {
@@ -153,6 +154,7 @@ plotStackedBarPlot <- function(stana, sp, by="NMF") {
 	}
     relab <- apply(coefMat, 2, function(x) x / sum(x))
 	stb <- data.frame(t(relab))
+	colnames(stb) <- as.character(seq_len(ncol(stb)))
     stb[["sample"]] <- row.names(stb)
     if (length(stana@cl)!=0) {
         stb[["group"]] <- as.character(listToNV(stana@cl)[stb[["sample"]]])

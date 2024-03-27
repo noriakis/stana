@@ -1,13 +1,13 @@
 #' combineGenes
 #' 
-#' (experimental) use common genes across multiple datasets to
+#' Use common genes across multiple datasets to
 #' merge gene copy numbers
 #' 
 #' @param stana_list stana list
 #' @param species species ID
 #' @export
 #' @return new stana object
-combineGenes <- function(stana_list, species, argList=list(), output_seq=FALSE) {
+combineGenes <- function(stana_list, species) {
   if (!is.list(stana_list)) {stop("Please provide list of stana object")}
   each_ID <- lapply(stana_list, function(x) x@genes[[species]] |> row.names())
   intersected <- Reduce(intersect, each_ID)

@@ -6,6 +6,15 @@
 \usage{
 reverseAnnot(stana, candSp, candidate, col = "KEGG_ko")
 }
+\arguments{
+\item{stana}{stana object}
+
+\item{candSp}{candidate species}
+
+\item{candidate}{candidate gene family ids}
+
+\item{col}{column to use in eggNOG mapper annotation}
+}
 \description{
 reverse_annot
 }

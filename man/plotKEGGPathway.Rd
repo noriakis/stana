@@ -58,6 +58,8 @@ are present in species by points}
 \item{sp_colors}{species colors used in point_mode}
 
 \item{point_size}{point size in point_mode}
+
+\item{statMethod}{how to colorize the nodes}
 }
 \value{
 list of plots or plot

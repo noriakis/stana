@@ -8,10 +8,8 @@ doL0(
   stana,
   species,
   cl = NULL,
-  doFix = TRUE,
   target = "genes",
   mat = NULL,
-  whichToCount = "ec_description",
   argList = list(),
   deleteZeroDepth = FALSE
 )

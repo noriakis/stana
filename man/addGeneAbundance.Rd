@@ -16,8 +16,25 @@ addGeneAbundance(
 )
 }
 \arguments{
+\item{stana}{stana object}
+
+\item{candSp}{candidate species}
+
+\item{IDs}{gene IDs to add}
+
+\item{target}{KO or genes}
+
+\item{how}{how to combine multiple IDs}
+
+\item{newCol}{new column name}
+
 \item{disc}{discretize the abundance by the threshold. function for calculating
 threshold, like {median}}
+
+\item{discNumeric}{convert discrete value to numeric}
+}
+\value{
+stana
 }
 \description{
 Add the specified gene copy number to metadata

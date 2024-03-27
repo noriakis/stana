@@ -9,7 +9,6 @@
 #' @param species species to plot
 #' If NULL, first species in fasta list is assigned
 #' @param cl optional, cluster to plot
-#' @param model dist.ml model
 #' @param tree_args passed to dist function
 #' @param dist_method dist method in phangorn, default to dist.ml
 #' if target is not fasta, ordinally `dist` method wil be used.
@@ -28,10 +27,11 @@
 #' In this case, FastTree should be in PATH.
 #' @param tree_only return tree only instead of stana object
 #' @param subset_samples subset samples (for matrix only)
+#' @param branch_col branch color, if this option is in the column name of metadata,
+#' use this variable as coloring. Default to black.
 #' @importFrom ggtreeExtra geom_fruit
 #' @importFrom ggnewscale new_scale_fill
 #' @importFrom ggstar geom_star
-#' @import phangorn
 #' @importFrom scico scale_fill_scico_d scale_fill_scico scale_color_scico scale_color_scico_d
 #' 
 #' @export

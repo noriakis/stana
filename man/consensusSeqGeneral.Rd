@@ -7,6 +7,8 @@
 consensusSeqGeneral(
   stana,
   species = NULL,
+  cl = NULL,
+  keep_samples = NULL,
   output_seq = FALSE,
   tree = FALSE,
   return_mat = FALSE,
@@ -18,43 +20,17 @@ consensusSeqGeneral(
 
 \item{species}{candidate species vector}
 
+\item{cl}{cluster, if plot cladogram}
+
+\item{keep_samples}{the samples to keep}
+
 \item{output_seq}{whether to output actual FASTA file}
 
-\item{tree}{if perform tree inference}
+\item{tree}{if TRUE, perform tree inference}
 
 \item{return_mat}{return matrix of characters}
 
 \item{verbose}{output current status}
-
-\item{mean_depth}{parameter for filtering}
-
-\item{fract_cov}{parameter for filtering}
-
-\item{site_depth}{parameter for filtering}
-
-\item{site_ratio}{parameter for filtering}
-
-\item{site_maf}{parameter for filtering}
-
-\item{allele_support}{parameter for filtering}
-
-\item{site_prev}{parameter for filtering}
-
-\item{cl}{cluster, if plot cladogram}
-
-\item{max_sites}{default to Inf}
-
-\item{keep_samples}{currently not implemented}
-
-\item{exclude_samples}{currently not implemented}
-
-\item{rand_samples}{currently not implemented}
-
-\item{max_samples}{currently not implemented}
-
-\item{locus_type}{locus type to be included, default to CDS}
-
-\item{site_list}{site list to be included}
 }
 \description{
 consensusSeqGeneral

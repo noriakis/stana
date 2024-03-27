@@ -23,6 +23,7 @@
 #' @param sp_colors species colors used in point_mode
 #' @param nudge_y nudge the y positions in point_mode
 #' @param point_size point size in point_mode
+#' @param statMethod how to colorize the nodes
 #' @export
 #' @return list of plots or plot
 #' @importFrom ggkegg pathway

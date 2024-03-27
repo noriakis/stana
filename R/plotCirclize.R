@@ -22,6 +22,7 @@
 #' @param featCircos which type of circos to use in the corresponding feature
 #' @param include_gene include these gene IDs, ignoring the thesh_snp_gene argument
 #' @param only_genome_id show only the genome IDs
+#' @param convertGeneID convert the gene id to KO id in eggNOG annotation
 #' @importFrom circlize CELL_META circos.clear circos.par circos.initialize circos.rect circos.barplot circos.track circos.text circos.points
 #' @return draw circlize plot
 #' @export
@@ -103,7 +104,7 @@ plotCirclize <- function(stana, candSp, genomeId, include_gene=NULL,
     ## Change the name of gene_id if available to KO
     if (convertGeneID) {
     	if (!is.null(stana@eggNOG[[candSp]])) {
-			chk <- stana:::checkEGGNOG(stana@eggNOG[[candSp]], "KEGG_ko")
+			chk <- checkEGGNOG(stana@eggNOG[[candSp]], "KEGG_ko")
 			col <- chk %>% group_by(ID) %>% summarise(paste0(value,collapse=",")) %>% `colnames<-`(c("ID","collapse"))
 			changed <- as.character(col$collapse) %>% setNames(col$ID)
 			circ_plot$gene_id <- changed[circ_plot$gene_id] 

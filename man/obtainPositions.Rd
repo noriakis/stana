@@ -6,6 +6,13 @@
 \usage{
 obtainPositions(stana, candSp, geneID)
 }
+\arguments{
+\item{stana}{stana object}
+
+\item{candSp}{candidate species}
+
+\item{geneID}{gene IDs}
+}
 \description{
 obtain_positions
 }

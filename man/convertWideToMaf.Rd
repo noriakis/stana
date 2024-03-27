@@ -6,6 +6,9 @@
 \usage{
 convertWideToMaf(df)
 }
+\arguments{
+\item{df}{data frame of six columns}
+}
 \value{
 species-named list of MAF data.frame
 }

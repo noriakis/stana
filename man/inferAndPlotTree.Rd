@@ -47,6 +47,9 @@ subset the matrix to this ID.}
 \item{use_point}{use geom_point for plotting discrete metadata,
 instead of geom_star.}
 
+\item{branch_col}{branch color, if this option is in the column name of metadata,
+use this variable as coloring. Default to black.}
+
 \item{tree_args}{passed to dist function}
 
 \item{branch.length}{branch length, default to "none", cladogram}
@@ -62,8 +65,6 @@ if `FastTree` is specified, FastTree will be called.
 In this case, FastTree should be in PATH.}
 
 \item{tree_only}{return tree only instead of stana object}
-
-\item{model}{dist.ml model}
 }
 \description{
 infer the tree and plot.

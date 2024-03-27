@@ -4,6 +4,13 @@
 #' clusterProfiler::GSEA is used.
 #' By default this uses moderated t-statistics for ranking of the genes.
 #' 
+#' @param stana stana object
+#' @param candSp candidate species
+#' @param cl if NULL, grouping in stana is used
+#' @param eps pseudovalue added if log is taken
+#' @param how how to combine multiple variables, default to mean
+#' @param rankMethod how to rank genes
+#' @param target pathway or module
 #' @param zeroPerc genes >= the percentage of count zero sample will be excluded.
 #' Default to zero, not recommended in GSEA
 #' @param bg_filter filter the background for those in table
@@ -75,9 +82,17 @@ doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean,
 #' 
 #' Add the specified gene copy number to metadata
 #' 
+#' @param stana stana object
+#' @param candSp candidate species
+#' @param IDs gene IDs to add
+#' @param target KO or genes
+#' @param how how to combine multiple IDs
+#' @param newCol new column name
+#' @param discNumeric convert discrete value to numeric
 #' @param disc discretize the abundance by the threshold. function for calculating
 #' threshold, like {median}
 #' @export
+#' @return stana
 addGeneAbundance <- function(stana, candSp, IDs,
     target="KO", how=sum, newCol="gene",
     disc=NULL, discNumeric=TRUE) {
@@ -175,6 +190,10 @@ calcGF <- function(stana, candSp=NULL, how=sum, annot="eggNOG", column="KEGG_ko"
 }
 
 #' reverse_annot
+#' @param stana stana object
+#' @param candSp candidate species
+#' @param candidate candidate gene family ids
+#' @param col column to use in eggNOG mapper annotation
 #' @export
 reverseAnnot <- function(stana, candSp, candidate, col="KEGG_ko") {
     annot <- checkEGGNOG(annot_file=stana@eggNOG[[candSp]], col)
@@ -184,12 +203,14 @@ reverseAnnot <- function(stana, candSp, candidate, col="KEGG_ko") {
 
 
 #' obtain_positions
+#' @param stana stana object
+#' @param candSp candidate species
+#' @param geneID gene IDs
 #' @export
 obtainPositions <- function(stana, candSp, geneID) {
     tmp <- stana@snpsInfo[[candSp]]
     tmp[tmp$gene_id %in% geneID, ] %>% row.names()
 }
-
 
 
 #' @noRd

@@ -10,6 +10,8 @@ plotStackedBarPlot(stana, sp, by = "NMF")
 \item{stana}{stana boject}
 
 \item{sp}{species}
+
+\item{by}{"NMF" or "coef"}
 }
 \value{
 ggplot

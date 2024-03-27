@@ -14,8 +14,8 @@
 #' @return L0Learn object
 #' @import ggplot2
 #' @export
-doL0 <- function(stana, species, cl=NULL, doFix=TRUE,
-    target="genes", mat=NULL, whichToCount="ec_description", argList=list(),
+doL0 <- function(stana, species, cl=NULL,
+    target="genes", mat=NULL, argList=list(),
     deleteZeroDepth=FALSE) {
     if (length(argList)==0) {
     	qqcat("Penalty is set to L0L2 by default")

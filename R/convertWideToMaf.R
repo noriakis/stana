@@ -2,6 +2,7 @@
 #' 
 #' should be six column layout with the column corresponding to
 #' "species_id","snv_id","ref_allele","alt_allele","ref_count","alt_count"
+#' @param df data frame of six columns
 #' @return species-named list of MAF data.frame
 #' @export
 convertWideToMaf <- function(df) {

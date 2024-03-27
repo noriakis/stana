@@ -2,29 +2,18 @@
 #' consensusSeqGeneral
 #' @param stana stana obj
 #' @param species candidate species vector
-#' @param mean_depth parameter for filtering
-#' @param fract_cov parameter for filtering
-#' @param site_depth parameter for filtering
-#' @param site_ratio parameter for filtering
-#' @param site_maf parameter for filtering
-#' @param allele_support parameter for filtering
-#' @param site_prev parameter for filtering
 #' @param cl cluster, if plot cladogram
-#' @param max_sites default to Inf
-#' @param keep_samples currently not implemented
-#' @param exclude_samples currently not implemented
-#' @param rand_samples currently not implemented
-#' @param tree if perform tree inference
-#' @param max_samples currently not implemented
+#' @param keep_samples the samples to keep
+#' @param tree if TRUE, perform tree inference
 #' @param verbose output current status
 #' @param output_seq whether to output actual FASTA file
-#' @param locus_type locus type to be included, default to CDS
-#' @param site_list site list to be included
 #' @param return_mat return matrix of characters
 #' @export
 consensusSeqGeneral <- function(
 	stana,
 	species=NULL,
+	cl=NULL,
+	keep_samples=NULL,
 	output_seq=FALSE,
 	tree=FALSE,
     return_mat=FALSE,

@@ -128,8 +128,17 @@ loadDic <- function() {
 
 #' check
 #' check and output statistics based on conditional formulas
+#' @param x stana boject
+#' @param exp expression for filtering the snps summary
+#' @param target snps or genes
 #' @export
 setGeneric("check", function(x, exp, target="snps") standardGeneric("check"))
+#' check
+#' check and output statistics based on conditional formulas
+#' @param x stana boject
+#' @param exp expression for filtering the snps summary
+#' @param target snps or genes
+#' @export
 setMethod("check", "stana",
     function(x, exp, target) {
     	if (target=="snps") {
@@ -197,52 +206,104 @@ setGeneric("getSlot",
 setMethod("getSlot", "stana",
     function(x, slot) attr(x, slot))
 
+#' getFasta
+#' get fasta list from stana
+#' @param x stana object
 #' @export
 setGeneric("getFasta",
     function(x) standardGeneric("getFasta"))
 
+#' getFasta
+#' get fasta list from stana
+#' @param x stana object
+#' @export
 setMethod("getFasta", "stana",
     function(x) attr(x, "fastaList"))
 
+#' getTree
+#' get tree list from stana
+#' @param x stana object
 #' @export
 setGeneric("getTree",
     function(x) standardGeneric("getTree"))
 
+#' getTree
+#' get tree list from stana
+#' @param x stana object
+#' @export
 setMethod("getTree", "stana",
     function(x) attr(x, "treeList"))
 
+#' getTreePlot
+#' get tree plot list from stana
+#' @param x stana object
 #' @export
 setGeneric("getTreePlot",
     function(x) standardGeneric("getTreePlot"))
 
+#' getTreePlot
+#' get tree plot list from stana
+#' @param x stana object
+#' @export
 setMethod("getTreePlot", "stana",
     function(x) attr(x, "treePlotList"))
 
+#' getID
+#' get ID list from stana
+#' @param x stana object
 #' @export
 setGeneric("getID",
     function(x) standardGeneric("getID"))
 
+
+#' getID
+#' get ID list from stana
+#' @param x stana object
+#' @export
 setMethod("getID", "stana",
     function(x) attr(x, "ids"))
 
+#' getAdonis
+#' get adonis list from stana
+#' @param x stana object
 #' @export
 setGeneric("getAdonis",
     function(x) standardGeneric("getAdonis"))
 
+#' getAdonis
+#' get adonis list from stana
+#' @param x stana object
+#' @export
 setMethod("getAdonis", "stana",
     function(x) attr(x, "adonisList"))
 
+#' getCl
+#' get grouping information list from stana
+#' @param x stana object
 #' @export
 setGeneric("getCl",
     function(x) standardGeneric("getCl"))
 
+#' getCl
+#' get grouping information list from stana
+#' @param x stana object
+#' @export
 setMethod("getCl", "stana",
     function(x) attr(x, "cl"))
 
+#' getGeneID
+#' get gene IDs from stana
+#' @param x stana object
+#' @param candSp species
 #' @export
 setGeneric("getGeneID",
     function(x, candSp) standardGeneric("getGeneID"))
 
+#' getGeneID
+#' get gene IDs from stana
+#' @param x stana object
+#' @param candSp species
+#' @export
 setMethod("getGeneID", "stana",
     function(x, candSp) {
         if (is.null(stana@genes[[candSp]])) {
@@ -252,10 +313,19 @@ setMethod("getGeneID", "stana",
         }
 })
 
+#' getSNVID
+#' get SNV IDs from stana
+#' @param x stana object
+#' @param candSp species
 #' @export
 setGeneric("getSNVID",
     function(x, candSp) standardGeneric("getSNVID"))
 
+#' getSNVID
+#' get SNV IDs from stana
+#' @param x stana object
+#' @param candSp species
+#' @export
 setMethod("getSNVID", "stana",
     function(x, candSp) {
         if (is.null(stana@snps[[candSp]])) {
@@ -265,10 +335,19 @@ setMethod("getSNVID", "stana",
         }
 })
 
+#' getKOID
+#' get gene family IDs from stana
+#' @param x stana object
+#' @param candSp species
 #' @export
 setGeneric("getKOID",
     function(x, candSp) standardGeneric("getKOID"))
 
+#' getKOID
+#' get gene family IDs from stana
+#' @param x stana object
+#' @param candSp species
+#' @export
 setMethod("getKOID", "stana",
     function(x, candSp) {
         if (is.null(stana@kos[[candSp]])) {
@@ -280,10 +359,21 @@ setMethod("getKOID", "stana",
 
 
 
+#' setSlot
+#' general method for setting the slot
+#' @param x stana object
+#' @param y slot name
+#' @param z set variable
 #' @export
 setGeneric("setSlot",
     function(x, y, z) standardGeneric("setSlot"))
 
+#' setSlot
+#' general method for setting the slot
+#' @param x stana object
+#' @param y slot name
+#' @param z set variable
+#' @export
 setMethod("setSlot", "stana",
     function(x, y, z) {
         attr(x, y) <- z

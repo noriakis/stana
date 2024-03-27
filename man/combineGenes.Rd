@@ -4,7 +4,7 @@
 \alias{combineGenes}
 \title{combineGenes}
 \usage{
-combineGenes(stana_list, species, argList = list(), output_seq = FALSE)
+combineGenes(stana_list, species)
 }
 \arguments{
 \item{stana_list}{stana list}
@@ -15,6 +15,6 @@ combineGenes(stana_list, species, argList = list(), output_seq = FALSE)
 new stana object
 }
 \description{
-(experimental) use common genes across multiple datasets to
+Use common genes across multiple datasets to
 merge gene copy numbers
 }

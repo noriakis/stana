@@ -6,7 +6,7 @@ License: GPL-3
 Description: Analysis toolkit for intra-species diversity from metagenomics.
 Authors@R: person("Noriaki", "Sato", email = "nori@hgc.jp", role = c("cre", "aut"))
 Depends: ggplot2, ggstar, ggraph, igraph
-Imports: GetoptLong, BiocFileCache, RCurl, igraph, vegan, methods, data.table, phangorn, RColorBrewer, ggtree, circlize, ComplexHeatmap, ggkegg, ape, dplyr, exactRankTests, ggblend, ggh4x, scales, tidygraph, ggplotify, ggtreeExtra, ggnewscale, scico, MKmisc, NMF, rmarkdown, BiocStyle, pillar
-Suggests: simplifyEnrichment, stringr, tidyr, Boruta, knitr, ggrepel
+Imports: GetoptLong, BiocFileCache, RCurl, vegan, methods, data.table, phangorn, RColorBrewer, ggtree, circlize, ComplexHeatmap, ggkegg, ape, dplyr, exactRankTests, ggblend, ggh4x, scales, tidygraph, ggplotify, ggtreeExtra, ggnewscale, scico, MKmisc, NMF, pillar
+Suggests: simplifyEnrichment, stringr, tidyr, Boruta, knitr, ggrepel, rmarkdown, BiocStyle, cowplot, patchwork, reshape2, NNLM
 RoxygenNote: 7.3.1
 VignetteBuilder: knitr

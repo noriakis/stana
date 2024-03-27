@@ -68,6 +68,8 @@ plotCirclize(
 \item{contPalette}{palette for continuous scale}
 
 \item{discPalette}{palette for discrete scale}
+
+\item{convertGeneID}{convert the gene id to KO id in eggNOG annotation}
 }
 \value{
 draw circlize plot

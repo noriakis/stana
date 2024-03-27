@@ -17,8 +17,22 @@ doGSEA(
 )
 }
 \arguments{
+\item{stana}{stana object}
+
+\item{candSp}{candidate species}
+
+\item{cl}{if NULL, grouping in stana is used}
+
+\item{eps}{pseudovalue added if log is taken}
+
+\item{how}{how to combine multiple variables, default to mean}
+
 \item{zeroPerc}{genes >= the percentage of count zero sample will be excluded.
 Default to zero, not recommended in GSEA}
+
+\item{rankMethod}{how to rank genes}
+
+\item{target}{pathway or module}
 
 \item{bg_filter}{filter the background for those in table}
 }
