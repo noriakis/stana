@@ -20,11 +20,12 @@
 #' When estimate is TRUE, only the error matrix is returned.
 #' @param nnlm_args arguments passed to NNLM functions
 #' @param nnlm_na_perc NA frequency when the cross-validation is performed.
+#' @param tss perform total sum scaling to the matrix
 #' @importFrom NMF nmf nmfEstimateRank
 #' @export
 NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
     deleteZeroDepth=FALSE, beta=0.01, estimate=FALSE, estimate_range=1:6, nnlm_flag=FALSE,
-    nnlm_args=list(), nnlm_na_perc=0.3) {
+    nnlm_args=list(), nnlm_na_perc=0.3, tss=FALSE) {
 	
 	## References for the missing value handling in NMF:
 	## https://github.com/scikit-learn/scikit-learn/pull/8474
@@ -51,20 +52,24 @@ NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
            nnlm_flag <- TRUE        	
         }
     }
+    if (tss) {
+    	cat_subtle("# Performing TSS\n")
+    	mat <- apply(mat, 2, function(x) x / sum(x))
+    }
     cat_subtle("# Original features: ", dim(mat)[1], "\n", sep="")
     cat_subtle("# Original samples: ", dim(mat)[2], "\n", sep="")
     if (!nnlm_flag) {
 	    mat <- mat[apply(mat, 1, function(x) sum(x)!=0),]
 	    mat <- mat[,apply(mat, 2, function(x) sum(x)!=0)]
 
-	    cat_subtle("# Filtered features:", dim(mat)[1], "\n", sep="")
-	    cat_subtle("# Filtered samples:", dim(mat)[2], "\n", sep="")
+	    cat_subtle("# Filtered features: ", dim(mat)[1], "\n", sep="")
+	    cat_subtle("# Filtered samples: ", dim(mat)[2], "\n", sep="")
     }
 
     ## Test multiple ranks
     if (estimate) {
     	if (nnlm_flag) {
-    		cat_subtle("# NNLM flag enabled, the cross-validation error matrix only will be returned.\n")
+    		cat_subtle("# NNLM flag enabled, the error matrix only will be returned.\n")
     		## Following the vignette procedures in NNLM
 			## Comparing the MSE and randomly assigned missing values
     		A <- as.matrix(mat)
