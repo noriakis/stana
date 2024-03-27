@@ -34,5 +34,6 @@ plotGenes <- function(stana, species, geneID, target="genes", cl=NULL) {
 	geom_jitter(shape=21, size=2)+
 	scale_fill_manual(values=stana@colors)+
 	facet_wrap(.~geneID)+
-	cowplot::theme_cowplot()
+	cowplot::theme_cowplot()+
+    cowplot::panel_border()
 }

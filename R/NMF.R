@@ -245,7 +245,8 @@ plotAbundanceWithinSpecies <- function(stana, species, tss=TRUE, return_data=FAL
         ggplot(aes(x=group, y=value))+
         geom_boxplot()+
         facet_wrap(.~name)+
-        cowplot::theme_cowplot()
+        cowplot::theme_cowplot()+
+        cowplot::panel_border()
 }
 
 
