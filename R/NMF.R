@@ -164,13 +164,13 @@ plotStackedBarPlot <- function(stana, sp, by="NMF") {
 		ggplot(melted, aes(fill=variable, y=value, x=sample)) + 
 		    geom_col(position="fill")+
 		    facet_grid(. ~ group, scale="free")+
-		    cowplot::theme_cowplot()+
+		    cowplot::theme_cowplot()+ cowplot::panel_border()+
 		    theme(axis.text.x = element_blank())
     } else {
 	    melted <- reshape2::melt(stb)
 		ggplot(melted, aes(fill=variable, y=value, x=sample)) + 
 		    geom_bar(position="fill", stat="identity")+
-		    cowplot::theme_cowplot()+
+		    cowplot::theme_cowplot()+cowplot::panel_border()+
 		    theme(axis.text.x = element_text(angle=90))    	
     }
 
