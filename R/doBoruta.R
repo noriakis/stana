@@ -22,11 +22,11 @@ doBoruta <- function(stana, sp, cl=NULL, doFix=TRUE,
   deleteZeroDepth=FALSE) {
   ret <- list()
   if (is.null(cl)) {
-    qqcat("Using grouping from the slot\n")
+    cat_subtle("# Using grouping from the slot: ", paste0(names(stana@cl), collapse="/"), "\n", sep="")
     cl <- stana@cl
   }
   if (target=="genes" & is.null(mat)){
-    qqcat("If needed, please provide preprocessed matrix of genes to `mat`\n")
+    cat_subtle("# If needed, please provide preprocessed matrix to `mat`\n")
     filtDf <- stana@genes[[sp]]
   } else if (target=="kos") {
     filtDf <- stana@kos[[sp]]  	
@@ -34,13 +34,13 @@ doBoruta <- function(stana, sp, cl=NULL, doFix=TRUE,
     filtDf <- stana@snps[[sp]]
     if (deleteZeroDepth) {
       filtDf <- filtDf[rowSums(filtDf==-1)==0,]
-      qqcat("After filtering `-1`, position numbers: @{dim(filtDf)[1]}\n")
+      cat_subtle("# After filtering `-1`, position numbers: ", dim(filtDf)[1], "\n", sep="")
     }
   } else {
-    qqcat("Proceeding with provided matrix\n")
+    cat_subtle("# Proceeding with provided matrix\n")
     filtDf <- mat
   }
-  qqcat("Feature number: @{dim(filtDf)[1]}\n")
+  cat_subtle("# Feature number: ", dim(filtDf)[1], "\n", sep="")
   transDf <- data.frame(t(filtDf),
                         check.names=F)
   transDf <- transDf[intersect(row.names(transDf), cl |> unlist() |> unique()),]
@@ -54,7 +54,7 @@ doBoruta <- function(stana, sp, cl=NULL, doFix=TRUE,
   }
   
   transDf$group <- as.factor(gr)
-  qqcat("Performing Boruta\n")
+  cat_subtle("# Performing Boruta\n")
   argList[["formula"]] <- group ~ .
   argList[["data"]] <- transDf
   rf <- do.call("Boruta", argList)

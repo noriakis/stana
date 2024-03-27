@@ -11,6 +11,7 @@ plotHeatmap(
   k = 10,
   mat = NULL,
   seed = 1,
+  geneID = NULL,
   fnc = "KEGG_Pathway",
   removeHigh = TRUE,
   removeAdditional = NULL,
@@ -33,6 +34,8 @@ plotHeatmap(
 and column sample names}
 
 \item{seed}{random seed}
+
+\item{geneID}{gene id to subset}
 
 \item{fnc}{One of `KEGG_Pathway` or `KEGG_Module`, when eggNOG annotation is used}
 

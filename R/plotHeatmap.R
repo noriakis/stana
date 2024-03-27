@@ -8,6 +8,7 @@
 #' @param sp candidate species
 #' @param cl grouping named list
 #' @param k k-means param for splitting gene
+#' @param geneID gene id to subset
 #' @param mat if customized matrix is to be used. Row will be gene names
 #' and column sample names
 #' @param fnc One of `KEGG_Pathway` or `KEGG_Module`, when eggNOG annotation is used
@@ -23,6 +24,7 @@
 #' @export
 #' 
 plotHeatmap <- function(stana, sp, cl=NULL, k=10, mat=NULL, seed=1,
+	geneID=NULL,
 	fnc="KEGG_Pathway", removeHigh=TRUE, removeAdditional=NULL, max_words=10,
     filter_zero_frac=0.8, filter_max_frac=Inf, filter_max_value=5) {
 	set.seed(seed)
@@ -32,13 +34,18 @@ plotHeatmap <- function(stana, sp, cl=NULL, k=10, mat=NULL, seed=1,
 	} else {
 		df <- stana@genes[[sp]]
         ## Filter
-        df <- df[!rowSums(df == 0) > ncol(df) * filter_zero_frac,]
-        df <- df[!rowSums(df > filter_max_value) > ncol(df) * filter_max_frac,]
+    	if (!is.null(geneID)) {
+			df <- df[intersect(row.names(df), geneID), ]
+		} else {
+	        df <- df[!rowSums(df == 0) > ncol(df) * filter_zero_frac,]
+	        df <- df[!rowSums(df > filter_max_value) > ncol(df) * filter_max_frac,]			
+		}
 	}
 
-    qqcat("In resulting matrix, max: @{max(df)}, min: @{min(df)}\n")
 
-	qqcat("Dimension: @{dim(df)[1]}, @{dim(df)[2]}\n")
+    cat_subtle("# In resulting matrix, max: ", max(df), " min: ", min(df), "\n", sep="")
+	cat_subtle("# Dimension: ", dim(df)[1], " ", dim(df)[2], "\n", sep="")
+	
 	if (is.null(cl)) {cl <- stana@cl}
 	if (length(cl)==0) {cl <- list("all"=colnames(df))}
 
@@ -67,10 +74,10 @@ plotHeatmap <- function(stana, sp, cl=NULL, k=10, mat=NULL, seed=1,
 			      argList=list(max_words = max_words))
 			)
 		return(hm)		
-	} else if (stana@type=="MIDAS2") {
-		qqcat("MIDAS2, looking for the annotation file by eggNOG-mapper v2\n")
+	} else {
+		cat_subtle("# Looking for the annotation file by eggNOG-mapper v2\n")
 		if (is.null(stana@eggNOG[[sp]])) {stop("No annotation file provided to slot `eggNOG`")}
-		qqcat("Loading annotation\n")
+		cat_subtle("# Loading annotation\n")
 		tib <- checkEGGNOG(stana@eggNOG[[sp]], ret=fnc)
 	    if (fnc=="KEGG_Pathway") {
      		mp <- data.table::fread("https://rest.kegg.jp/list/pathway", header=FALSE)
@@ -92,9 +99,6 @@ plotHeatmap <- function(stana, sp, cl=NULL, k=10, mat=NULL, seed=1,
 			      argList=list(max_words = max_words))
 			)
 		return(hm)
-	} else {
-		stop("Currently MIDAS2 and MIDAS are supported.")
 	}
-
 
 }
