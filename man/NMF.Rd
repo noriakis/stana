@@ -16,7 +16,8 @@ NMF(
   estimate = FALSE,
   estimate_range = 1:6,
   nnlm_flag = FALSE,
-  nnlm_args = list()
+  nnlm_args = list(),
+  nnlm_na_perc = 0.3
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ The different approach for estimating k is taken when estimate is TRUE.
 When estimate is TRUE, only the error matrix is returned.}
 
 \item{nnlm_args}{arguments passed to NNLM functions}
+
+\item{nnlm_na_perc}{NA frequency when the cross-validation is performed.}
 }
 \description{
 decompose SNV, gene content, or gene family abundance to

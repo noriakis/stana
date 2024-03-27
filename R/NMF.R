@@ -19,11 +19,12 @@
 #' The different approach for estimating k is taken when estimate is TRUE.
 #' When estimate is TRUE, only the error matrix is returned.
 #' @param nnlm_args arguments passed to NNLM functions
+#' @param nnlm_na_perc NA frequency when the cross-validation is performed.
 #' @importFrom NMF nmf nmfEstimateRank
 #' @export
 NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
     deleteZeroDepth=FALSE, beta=0.01, estimate=FALSE, estimate_range=1:6, nnlm_flag=FALSE,
-    nnlm_args=list()) {
+    nnlm_args=list(), nnlm_na_perc=0.3) {
 	
 	## References for the missing value handling in NMF:
 	## https://github.com/scikit-learn/scikit-learn/pull/8474
@@ -70,7 +71,7 @@ NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
 			already_na <- which(is.na(A))
 			allind <- seq_len(length(A))
 			newind <- allind[!(allind %in% already_na)]
-			ind <- sample(newind, 0.1*length(newind));
+			ind <- sample(newind, nnlm_na_perc * length(newind));
 			A2 <- A;
 			A2[ind] <- NA;
 
