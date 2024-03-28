@@ -12,6 +12,7 @@ consensusSeqGeneral(
   output_seq = FALSE,
   tree = FALSE,
   return_mat = FALSE,
+  allele_columns = c("major_allele", "minor_allele"),
   verbose = FALSE
 )
 }
@@ -29,6 +30,8 @@ consensusSeqGeneral(
 \item{tree}{if TRUE, perform tree inference}
 
 \item{return_mat}{return matrix of characters}
+
+\item{allele_columns}{columns specifying major and minor allele}
 
 \item{verbose}{output current status}
 }

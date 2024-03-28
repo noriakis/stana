@@ -157,7 +157,11 @@ NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
 
     cat("Present feature per factor:", apply(basisMat!=0, 2, function(x) sum(x)), "\n")
     stana@NMF[[species]] <- res
-    return(stana)
+    if (estimate & !nnlm_flag) {
+        return(list(stana, test))
+    } else {
+        return(stana)    
+    }
 }
 
 #' plotStackedBarPlot

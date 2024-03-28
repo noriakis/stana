@@ -69,7 +69,7 @@ listToNV <- function(l) {
 #' @export
 #' @return ggplot
 plotSNVInfo <- function(stana, sp) {
-	if (!is.null(stana@includeSNVID)[[sp]]) {cat_subtle("# The set SNV ID information is not used in this function\n")}
+	if (!is.null(stana@includeSNVID[[sp]])) {cat_subtle("# The set SNV ID information is not used in this function\n")}
     d <- stana@snpsInfo[[sp]]
     tbl <- data.frame(table(paste0(d$major_allele,"/",d$minor_allele)))
     if ("locus_type" %in% colnames(d)) {
