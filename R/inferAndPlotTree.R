@@ -231,13 +231,20 @@ inferAndPlotTree <- function(stana, species=NULL, cl=NULL,
             }
 		    stana@treePlotList[[sp]] <- p
 		} else {
-		    tre <- groupOTU(tre, cl)
-		    tp <- ggtree(tre,
-		        layout=layout,branch.length = branch.length) + # Return cladogram by default
-		        geom_tippoint(size=point_size, aes(color=.data$group)) +
-		        ggtitle(sp)+
-		        scale_color_manual(values=stana@colors)
-		    stana@treePlotList[[sp]] <- tp			
+			if (length(cl)==0) {
+			    tp <- ggtree(tre,
+			        layout=layout,branch.length = branch.length) + # Return cladogram by default
+			        geom_tippoint(size=point_size) +
+			        ggtitle(sp)				
+			} else {
+			    tre <- groupOTU(tre, cl)
+			    tp <- ggtree(tre,
+			        layout=layout,branch.length = branch.length) + # Return cladogram by default
+			        geom_tippoint(size=point_size, aes(color=.data$group)) +
+			        ggtitle(sp)+
+			        scale_color_manual(values=stana@colors)
+			}
+		    stana@treePlotList[[sp]] <- tp
 		}
 	}
     stana

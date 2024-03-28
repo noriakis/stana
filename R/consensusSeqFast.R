@@ -8,6 +8,7 @@
 #' @param verbose output current status
 #' @param output_seq whether to output actual FASTA file
 #' @param return_mat return matrix of characters
+#' @param allele_columns columns specifying major and minor allele
 #' @export
 consensusSeqGeneral <- function(
 	stana,
@@ -17,6 +18,7 @@ consensusSeqGeneral <- function(
 	output_seq=FALSE,
 	tree=FALSE,
     return_mat=FALSE,
+    allele_columns=c("major_allele","minor_allele"),
     verbose=FALSE) {
     
     if (is.null(species)) {species <- stana@clearSnps}
@@ -40,19 +42,18 @@ consensusSeqGeneral <- function(
 		if (is.null(stana@snpsInfo[[sp]])) {
 			stop("Please provide data frame for snpsInfo slot")
 		} else {
-			if (length(intersect(c("major_allele", "minor_allele"), colnames(stana@snpsInfo[[sp]])))<2) {
+			if (length(intersect(allele_columns, colnames(stana@snpsInfo[[sp]])))<2) {
 				stop("Snps info data frame has to have major_allele and minor_allele column")
 			}
-    		SPECIES[["info"]] <- stana@snpsInfo[[sp]]
+    		SPECIES[["info"]] <- data.frame(stana@snpsInfo[[sp]])
 			if (!is.null(stana@includeSNVID[[sp]])) {
 				SPECIES[["info"]] <- SPECIES[["info"]][stana@includeSNVID[[sp]], ]
 			}    		
 		}
 
-        sp_minor_allele <- SPECIES[["info"]]$minor_allele
-        sp_major_allele <- SPECIES[["info"]]$major_allele
+        sp_minor_allele <- SPECIES[["info"]][[allele_columns[2]]]
+        sp_major_allele <- SPECIES[["info"]][[allele_columns[1]]]
         
-
         allele_list <- lapply(seq_len(nrow(SPECIES[["freqs"]])), function(i) {
 	        	if (!is.null(keep_samples)) {
 	        		samples <- keep_samples
@@ -60,7 +61,7 @@ consensusSeqGeneral <- function(
 	        		samples <- colnames(SPECIES[["freqs"]])
 	        	}
         	    
-		    	per_sample_allele <- lapply(, function(sample) { ## BOTTLENECK [3]
+		    	per_sample_allele <- lapply(samples, function(sample) { ## BOTTLENECK [3]
 		    		if (SPECIES[["freqs"]][[sample]][i] == -1) {
 		    		    return("-")
 		    		}
