@@ -80,6 +80,7 @@ plotSNVInfo <- function(stana, sp) {
         geom_col()+
         xlab("major_allele/minor_allele")+
         cowplot::theme_cowplot()+
+        scale_y_continuous(expand = expansion(mult = c(0, 0.05)))+
         ggtitle(title)
 }
 

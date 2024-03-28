@@ -21,11 +21,13 @@
 #' @param nnlm_args arguments passed to NNLM functions
 #' @param nnlm_na_perc NA frequency when the cross-validation is performed.
 #' @param tss perform total sum scaling to the matrix
+#' @param remove_na_perc remove features with too many NA
+#' (features with NA below {remove_na_perc} * overall sample numbers will be retained)
 #' @importFrom NMF nmf nmfEstimateRank
 #' @export
 NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
     deleteZeroDepth=FALSE, beta=0.01, estimate=FALSE, estimate_range=1:6, nnlm_flag=FALSE,
-    nnlm_args=list(), nnlm_na_perc=0.3, tss=FALSE) {
+    nnlm_args=list(), nnlm_na_perc=0.3, tss=FALSE, remove_na_perc=NULL) {
 	
 	## References for the missing value handling in NMF:
 	## https://github.com/scikit-learn/scikit-learn/pull/8474
@@ -46,12 +48,19 @@ NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
         mat <- stana@snps[[species]]
         if (deleteZeroDepth) {
            mat <- mat[rowSums(mat == -1)==0,]
-           qqcat("After filtering `-1`, position numbers: @{dim(mat)[1]}\n")
+           cat_subtle("# After filtering `-1`, position numbers: ",dim(mat)[1],"\n")
         } else {
            mat[ mat == -1 ] <- NA
+           if (!nnlm_flag) cat_subtle("# Changing to NNLM\n")
            nnlm_flag <- TRUE        	
         }
     }
+    
+    if (!is.null(remove_na_perc)){
+    	cat_subtle("# Removing too many NA features: ", remove_na_perc * dim(mat)[2], "\n", sep="")
+    	mat <- mat[apply(is.na(mat), 1, sum) < remove_na_perc * dim(mat)[2],]
+    }
+    
     if (tss) {
     	cat_subtle("# Performing TSS\n")
     	mat <- apply(mat, 2, function(x) x / sum(x))
@@ -132,7 +141,7 @@ NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
     relab <- apply(coefMat, 2, function(x) x / sum(x))
     cat("Mean relative abundances:", apply(relab, 1, mean), "\n")
 
-    cat("Present feature per strain:", apply(basisMat!=0, 2, function(x) sum(x)), "\n")
+    cat("Present feature per factor:", apply(basisMat!=0, 2, function(x) sum(x)), "\n")
     stana@NMF[[species]] <- res
     return(stana)
 }
@@ -169,12 +178,14 @@ plotStackedBarPlot <- function(stana, sp, by="NMF") {
 		ggplot(melted, aes(fill=variable, y=value, x=sample)) + 
 		    geom_col(position="fill")+
 		    facet_grid(. ~ group, scale="free")+
-		    cowplot::theme_cowplot()+ cowplot::panel_border()+
+            scale_y_continuous(expand = expansion(mult = c(0, 0.05)))+
+            cowplot::theme_cowplot()+ cowplot::panel_border()+
 		    theme(axis.text.x = element_blank())
     } else {
 	    melted <- reshape2::melt(stb)
 		ggplot(melted, aes(fill=variable, y=value, x=sample)) + 
 		    geom_bar(position="fill", stat="identity")+
+            scale_y_continuous(expand = expansion(mult = c(0, 0.05)))+
 		    cowplot::theme_cowplot()+cowplot::panel_border()+
 		    theme(axis.text.x = element_text(angle=90))    	
     }
