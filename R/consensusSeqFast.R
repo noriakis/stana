@@ -23,9 +23,16 @@ consensusSeqGeneral <- function(
     if (length(species)==0) {stop("No species available")}
 	retList <- list()
 	for (sp in species) {
-		qqcat("Beginning calling for @{sp}\n")
+		cat_subtle("# Beginning calling for ", sp, "\n", sep="")
 		SPECIES <- list()
 		SPECIES[["freqs"]] <- stana@snps[[sp]]
+		
+		if (!is.null(stana@includeSNVID[[sp]])) {
+			cat_subtle("# The set SNV ID information (",
+				length(stana@includeSNVID[[sp]]), ") is used.\n")
+			SPECIES[["freqs"]] <- SPECIES[["freqs"]][stana@includeSNVID[[sp]], ]
+		}
+		
 		siteNum <- dim(SPECIES[["freqs"]])[1]
 		qqcat("  Site number: @{siteNum}\n")
 		
@@ -37,6 +44,9 @@ consensusSeqGeneral <- function(
 				stop("Snps info data frame has to have major_allele and minor_allele column")
 			}
     		SPECIES[["info"]] <- stana@snpsInfo[[sp]]
+			if (!is.null(stana@includeSNVID[[sp]])) {
+				SPECIES[["info"]] <- SPECIES[["info"]][stana@includeSNVID[[sp]], ]
+			}    		
 		}
 
         sp_minor_allele <- SPECIES[["info"]]$minor_allele
@@ -156,9 +166,16 @@ consensusSeqMIDAS2 <- function(
 	midas_merge_dir <- stana@mergeDir
 	retList <- list()
 	for (sp in species) {
-		qqcat("Beginning calling for @{sp}\n")
+		cat_subtle("# Beginning calling for ", sp, "\n", sep="")
 		SPECIES <- list()
 		## Load info and depth file per species
+		
+		if (!is.null(stana@includeSNVID[[sp]])) {
+			cat_subtle("# The set SNV ID information (",
+				length(stana@includeSNVID[[sp]]), ") is used.\n")
+			site_list <- stana@includeSNVID[[sp]]
+		}
+		
 		if (is.null(stana@snpsInfo[[sp]])) {
 			file <- "info"
 			if (verbose) {
@@ -195,7 +212,7 @@ consensusSeqMIDAS2 <- function(
 		}
 		SPECIES[["freqs"]] <- stana@snps[[sp]]
 		siteNum <- dim(SPECIES[["freqs"]])[1]
-		qqcat("  Site number: @{siteNum}\n")
+		cat_subtle("# Original Site number: ", siteNum, "\n", sep="")
 
 		if (stana@type=="MIDAS2") {
 			if (dim(stana@snpsSummary)[1]==0) {

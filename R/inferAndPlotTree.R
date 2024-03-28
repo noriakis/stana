@@ -79,6 +79,11 @@ inferAndPlotTree <- function(stana, species=NULL, cl=NULL,
             dm <- do.call(dist, tree_args)      
         } else {
 			mat <- stana@snps[[sp]]
+			if (!is.null(stana@includeSNVID[[sp]])) {
+				cat_subtle("# The set SNV ID information (",
+					length(stana@includeSNVID[[sp]]), ") is used.\n")
+				mat <- mat[stana@includeSNVID[[sp]], ]
+			}
             if (deleteZeroDepth) {
                 mat <- mat[rowSums(mat==-1)==0, ]
                 cat("Position number:", dim(mat)[1], "\n")      

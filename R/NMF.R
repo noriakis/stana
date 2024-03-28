@@ -46,14 +46,31 @@ NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
         mat <- stana@genes[[species]]
     } else if (target=="snps") {
         mat <- stana@snps[[species]]
+		if (!is.null(stana@includeSNVID[[species]])) {
+			cat_subtle("# The set SNV ID information (", length(stana@includeSNVID[[species]]), ") is used.\n")
+			mat <- mat[stana@includeSNVID[[species]], ]
+		}
         if (deleteZeroDepth) {
            mat <- mat[rowSums(mat == -1)==0,]
            cat_subtle("# After filtering `-1`, position numbers: ",dim(mat)[1],"\n")
         } else {
            mat[ mat == -1 ] <- NA
            if (!nnlm_flag) cat_subtle("# Changing to NNLM\n")
-           nnlm_flag <- TRUE        	
+           nnlm_flag <- TRUE
         }
+    }
+    
+    nac <- as.numeric(table(is.na(mat))["TRUE"]) / (dim(mat)[1]*dim(mat)[2])
+    zeroc <- as.numeric(table(mat==0)["TRUE"]) / (dim(mat)[1]*dim(mat)[2])
+    
+    cat_subtle("# Original features: ", dim(mat)[1], "\n", sep="")
+    cat_subtle("# Original samples: ", dim(mat)[2], "\n", sep="")
+    cat_subtle("# Original matrix NA: ", round(nac, 3), "\n", sep="")
+    cat_subtle("# Original matrix zero: ", round(zeroc, 3), "\n", sep="")
+
+    if (is.null(nnlm_args[["loss"]])){
+    	cat_subtle("# Selecting KL loss\n")
+       	nnlm_args[["loss"]] <- "mkl"
     }
     
     if (!is.null(remove_na_perc)){
@@ -65,15 +82,12 @@ NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
     	cat_subtle("# Performing TSS\n")
     	mat <- apply(mat, 2, function(x) x / sum(x))
     }
-    cat_subtle("# Original features: ", dim(mat)[1], "\n", sep="")
-    cat_subtle("# Original samples: ", dim(mat)[2], "\n", sep="")
     if (!nnlm_flag) {
 	    mat <- mat[apply(mat, 1, function(x) sum(x)!=0),]
 	    mat <- mat[,apply(mat, 2, function(x) sum(x)!=0)]
-
-	    cat_subtle("# Filtered features: ", dim(mat)[1], "\n", sep="")
-	    cat_subtle("# Filtered samples: ", dim(mat)[2], "\n", sep="")
     }
+    cat_subtle("# Filtered features: ", dim(mat)[1], "\n", sep="")
+    cat_subtle("# Filtered samples: ", dim(mat)[2], "\n", sep="")
 
     ## Test multiple ranks
     if (estimate) {

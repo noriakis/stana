@@ -10,6 +10,8 @@
 #' @slot eggNOG list of path for eggNOG mapper v2 results for species
 #' @slot map slot storing the mapping data.frame for gene ID and orthology
 #' @slot coefMat slot storing the strain (or subspecies) abundances
+#' @slot includeSNVID if SNV allele frequency is used in the calculation,
+#' the IDs in the slot is subset by default.
 setClass("stana", slots=list(
                             type="character",
                             cl="list",
@@ -24,6 +26,7 @@ setClass("stana", slots=list(
                             eggNOG="list",
                             NMF = "list",
                             kos="list",
+                            includeSNVID="list",
                             snpsInfo="list",
                             snpsDepth="list",
                             snpsSummary="data.frame",
@@ -126,15 +129,41 @@ loadDic <- function() {
 }
 
 
+
+#' siteFilter
+#' @param x stana object
+#' @param sp species ID
+#' @param exp expression for filtering the snps info
+#' @export
+setGeneric("siteFilter", function(x, sp, exp) standardGeneric("siteFilter"))
+
+#' siteFilter
+#' @param x stana object
+#' @param sp species ID
+#' @param exp expression for filtering the snps info
+#' @export
+setMethod("siteFilter", "stana",
+    function(x, sp, exp) {
+    	info <- x@snpsInfo[[sp]]
+    	ret <- info %>% 
+    	    dplyr::filter(!!enquo(exp)) %>%
+    	    row.names(.)
+    	cat_subtle("# total of ", length(ret), " obtained from ", dim(info)[1], "\n", sep="")
+    	x@includeSNVID[[sp]] <- ret
+    	x
+})
+
+
+
 #' check
-#' check and output statistics based on conditional formulas
+#' check and output statistics based on conditional formulas for summary
 #' @param x stana boject
 #' @param exp expression for filtering the snps summary
 #' @param target snps or genes
 #' @export
 setGeneric("check", function(x, exp, target="snps") standardGeneric("check"))
 #' check
-#' check and output statistics based on conditional formulas
+#' check and output statistics based on conditional formulas for summary
 #' @param x stana boject
 #' @param exp expression for filtering the snps summary
 #' @param target snps or genes

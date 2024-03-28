@@ -3,7 +3,7 @@
 \name{check,stana-method}
 \alias{check,stana-method}
 \title{check
-check and output statistics based on conditional formulas}
+check and output statistics based on conditional formulas for summary}
 \usage{
 \S4method{check}{stana}(x, exp, target = "snps")
 }
@@ -16,5 +16,5 @@ check and output statistics based on conditional formulas}
 }
 \description{
 check
-check and output statistics based on conditional formulas
+check and output statistics based on conditional formulas for summary
 }

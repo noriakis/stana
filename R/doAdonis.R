@@ -29,7 +29,7 @@
 #' @export
 doAdonis <- function(stana, specs, cl=NULL,
     target="snps", formula=NULL,
-    distMethod="binary", pcoa=FALSE,
+    distMethod="manhattan", pcoa=FALSE,
     AAfunc=dist.ml, AAargs=list(),
     maj=FALSE, deleteZeroDepth=FALSE,
     argList=list(), distArg=list()) {
@@ -39,6 +39,10 @@ doAdonis <- function(stana, specs, cl=NULL,
         cat_subtle("# Performing adonis in ", sp, " target is ", target, "\n", sep="")
         if (target=="snps") {
             snps <- stana@snps[[sp]]
+			if (!is.null(stana@includeSNVID[[sp]])) {
+				cat_subtle("# The set SNV ID information (", length(stana@includeSNVID[[sp]]), ") is used.\n")
+				snps <- snps[stana@includeSNVID[[sp]], ]
+			}
             if (deleteZeroDepth) {
               snps <- snps[rowSums(snps==-1)==0,]
               cat_subtle("After filtering `-1`, position numbers: ", dim(snps)[1], "\n", sep="")

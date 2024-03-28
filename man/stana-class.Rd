@@ -25,5 +25,8 @@ Note that gene summary and depth is not loaded in MIDAS and MIDAS2.
 \item{\code{map}}{slot storing the mapping data.frame for gene ID and orthology}
 
 \item{\code{coefMat}}{slot storing the strain (or subspecies) abundances}
+
+\item{\code{includeSNVID}}{if SNV allele frequency is used in the calculation,
+the IDs in the slot is subset by default.}
 }}
 

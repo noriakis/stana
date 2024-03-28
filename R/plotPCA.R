@@ -27,6 +27,10 @@ plotPCA <- function(stana, species, cl=NULL, target="snps",
 		
 		if (target=="snps") {
 			df <- stana@snps[[sp]]
+			if (!is.null(stana@includeSNVID[[sp]])) {
+				cat_subtle("# The set SNV ID information (", length(stana@includeSNVID[[sp]]), ") is used.\n")
+				df <- df[stana@includeSNVID[[sp]], ]
+			}
 		} else if (target=="genes") {
 			df <- stana@genes[[sp]]
 		} else if (target=="kos") {

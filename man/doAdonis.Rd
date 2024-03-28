@@ -10,7 +10,7 @@ doAdonis(
   cl = NULL,
   target = "snps",
   formula = NULL,
-  distMethod = "binary",
+  distMethod = "manhattan",
   pcoa = FALSE,
   AAfunc = dist.ml,
   AAargs = list(),

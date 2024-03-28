@@ -3,7 +3,7 @@
 \name{check}
 \alias{check}
 \title{check
-check and output statistics based on conditional formulas}
+check and output statistics based on conditional formulas for summary}
 \usage{
 check(x, exp, target = "snps")
 }
@@ -16,5 +16,5 @@ check(x, exp, target = "snps")
 }
 \description{
 check
-check and output statistics based on conditional formulas
+check and output statistics based on conditional formulas for summary
 }

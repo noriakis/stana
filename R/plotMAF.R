@@ -41,3 +41,32 @@ plotMAF <- function(stana, species, SNV, cl=NULL, deleteZeroDepth=TRUE) {
 	facet_wrap(.~snvID)+
 	theme_minimal()
 }
+
+
+#'
+#' plotMAFHist
+#' 
+#' plot the distribution of MAF for specificed species
+#' 
+#' @param stana stana object
+#' @param species candidate species
+#' @import ggplot2
+#' @export
+#' @return ggplot
+#' 
+plotMAFHist <- function(stana, species) {
+
+	snvDf <- stana@snps[[species]]
+	if (!is.null(stana@includeSNVID[[species]])) {
+		cat_subtle("# The set SNV ID information (", length(stana@includeSNVID[[species]]), ") is used.\n")
+		snvDf <- snvDf[stana@includeSNVID[[species]], ]
+	}
+	snvDf[ snvDf == -1 ] <- NA
+	snvMat <- as.matrix(snvDf)
+
+    df <- data.frame(freq=as.vector(snvMat))
+    ggplot(df, aes(x=freq))+geom_histogram()+cowplot::theme_cowplot()+
+    scale_y_continuous(expand = expansion(mult = c(0, 0.05)))
+
+
+}
