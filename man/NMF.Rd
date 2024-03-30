@@ -8,7 +8,7 @@ NMF(
   stana,
   species,
   rank = 3,
-  target = "KO",
+  target = "kos",
   seed = 53,
   method = "snmf/r",
   deleteZeroDepth = FALSE,

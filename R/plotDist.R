@@ -3,7 +3,7 @@
 #' 
 #' Perform distance calculation based on the matrix
 #' stored in stana, and plot the heatmap with grouping
-#' information
+#' information.
 #' 
 #' @param stana stana object
 #' @param sp species to be examined
@@ -52,7 +52,11 @@ plotDist <- function(stana, sp, cl=NULL, AAfunc=dist.ml, AAargs=list(),
           d <- do.call(dist, distArg)
           sn <- attr(d, "Labels")      
         }
-        met <- data.frame(listToNV(cl))
-        met <- data.frame(met[sn, ]) %>% `row.names<-`(sn)
-        pheatmap(d, annotation_row=met)
+        if (length(cl)!=0) {
+	        met <- data.frame(listToNV(cl))
+	        met <- data.frame(met[sn, ]) %>% `row.names<-`(sn) %>% `colnames<-`(c("group"))
+	        pheatmap(d, annotation_row=met)        	
+        } else {
+        	pheatmap(d)
+        }
 }

@@ -3,7 +3,7 @@
 #'
 #' decompose SNV, gene content, or gene family abundance to
 #' factor x sample and factor x feature matrix.
-#'
+#' 
 #' @param stana stana object
 #' @param species candidate species ID
 #' @param rank rank of NMF
@@ -25,7 +25,7 @@
 #' (features with NA below {remove_na_perc} * overall sample numbers will be retained)
 #' @importFrom NMF nmf nmfEstimateRank
 #' @export
-NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
+NMF <- function(stana, species, rank=3, target="kos", seed=53, method="snmf/r",
     deleteZeroDepth=FALSE, beta=0.01, estimate=FALSE, estimate_range=1:6, nnlm_flag=FALSE,
     nnlm_args=list(), nnlm_na_perc=0.3, tss=FALSE, remove_na_perc=NULL) {
 	
@@ -40,11 +40,12 @@ NMF <- function(stana, species, rank=3, target="KO", seed=53, method="snmf/r",
     		stop("Please install NNLM.")
     	}
     }
-    if (target=="KO") {
+    if (target=="kos") {
         mat <- stana@kos[[species]]
     } else if (target=="genes") {
         mat <- stana@genes[[species]]
     } else if (target=="snps") {
+    	## For SNV, zero-inflated models should be applied (with NA handling capabilities)
         mat <- stana@snps[[species]]
 		if (!is.null(stana@includeSNVID[[species]])) {
 			cat_subtle("# The set SNV ID information (", length(stana@includeSNVID[[species]]), ") is used.\n")
@@ -189,6 +190,7 @@ plotStackedBarPlot <- function(stana, sp, by="NMF") {
 	stb <- data.frame(t(relab))
 	colnames(stb) <- as.character(seq_len(ncol(stb)))
     stb[["sample"]] <- row.names(stb)
+    ## This does not use the stana@colors slot
     if (length(stana@cl)!=0) {
         stb[["group"]] <- as.character(listToNV(stana@cl)[stb[["sample"]]])
 	    melted <- reshape2::melt(stb)
@@ -277,10 +279,11 @@ plotAbundanceWithinSpecies <- function(stana, species, tss=TRUE, return_data=FAL
     }
     H %>% tidyr::pivot_longer(1:(ncol(H)-1)) %>%
         ggplot(aes(x=group, y=value))+
-        geom_boxplot()+
+        geom_boxplot(aes(fill=group), alpha=0.5)+
         facet_wrap(.~name)+
         cowplot::theme_cowplot()+
-        cowplot::panel_border()
+        cowplot::panel_border()+
+        scale_fill_manual(values=stana@colors)
 }
 
 
@@ -297,10 +300,12 @@ plotAbundanceWithinSpecies <- function(stana, species, tss=TRUE, return_data=FAL
 pathwayWithFactor <- function(stana, species, tss=FALSE, change_name=FALSE,
 	summarize=sum, mat=NULL) {
 	if (!is.null(mat)) {
+		use_name <- TRUE
 		dat <- mat
 	} else {
 	  dat <- stana@NMF[[species]]
 	  dat <- basis(dat)		
+	  use_name <- FALSE
 	}
 
   bfc <- BiocFileCache()
@@ -327,7 +332,9 @@ pathwayWithFactor <- function(stana, species, tss=FALSE, change_name=FALSE,
   })) %>% data.frame()
   row.names(pathdf) <- pathdf[,1]
   pathdf[,1] <- NULL
-  # colnames(pathdf) <- as.character(paste0("factor",seq_len(ncol(pathdf))))
+  if (!use_name) {
+     colnames(pathdf) <- as.character(paste0("factor",seq_len(ncol(pathdf))))	
+  }
   pathdf <- dplyr::mutate_all(pathdf, as.numeric)  
   if (tss) {
     pathdf <- apply(pathdf, 2, function(x) x / sum(x))
