@@ -74,7 +74,81 @@ doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean,
     ## Return all the value regardless of P
     enr <- GSEA(ko_sum,
         TERM2GENE = kopgsea, pvalueCutoff=1)
-    return(enr)
+    if (!is.null(stana@gsea[[candSp]])) {
+        cat_subtle("# Overriding previous GSEA result\n")
+    }
+    stana@gsea[[candSp]] <- enr
+    return(stana)
+}
+
+#' plotGSEA
+#' 
+#' plot GSEA results
+#' 
+#' @param stana stana object or list of stana object
+#' @param dataset_names dataset names
+#' @param padjThreshold threshold of adjusted p-values
+#' @param return_graph return only the tbl_graph
+#' @param layout graph layout in ggraph
+#' @export
+#' @return ggplot object
+plotGSEA <- function(stana, dataset_names=NULL, padjThreshold=0.05,
+    return_graph=FALSE, layout="kk") {
+    if (is.list(stana)) {
+        num <- length(stana)
+    } else {
+        num <- 1
+        stana <- list(stana)
+    }
+    if (is.null(dataset_names)) {
+        dataset_names <- paste0("dataset_",seq_len(num))
+    }
+
+    dat <- do.call(rbind, lapply(seq_along(stana), function(e) {
+        gsea_res <- stana[[e]]@gsea
+        summed <- do.call(rbind, lapply(names(gsea_res), function(x) {
+            tmp <- subset(gsea_res[[x]]@result, p.adjust<padjThreshold)
+            if (dim(tmp)[1]!=0) {
+                tmp[["dataset"]] <- dataset_names[e]
+                tmp[["species_name"]] <- x
+                return(tmp)
+            } else {
+                return(NULL)
+            }
+        }))
+    }))
+
+    if (is.null(dat)) {
+        stop("There is no significant results")
+    }
+
+    raw <- dat %>%
+        as_tibble() %>%
+        dplyr::select(ID, NES, p.adjust, species_name, dataset)
+
+    raw2 <- bind_rows(raw %>% select(ID, species_name, dataset) %>% `colnames<-`(c("from","to","dataset")))
+    raw2 <- na.omit(raw2)
+    gg <- as_tbl_graph(raw2)
+
+    if (return_graph) {
+        return(gg)
+    }
+
+    gg <- gg %N>%
+        mutate(pathway=startsWith(name, "ko")) %>%
+        mutate(species=!pathway) %>%
+        mutate(degree=centrality_degree(mode="all"))
+
+
+    ggraph(gg, layout=layout) +
+      geom_edge_link(aes(color=dataset)) +
+      geom_node_point(aes(filter=pathway, size=degree), shape=15) +
+      geom_node_text(aes(label=name, filter=pathway, size=degree), repel=TRUE, bg.colour="white") +
+      geom_node_point(aes(filter=species, size=degree)) +
+      geom_node_text(aes(label=name, filter=species, size=degree), repel=TRUE, bg.colour="white") +
+      theme_graph()+
+      scale_size(range=c(2,6))
+
 }
 
 
