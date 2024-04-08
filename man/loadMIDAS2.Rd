@@ -12,7 +12,6 @@ loadMIDAS2(
   only_stat = FALSE,
   filtBy = "snps",
   filtPer = 0.8,
-  taxtbl = NULL,
   candSp = NULL,
   filtType = "group",
   geneType = "copynum",
@@ -35,9 +34,6 @@ loadMIDAS2(
 \item{filtBy}{filter by {snps} number or {genes} number (default to snps)}
 
 \item{filtPer}{filter by fraction}
-
-\item{taxtbl}{tax table, row.names: 6-digits MIDAS2 ID and `GTDB species` (gtdb)
-or `Lineage` column.}
 
 \item{candSp}{candidate species ID}
 

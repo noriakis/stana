@@ -12,8 +12,6 @@
 #' @param filtPer filter by fraction
 #' @param db data base that was used to profile, default to gtdb.
 #' @param candSp candidate species ID
-#' @param taxtbl tax table, row.names: 6-digits MIDAS2 ID and `GTDB species` (gtdb)
-#' or `Lineage` column.
 #' @param filtType "whole" or "group"
 #' @param geneType "presabs" or "copynum"
 #' @param loadSummary default to FALSE, load summary information.
@@ -30,7 +28,6 @@ loadMIDAS2 <- function(midas_merge_dir,
                         only_stat=FALSE,
                         filtBy="snps",
                         filtPer=0.8,
-                        taxtbl=NULL,
                         candSp=NULL,
                         filtType="group",
                         geneType="copynum",
@@ -76,13 +73,10 @@ loadMIDAS2 <- function(midas_merge_dir,
         dplyr::count(group)
     geneRet <- genesSummary |> dplyr::group_by(species_id) |>
         dplyr::count(group)
-    
     ## Change tax name if available
-    if (!is.null(taxtbl)) {
-        nmdic <- taxtbl[[tblCol]] |> setNames(row.names(taxtbl))
-        snpRet$species_name <- nmdic[as.character(snpRet$species_id)]
-        geneRet$species_name <- nmdic[as.character(geneRet$species_id)]
-    }
+    
+    snpRet[["species_name"]] <- loadDic()[[db]][as.character(snpRet$species_id)] 
+    geneRet[["species_name"]] <- loadDic()[[db]][as.character(geneRet$species_id)]
     
     snpRet$species_id <- as.character(snpRet$species_id)
     geneRet$species_id <- as.character(geneRet$species_id)
@@ -146,10 +140,8 @@ loadMIDAS2 <- function(midas_merge_dir,
     snpsList <- lapply(specNames, function(i) {
         if (!is.na(as.numeric(i))) {## Check that ID is number
             qqcat("  @{i}\n")
-            if (!is.null(taxtbl)){
-                spnm <- taxtbl[i,][[tblCol]]
-                qqcat("  @{spnm}\n")
-            }
+            spnm <- loadDic()[[db]][i]
+            qqcat("  @{spnm}\n")
             cnc <- paste0(midas_merge_dir,"/snps/",i,"/",i,".snps_freqs.tsv.lz4")
             cnd <- gsub(".lz4","",cnc)
             system2("lz4", args=c("-d","-f",
@@ -203,10 +195,8 @@ loadMIDAS2 <- function(midas_merge_dir,
     geneList <- lapply(specNames, function(i) {
         if (!is.na(as.numeric(i))) {
             qqcat("  @{i}\n")
-            if (!is.null(taxtbl)){
-                spnm <- taxtbl[i,][[tblCol]]
-                qqcat("  @{spnm}\n")
-            }
+            spnm <- loadDic()[[db]][i]
+            qqcat("  @{spnm}\n")
             cnc <- paste0(midas_merge_dir,
                         "/genes/",i,"/",i,".genes_",geneType,".tsv.lz4")
             cnd <- gsub(".lz4","",cnc)
@@ -229,9 +219,9 @@ loadMIDAS2 <- function(midas_merge_dir,
     stana@ids <- union(names(geneList),names(snpsList))
     stana <- initializeStana(stana,cl)
 
-    if (!is.null(taxtbl)){
-        stana@clearSnpsSpecies <- taxtbl[stana@clearSnps,][[tblCol]]
-        stana@clearGenesSpecies <- taxtbl[stana@clearGenes,][[tblCol]]
-    }
+
+    stana@clearSnpsSpecies <- loadDic()[[db]][stana@clearSnps]
+    stana@clearGenesSpecies <- loadDic()[[db]][stana@clearGenes]
+
     stana
 }

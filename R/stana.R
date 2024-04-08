@@ -100,24 +100,6 @@ setMethod("show",
       cat_subtle("# Inferred fasta: ", length(object@kos), " ID: ", paste0(names(object@kos)[1], collapse="/"), "\n", sep="")
     }
     cat_subtle("# Size: ", object.size(object), " B\n", sep="")
-    if (object@type %in% c("MIDAS", "MIDAS2")) {
-	    cat_subtle("# \n")
-	    cat_subtle("# SNV description\n")
-    	df <- object@snpsSummary %>%
-    	    dplyr::filter(.data$species_id %in% names(object@snps))
-    	if (object@type=="MIDAS2") {
-    		df$species_id <- loadDic()[[object@db]][as.character(df$species_id)]
-    	}
-    	if (length(object@cl)!=0) {
-    		print(df %>% mutate(group=listToNV(object@cl)[sample_name]) %>%
-    		group_by(group, species_id) %>%
-    		summarise(n=n()))
-    	} else {
-    		print(df %>%
-    		group_by(species_id) %>%
-    		summarise(n=n()))
-    	}
-    }
   })
 
 #' loadDic
@@ -127,6 +109,54 @@ loadDic <- function() {
     gtdb <- readRDS(system.file("extdata", "gtdbdic.rds", package = "stana"))
     list("uhgg"=uhgg, "gtdb"=gtdb)
 }
+
+
+#' summary
+#' print summary information
+#' @param object stana object
+#' @export
+setGeneric("summary", function(object) standardGeneric("summary"))
+#' summary
+#' print summary information
+#' @param object stana object
+#' @export
+setMethod("summary", "stana",
+    function(object) {
+        if (object@type %in% c("MIDAS", "MIDAS2")) {
+            cat_subtle("# \n")
+            cat_subtle("# SNV description\n")
+            df <- object@snpsSummary %>%
+                dplyr::filter(.data$species_id %in% names(object@snps))
+            if (object@type=="MIDAS2") {
+                df$species_id <- loadDic()[[object@db]][as.character(df$species_id)]
+            }
+            if (length(object@cl)!=0) {
+                print(df %>% mutate(group=listToNV(object@cl)[sample_name]) %>%
+                group_by(group, species_id) %>%
+                summarise(n=n()))
+            } else {
+                print(df %>%
+                group_by(species_id) %>%
+                summarise(n=n()))
+            }
+            cat_subtle("# Gene description\n")
+            df <- object@genesSummary %>%
+                dplyr::filter(.data$species_id %in% names(object@genes))
+            if (object@type=="MIDAS2") {
+                df$species_id <- loadDic()[[object@db]][as.character(df$species_id)]
+            }
+            if (length(object@cl)!=0) {
+                print(df %>% mutate(group=listToNV(object@cl)[sample_name]) %>%
+                group_by(group, species_id) %>%
+                summarise(n=n()))
+            } else {
+                print(df %>%
+                group_by(species_id) %>%
+                summarise(n=n()))
+            }
+        }
+    }    
+)
 
 
 
