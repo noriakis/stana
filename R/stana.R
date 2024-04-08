@@ -53,6 +53,7 @@ setClass("stana", slots=list(
                             geneCluster="list",
                             paFilterUp="numeric",
                             paFilterDown="numeric",
+                            gsea="list",
                             map="list"))
 
 #' cat_subtle
