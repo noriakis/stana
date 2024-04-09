@@ -142,7 +142,7 @@ plotGSEA <- function(stana, dataset_names=NULL, padjThreshold=0.05,
 
 
     ggraph(gg, layout=layout) +
-      geom_edge_link(aes(color=dataset)) +
+      geom_edge_parallel(aes(color=dataset)) +
       geom_node_point(aes(filter=pathway, size=degree), shape=15) +
       geom_node_text(aes(label=name, filter=pathway, size=degree), repel=TRUE, bg.colour="white") +
       geom_node_point(aes(filter=species, size=degree)) +
