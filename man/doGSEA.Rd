@@ -9,7 +9,7 @@ doGSEA(
   candSp = NULL,
   cl = NULL,
   eps = 0.01,
-  how = mean,
+  how = sum,
   zeroPerc = 0,
   rankMethod = "modt",
   target = "pathway",
@@ -25,7 +25,7 @@ doGSEA(
 
 \item{eps}{pseudovalue added if log is taken}
 
-\item{how}{how to combine multiple variables, default to mean}
+\item{how}{how to combine multiple variables, default to sum}
 
 \item{zeroPerc}{genes >= the percentage of count zero sample will be excluded.
 Default to zero, not recommended in GSEA}

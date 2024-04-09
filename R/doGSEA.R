@@ -8,7 +8,7 @@
 #' @param candSp candidate species
 #' @param cl if NULL, grouping in stana is used
 #' @param eps pseudovalue added if log is taken
-#' @param how how to combine multiple variables, default to mean
+#' @param how how to combine multiple variables, default to sum
 #' @param rankMethod how to rank genes
 #' @param target pathway or module
 #' @param zeroPerc genes >= the percentage of count zero sample will be excluded.
@@ -17,7 +17,7 @@
 #' @importFrom MKmisc mod.t.test
 #' @return GSEA results from clusterProfiler
 #' @export
-doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean,
+doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=sum,
     zeroPerc=0, rankMethod="modt", target="pathway", bg_filter=TRUE) {
     if (is.null(candSp)) {candSp <- stana@ids[1]}
     if (is.null(cl)) {cl <- stana@cl}
@@ -36,6 +36,7 @@ doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=mean,
         ko_df_filt <- summariseAbundance(stana, sp = candSp,
             checkEGGNOG(annot_file=stana@eggNOG[[candSp]], "KEGG_ko"),
             how=how)
+        stana@kos[[candSp]] <- ko_df_filt
     } else {
         ko_df_filt <- stana@kos[[candSp]]
     }
