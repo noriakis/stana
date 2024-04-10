@@ -115,11 +115,13 @@ loadDic <- function() {
 #' summary
 #' print summary information
 #' @param object stana object
+#' @param ... other arguments
 #' @export
 setGeneric("summary", function(object) standardGeneric("summary"))
 #' summary
 #' print summary information
 #' @param object stana object
+#' @param ... other arguments
 #' @export
 setMethod("summary", "stana",
     function(object) {

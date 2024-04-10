@@ -9,6 +9,8 @@ summary(object, ...)
 }
 \arguments{
 \item{object}{stana object}
+
+\item{...}{other arguments}
 }
 \description{
 summary

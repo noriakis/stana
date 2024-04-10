@@ -9,6 +9,8 @@ print summary information}
 }
 \arguments{
 \item{object}{stana object}
+
+\item{...}{other arguments}
 }
 \description{
 summary
