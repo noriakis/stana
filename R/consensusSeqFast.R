@@ -244,10 +244,10 @@ consensusSeqMIDAS2 <- function(
 	        		fract_cov=info$fraction_covered))
         	}
         })
-        qqcat("  Profiled samples: @{length(SAMPLES)}\n")
+        cat_subtle("#  Profiled samples: ", length(SAMPLES), "\n", sep="")
         names(SAMPLES) <- SPECIES[["summary"]]$sample_name
         SAMPLES <- SAMPLES[vapply(SAMPLES, function(x) !is.null(x), FUN.VALUE=TRUE)]
-        qqcat("  Included samples: @{length(SAMPLES)}\n")
+        cat_subtle("#  Included samples: ", length(SAMPLES), "\n", sep="")
         
         if (verbose) {
             qqcat("Beginning site-wise filtering\n")
@@ -298,6 +298,7 @@ consensusSeqMIDAS2 <- function(
         
                 
         if (!is.null(site_list)) {
+        	cat_subtle("# site_list specified: ", length(site_list), "\n", sep="")
         	positions <- which(row.names(SPECIES[["info"]]) %in% site_list)
         	## Ignoring max_sites if site_list is provided.
         	## All the site in site_list is included, and filtered positions are 

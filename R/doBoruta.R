@@ -14,7 +14,7 @@
 #' @param deleteZeroDepth delete zero depth SNV
 #' @param doFix performs TentativeRoughFix on Boruta result
 #' @param argList passed to Boruta()
-#' @return Boruta object
+#' @return list of Boruta object and plot
 #' @import ggplot2
 #' @export
 doBoruta <- function(stana, sp, cl=NULL, doFix=TRUE,

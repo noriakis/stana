@@ -38,7 +38,7 @@ pass to checkPATRIC() (in MIDAS1)}
 \item{deleteZeroDepth}{delete zero depth SNV}
 }
 \value{
-Boruta object
+list of Boruta object and plot
 }
 \description{
 feature selection of classification between category
