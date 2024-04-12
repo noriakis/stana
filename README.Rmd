@@ -47,6 +47,7 @@ devtools::install_github("noriakis/stana")
 ```{r message=FALSE, warning=FALSE, fig.width=6, fig.height=6}
 ## Using example data
 library(stana)
+library(phangorn)
 load(system.file("extdata", "sysdata.rda", package = "stana"))
 
 stana
@@ -74,7 +75,7 @@ getTree(stana)[[1]]
 getTreePlot(stana)[[1]]
 ```
 
-If the gene copy number table is available like in `MIDAS` series and `inStrain`, one can compare the functional implications of these gene contents.
+If the gene copy number table is available like in `MIDAS` series and `inStrain`, one can compare the functional implications of these gene contents. The details are described in the [documentation](https://noriakis.github.io/software/stana).
 
 
 ## Interactive inspection

@@ -39,6 +39,7 @@ devtools::install_github("noriakis/stana")
 ``` r
 ## Using example data
 library(stana)
+library(phangorn)
 load(system.file("extdata", "sysdata.rda", package = "stana"))
 
 stana
@@ -50,15 +51,7 @@ stana
 #> # Loaded SNV table: 1 ID: 100003
 #> # Loaded gene table: 1 ID: 100003
 #> # Loaded KO table: 1 ID: 100003
-#> # Size:7623472 B
-#> # 
-#> # SNV description
-#> # A tibble: 2 × 3
-#> # Groups:   group [2]
-#>   group  species_id                                               n
-#>   <chr>  <chr>                                                <int>
-#> 1 Group1 d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacte…     4
-#> 2 Group2 d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Bacte…     7
+#> # Size: 7623792 B
 getID(stana)
 #> [1] "100003"
 
@@ -79,10 +72,10 @@ stana <- setMetadata(stana, metadata)
 stana <- stana |>
   consensusSeq(argList=list(site_prev=0.95)) |>
   inferAndPlotTree(meta=c("treatment","marker"))
-#> Beginning calling for 100003
-#>   Site number: 5019
-#>   Profiled samples: 11
-#>   Included samples: 11
+#> # Beginning calling for 100003
+#> # Original Site number: 5019
+#> #  Profiled samples: 11
+#> #  Included samples: 11
 getFasta(stana)[[1]]
 #> 11 sequences with 896 character and 625 different site patterns.
 #> The states are a c g t
@@ -101,7 +94,8 @@ getTreePlot(stana)[[1]]
 
 If the gene copy number table is available like in `MIDAS` series and
 `inStrain`, one can compare the functional implications of these gene
-contents.
+contents. The details are described in the
+[documentation](https://noriakis.github.io/software/stana).
 
 ## Interactive inspection
 
