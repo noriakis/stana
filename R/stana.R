@@ -120,14 +120,14 @@ loadDic <- function() {
 #' @param object stana object
 #' @param ... other arguments
 #' @export
-setGeneric("summary", function(object) standardGeneric("summary"))
+setGeneric("summary", function(object, ...) standardGeneric("summary"))
 #' summary
 #' print summary information
 #' @param object stana object
 #' @param ... other arguments
 #' @export
 setMethod("summary", "stana",
-    function(object) {
+    function(object, ...) {
         if (object@type %in% c("MIDAS", "MIDAS2")) {
             cat_subtle("# \n")
             cat_subtle("# SNV description\n")

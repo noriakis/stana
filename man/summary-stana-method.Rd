@@ -5,7 +5,7 @@
 \title{summary
 print summary information}
 \usage{
-\S4method{summary}{stana}(object)
+\S4method{summary}{stana}(object, ...)
 }
 \arguments{
 \item{object}{stana object}
