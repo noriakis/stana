@@ -2,6 +2,8 @@
 #' @import methods
 #' @importFrom utils object.size
 #' @importFrom grDevices colorRampPalette
+#' @slot ids identifiers distinguishing species
+#' @slot names name of species (named vector)
 #' @slot snpsInfo snp info
 #' @slot snpsDepth snp depth
 #' @slot snpsSummary snp summary
@@ -19,6 +21,7 @@ setClass("stana", slots=list(
                             mergeDir="character",
                             db="character",
                             ids="character",
+                            names="character",
                             comparisonTable="data.table",
                             genomeWideCompare="data.table",
                             strainClusters="data.table",

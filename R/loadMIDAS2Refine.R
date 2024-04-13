@@ -217,6 +217,7 @@ loadMIDAS2 <- function(midas_merge_dir,
     stana@snps <- snpsList
     stana@genes <- geneList
     stana@ids <- union(names(geneList),names(snpsList))
+    stana@names <- loadDic()[[db]][stana@ids] %>% setNames(stana@ids)
     stana <- initializeStana(stana,cl)
 
 

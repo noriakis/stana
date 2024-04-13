@@ -10,6 +10,10 @@ Note that gene summary and depth is not loaded in MIDAS and MIDAS2.
 \section{Slots}{
 
 \describe{
+\item{\code{ids}}{identifiers distinguishing species}
+
+\item{\code{names}}{name of species (named vector)}
+
 \item{\code{snpsInfo}}{snp info}
 
 \item{\code{snpsDepth}}{snp depth}

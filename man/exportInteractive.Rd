@@ -11,7 +11,9 @@ exportInteractive(
   calcko = FALSE,
   calctree = FALSE,
   dataset_name = NULL,
-  species = NULL
+  clear = TRUE,
+  species = NULL,
+  notRun = FALSE
 )
 }
 \arguments{
@@ -27,7 +29,11 @@ exportInteractive(
 
 \item{dataset_name}{dataset name}
 
+\item{clear}{when exporting clear the gene and snp slot to reduce file size}
+
 \item{species}{candidate species, default to all the species}
+
+\item{notRun}{do not run the shiny app immediately}
 }
 \value{
 output the results to specified directory
