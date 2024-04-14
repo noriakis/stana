@@ -6,14 +6,13 @@ library(shiny)
 library(shinyjs)
 library(shinyWidgets)
 library(waiter)
-
+library(dplyr)
 library(ggtree)
 library(ggplot2)
 library(patchwork)
 library(RColorBrewer)
 library(ggraph)
 library(ComplexHeatmap)
-library(MicrobiomeProfiler)
 library(ggkegg)
 library(GetoptLong)
 library(ggnewscale)
@@ -80,15 +79,15 @@ mod.T <- function(mat, l1, l2) {
 return_all_gsea_heatmap <- function(list_of_gsea, sel="enrichmentScore",
                                     retTable=FALSE, title="GSEAMat") {
     matl <- lapply(names(list_of_gsea), function(x) {
-        list_of_gsea[[x]]@result |> dplyr::select(ID, sel)
+        list_of_gsea[[x]] |> dplyr::select(pathway, sel)
     })
     hm <- matl |>
-        purrr::reduce(full_join, by = "ID") |>
-        `colnames<-`(c("ID",names(list_of_gsea))) |>
+        purrr::reduce(full_join, by = "pathway") |>
+        `colnames<-`(c("pathway",names(list_of_gsea))) |>
         data.frame(check.names=FALSE)
 
-    row.names(hm) <- hm$ID
-    hm$ID <- NULL
+    row.names(hm) <- hm$pathway
+    hm$pathway <- NULL
     hm2 <- hm |> mutate_all(~as.numeric(.))
     changer <- nmls$V2 |> setNames(nmls$V1)
     row.names(hm2) <- changer[row.names(hm2)]
@@ -1145,7 +1144,18 @@ server <- function(input, output, session) {
 
             }
         }
-
+        ## Prepare for the BG set, should be modified if specified in certain environments
+        kopgsea <- kop
+        kopgsea <- kopgsea |> filter(startsWith(V1, "path:ko"))
+        kopgsea$V1 <- kopgsea$V1 |> strsplit(":") |>
+            vapply("[",2,FUN.VALUE="a")
+        
+        paths <- unique(kopgsea$V1)
+        nl <- lapply(paths, function(p) {
+            tmp <- subset(kopgsea, kopgsea$V1 == p)
+            tmp$V2
+        })
+        names(nl) <- paths
         if (input$lfc) {
             ## Calculate LFC if two variables!
             a <- unique(sel_cv)[1]
@@ -1175,28 +1185,36 @@ server <- function(input, output, session) {
             ko_sum <- mod.T(ko_df_filt, aa, bb)
             if (is.null(ko_sum)) {waiter_hide(); return(1); showNotification("Matrix is empty.")}
             ko_sum <- ko_sum[order(ko_sum, decreasing=TRUE)]
-            # top50 <- names(abs(ko_sum)[order(abs(ko_sum), decreasing=TRUE)]) |> strsplit(":") |> sapply("[",2)
+            
+
             if (input$gsea) {
                 updateLog(paste0("Performing GSEA for ", values$sp_id))
-                kopgsea <- kop
-                kopgsea <- kopgsea |> filter(startsWith(V1, "path:ko"))
-                kopgsea$V1 <- kopgsea$V1 |> strsplit(":") |>
-                    vapply("[",2,FUN.VALUE="a")
-                # if (length(ko_sum)==0) {return(1);waiter_hide();}
-                enr <- clusterProfiler::GSEA(ko_sum,
-                                             TERM2GENE = kopgsea, pvalueCutoff=1)
+
+
+
+
+                res <- fgsea::fgsea(nl, ko_sum, nproc=1)
+                enr <- data.frame(res)
+
+                ## Changing list to char
+                enr[[8]] <- unlist(lapply(enr[[8]], function(x) paste0(x, collapse="/")))
+                enr <- enr[order(enr$padj), ]
+
             } else {
                 updateLog(paste0("Performing ORA for ", values$sp_id))
+
+
                 if (input$updown) {
-                    candint <- intersect(names(ko_sum[ko_sum>0]), names(apvs[apvs < 0.05])) |>
-                        strsplit(":") |> sapply("[",2)
+                    candint <- intersect(names(ko_sum[ko_sum>0]), names(apvs[apvs < 0.05]))
                 } else {
-                    candint <- intersect(names(ko_sum[ko_sum<0]), names(apvs[apvs < 0.05])) |>
-                        strsplit(":") |> sapply("[",2)
+                    candint <- intersect(names(ko_sum[ko_sum<0]), names(apvs[apvs < 0.05]))
                 }
                 qqcat("Length of candint: @{length(candint)}\n")
                 if (length(candint)==0) {waiter_hide();return(1);}
-                enr <- enrichKO(candint, pvalueCutoff=1)
+                
+                enr <- fgsea::fora(nl, candint, universe=names(ko_sum))
+
+                res <- data.frame(enr)
                 if (is.null(enr)) {waiter_hide();return(1);}
             }
         } else {
@@ -1207,18 +1225,19 @@ server <- function(input, output, session) {
                 strsplit(":") |> sapply("[", 2)
             ## Performing ORA on all KOs
             qqcat("Performing EA\n")
-            enr <- enrichKO(top50)
+            enr <- fgsea::fora(nl, top50, names(ko_sum))
+            res <- data.frame(enr)
         }
 
         qqcat("Inserting named vector of values to reactive\n")
-        if (input$gsea) {
-            pnames <- nmls$V2 |> setNames(nmls$V1)
-            enr@result$Description <- pnames[enr@result$Description]
-        }
+
+        pnames <- nmls$V2 |> setNames(nmls$V1)
+        enr$Description <- pnames[enr$pathway]
+
         values$lfc <- ko_sum
         values$enr <- enr
-        output$showEnr <- DT::renderDataTable(enr@result, caption=comp_label)
-        all_path <- enr@result[,"Description"]
+        output$showEnr <- DT::renderDataTable(enr, caption=comp_label)
+        all_path <- enr$Description
         updateSelectInput(session, "path_selector",
                           choices = all_path)
 
@@ -1366,7 +1385,18 @@ server <- function(input, output, session) {
 
                     }
                 }
-
+                ## Prepare for the BG set, should be modified if specified in certain environments
+                kopgsea <- kop
+                kopgsea <- kopgsea |> filter(startsWith(V1, "path:ko"))
+                kopgsea$V1 <- kopgsea$V1 |> strsplit(":") |>
+                    vapply("[",2,FUN.VALUE="a")
+                
+                paths <- unique(kopgsea$V1)
+                nl <- lapply(paths, function(p) {
+                    tmp <- subset(kopgsea, kopgsea$V1 == p)
+                    tmp$V2
+                })
+                names(nl) <- paths
                 if (input$lfc) {
                     ## Calculate LFC if two variables!
                     ## Fix levels for all the comparison
@@ -1396,16 +1426,18 @@ server <- function(input, output, session) {
                     # top50 <- names(abs(ko_sum)[order(abs(ko_sum), decreasing=TRUE)]) |> strsplit(":") |> sapply("[",2)
                     updateLog(paste0("Performing GSEA for ", sp_id))
                     qqcat("GSEAMat: Cleared the threshold (@{curthre}), performing GSEA for @{sp_id} (@{labnum})\n")
-                    kopgsea <- kop
-                    kopgsea <- kopgsea |> filter(startsWith(V1, "path:ko"))
-                    kopgsea$V1 <- kopgsea$V1 |> strsplit(":") |>
-                        vapply("[",2,FUN.VALUE="a")
+                
+
                     if (length(ko_sum)==0) {next;}
                     withProgress(
-                        enr <- clusterProfiler::GSEA(ko_sum,
-                                                     TERM2GENE = kopgsea, pvalueCutoff=1),
+                        res <- fgsea::fgsea(nl, ko_sum, nproc=1),
                         message=paste0("Performing GSEA: ", sp_id)
                     )
+                    
+                    enr <- data.frame(res)
+
+                    ## Changing list to char
+                    enr[[8]] <- unlist(lapply(enr[[8]], function(x) paste0(x, collapse="/")))
                     ## Saving function
                     # save(file=paste0(input$site,"_",cur_cv,"_",sp,".rda"), enr)
                 } else {
@@ -1415,8 +1447,8 @@ server <- function(input, output, session) {
                     top50 <- names(ko_sum[order(ko_sum, decreasing=TRUE)]) |>
                         strsplit(":") |> sapply("[", 2)
                     ## Performing ORA on all KOs
-                    qqcat("Performing EA\n")
-                    enr <- enrichKO(top50)
+                    cat_subtle("# Performing EA\n")
+                    enr <- fgsea::fora(nl, top50, names(ko_sum)) %>% data.frame()
                 }
                 list_of_gsea[[sp]] <- enr
             } else {
@@ -1459,17 +1491,17 @@ server <- function(input, output, session) {
         updateTabsetPanel(session, "main_tab",
                           selected = "KEGG PATHWAY")
         qqcat(" @{input$path_selector}")
-        enr_res <- values$enr@result
-        if (startsWith(enr_res$ID[1], "ko")) {
-            enr_res$ID <- gsub("ko","map",enr_res$ID)
+        enr_res <- values$enr
+        if (startsWith(enr_res$pathway[1], "ko")) {
+            enr_res$pathway <- gsub("ko","map",enr_res$pathway)
         }
         tmp <- enr_res[ enr_res$Description==input$path_selector, ]
 
-        if (startsWith(tmp$ID, "map012") | startsWith(tmp$ID, "map011")) {## If global map
+        if (startsWith(tmp$pathway, "map012") | startsWith(tmp$pathway, "map011")) {## If global map
             if (input$ggraph) {
-                path <- pathway(gsub("map","ko",tmp$ID), directory="pathways") |> process_reaction()
+                path <- pathway(gsub("map","ko",tmp$pathway)) |> process_reaction()
             } else {
-                path <- pathway(gsub("map","ko",tmp$ID), directory="pathways") |> process_line()
+                path <- pathway(gsub("map","ko",tmp$pathway)) |> process_line()
             }
             path <- path |> activate(edges) |> mutate(num = edge_numeric(values$lfc))
             dd <- (path |> activate(edges) |> data.frame())
@@ -1505,7 +1537,7 @@ server <- function(input, output, session) {
 
                 graph <- path |>
                     ggraph(layout="manual", x=x, y=y) +
-                    overlay_raw_map(directory="pathways", use_cache=FALSE)+
+                    overlay_raw_map()+
                     geom_edge_link0(aes(color=num))+
                     scale_edge_color_gradient(low="blue",high="red",name="Statistics")+
                     theme_void()
@@ -1514,10 +1546,10 @@ server <- function(input, output, session) {
                 statdf <- statdf[!duplicated(statdf[,c("ko","num")]),]
             }
         } else {## If not global map
-            path <- pathway(gsub("map","ko",tmp$ID), directory="pathways")
+            path <- pathway(gsub("map","ko",tmp$pathway))
             path <- path |> activate(nodes) |> mutate(num = node_numeric(values$lfc),ko=convert_id("ko"))
             graph <- ggraph(path, layout="manual", x=x, y=y) +
-                overlay_raw_map(directory="pathways", use_cache=FALSE)+
+                overlay_raw_map()+
                 geom_node_rect(aes(fill=num, filter=type=="ortholog"),
                                color="black")+
                 geom_node_text(aes(label=strsplit(graphics_name, ",") %>%

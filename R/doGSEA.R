@@ -14,11 +14,13 @@
 #' @param zeroPerc genes >= the percentage of count zero sample will be excluded.
 #' Default to zero, not recommended in GSEA
 #' @param bg_filter filter the background for those in table
+#' @param background background TERM2GENE data
 #' @importFrom MKmisc mod.t.test
 #' @return GSEA results from clusterProfiler
 #' @export
 doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=sum,
-    zeroPerc=0, rankMethod="modt", target="pathway", bg_filter=TRUE) {
+    zeroPerc=0, rankMethod="modt", target="pathway", bg_filter=TRUE,
+    background=NULL) {
     if (is.null(candSp)) {candSp <- stana@ids[1]}
     if (is.null(cl)) {cl <- stana@cl}
     if (length(cl)!=2) {stop("Only the two group is supported")}
@@ -73,8 +75,14 @@ doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=sum,
         kopgsea <- kopgsea[kopgsea$V2 %in% sub, ]
     }
     ## Return all the value regardless of P
-    enr <- GSEA(ko_sum,
-        TERM2GENE = kopgsea, pvalueCutoff=1)
+    if (!is.null(background)) {
+        enr <- GSEA(ko_sum,
+            TERM2GENE = background, pvalueCutoff=1)        
+    } else {
+        enr <- GSEA(ko_sum,
+            TERM2GENE = kopgsea, pvalueCutoff=1)        
+    }
+
     if (!is.null(stana@gsea[[candSp]])) {
         cat_subtle("# Overriding previous GSEA result\n")
     }

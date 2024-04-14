@@ -13,7 +13,8 @@ doGSEA(
   zeroPerc = 0,
   rankMethod = "modt",
   target = "pathway",
-  bg_filter = TRUE
+  bg_filter = TRUE,
+  background = NULL
 )
 }
 \arguments{
@@ -35,6 +36,8 @@ Default to zero, not recommended in GSEA}
 \item{target}{pathway or module}
 
 \item{bg_filter}{filter the background for those in table}
+
+\item{background}{background TERM2GENE data}
 }
 \value{
 GSEA results from clusterProfiler
