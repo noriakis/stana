@@ -557,6 +557,45 @@ gene <- function(dfs) {
 }
 
 
+#' GF
+#' @param dfs named list of dfs
+#' @export
+GF <- function(dfs) {
+    stana <- new("stana")
+    stana@type <- "manual"
+    if (is.null(names(dfs))) {
+        ids <- paste0("species", seq_len(length(dfs)))
+    } else {
+        ids <- names(dfs)
+    }
+    stana@kos <- dfs
+    stana@ids <- ids
+    return(stana)
+}
+
+#' fromHumann
+#' import from HUMAnN profiles
+#' @param df data frame (row.names as taxonomy and column names as sample names)
+#' @export
+#' @return stana object
+fromHumann <- function(df) {
+    ls <- row.names(df)
+    tax <- ls[!startsWith(ls, "UNGROUPED")]
+    tax <- tax[grepl("\\|", tax)]
+    whole <- tax %>% strsplit("\\|") %>% vapply("[", 2, FUN.VALUE="a") %>% unique()
+    whole <- whole[whole!="unclassified"]
+    gfs <- lapply(whole, function(w) {
+        tmp <- df[tax[endsWith(tax, w)], ]
+        row.names(tmp) <- row.names(tmp) %>% strsplit("\\|") %>% sapply("[", 1)
+        tmp
+    }) %>% `setNames`(whole)
+    stana <- new("stana")
+    stana@kos <- gfs
+    stana@ids <- names(gfs)
+    stana@names <- names(gfs)
+    stana@type <- "manual"
+    stana
+}
 
 
 #' getGenes (concatenated to checkProfile)

@@ -94,8 +94,9 @@ exportInteractive <- function(stana, out=".", db="uhgg", calcko=FALSE,
             meta <- meta |> data.frame() |> `colnames<-`(c("label","group"))
             row.names(meta) <- meta[["label"]]            
         }
+        stana@meta <- meta
     } else {
-        meta <- stana@meta
+        cat_subtle("# Using preset metadata\n")
     }
 	
 	cat_subtle("# Tree number: ", treLen, " KO (or gene) number: ", koLen,  "\n")

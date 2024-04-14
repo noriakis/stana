@@ -668,9 +668,11 @@ server <- function(input, output, session) {
                     meta <- meta[tre$tip.label,]
 
                     ## Layout for `all` type should be fixed?
+                    meta$label <- NULL
+                    meta <- cbind(meta[, 1], meta)
                     p <- ggtree(tre, layout=input$layout,
                                 branch.length=ifelse(input$cladogram,
-                                                     "none", "branch.length")) %<+% meta[, which(!(colnames(meta) %in% "label"))] +
+                                                     "none", "branch.length")) %<+% meta +
                         geom_tippoint(aes_string(color=show_cv), size=input$size)+
                         ggtitle(i)+theme(legend.position="bottom") ## Title wil be just ID in MIDASDB
                     if (input[[show_cv]]) {
@@ -1033,7 +1035,9 @@ server <- function(input, output, session) {
                     }
                 }
             } else {
-                p <- ggtree(tre, layout=input$layout, branch.length=branch.length) %<+% meta[, which(!(colnames(meta) %in% "label"))] +
+                meta$label <- NULL
+                meta <- cbind(meta[, 1], meta)
+                p <- ggtree(tre, layout=input$layout, branch.length=branch.length) %<+% meta +
                     geom_tippoint(aes_string(color=show_cv[1]), size=input$size)
                 if (is.numeric(meta[[show_cv[1]]])) {
                     p <- p + scale_color_gradient(low="blue",
