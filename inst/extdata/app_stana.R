@@ -12,9 +12,7 @@ library(ggplot2)
 library(patchwork)
 library(RColorBrewer)
 library(ggraph)
-library(ComplexHeatmap)
 library(ggkegg)
-library(GetoptLong)
 library(ggnewscale)
 library(ggtreeExtra)
 library(ggstar)
@@ -22,6 +20,10 @@ library(MKmisc)
 library(purrr)
 library(castor)
 library(pillar)
+library(ComplexHeatmap)
+
+## Random palette
+pal <- sample(RColorBrewer::brewer.pal.info %>% row.names(), 1)
 
 set.seed(1)
 
@@ -40,12 +42,20 @@ if (requireNamespace("NNLM")) {
 	}
 }
 
-## Random palette
-pal <- sample(RColorBrewer::brewer.pal.info %>% row.names(), 1)
 
 ## Load the necessary data
-kop <- data.table::fread("https://rest.kegg.jp/link/ko/pathway", header=FALSE)
-nmls <- data.table::fread("https://rest.kegg.jp/list/pathway/ko", header=FALSE)
+if (!file.exists("ko_pathway.rda")) {
+    kop <- data.table::fread("https://rest.kegg.jp/link/ko/pathway", header=FALSE)
+    save(file="ko_pathway.rda", kop, compress="xz")
+} else {
+    load(file="ko_pathway.rda")
+}
+if (!file.exists("pathway_name.rda")) {
+    nmls <- data.table::fread("https://rest.kegg.jp/list/pathway/ko", header=FALSE)
+    save(file="pathway_name.rda", nmls, compress="xz")
+} else {
+    load(file="pathway_name.rda")
+}
 
 list_of_species <- NULL
 
@@ -94,7 +104,7 @@ return_all_gsea_heatmap <- function(list_of_gsea, sel="enrichmentScore",
     if (retTable) {return(hm2)}
     Heatmap(hm2 |> as.matrix(), cluster_rows = FALSE,
             column_title=title,
-            column_names_max_height = unit(10, "cm"))
+            column_names_max_height = unit(10, "cm"))        
 }
 
 ## Dataset definition
@@ -171,6 +181,7 @@ ui <-  fluidPage(
                 column(3, align="center",
                     h4("Gene options"),
                     numericInput("kmeans", "K-means", value=10),
+                    numericInput("reduce", "Reduce", value=100),
                     switchInput("lfc", label="T-statistics (must be two levels)"),
                     p("If not T-stat, sum values of KO abundance across sample",
                       "is passed to EA and KEGG"),
@@ -667,8 +678,8 @@ server <- function(input, output, session) {
                     meta <- meta[tre$tip.label,]
 
                     ## Layout for `all` type should be fixed?
-                    meta$label <- NULL
-                    meta <- cbind(meta[, 1], meta)
+                    # meta$label <- NULL
+                    # meta <- cbind(meta[, 1], meta)
                     p <- ggtree(tre, layout=input$layout,
                                 branch.length=ifelse(input$cladogram,
                                                      "none", "branch.length")) %<+% meta +
@@ -808,7 +819,7 @@ server <- function(input, output, session) {
 	                    meta[[tmp_show_cv]] <- as.factor(change_cv)
 	                }
 	                if (is.na(meta[[tmp_show_cv]]) |> sum() == dim(meta)[1]) {
-	                    qqcat("One of the covariates are all NA\n")
+	                    cat_subtle("# One of the covariates are all NA\n")
 	                    updateLog("One of the covariates are all NA, exiting");
 	                    waiter_hide()
 	                    return(1)
@@ -855,7 +866,7 @@ server <- function(input, output, session) {
             } ## KO-NMF approach
             
             if (input$use_ko_dist) {
-                qqcat("Using KO table to calculate distance between samples\n")
+                cat_subtle("# Using KO table to calculate distance between samples\n")
                 ## Load the precalculated KO table
                 ko_df_filt <- values$stana@kos[[sp_id]]
                 if (dim(ko_df_filt)[1]<=1) {
@@ -906,7 +917,7 @@ server <- function(input, output, session) {
                     meta[[tmp_show_cv]] <- as.factor(change_cv)
                 }
                 if (is.na(meta[[tmp_show_cv]]) |> sum() == dim(meta)[1]) {
-                    qqcat("One of the covariates are all NA\n")
+                    cat_subtle("# One of the covariates are all NA\n")
                     updateLog("One of the covariates are all NA, exiting");
                     waiter_hide()
                     return(1)
@@ -923,10 +934,10 @@ server <- function(input, output, session) {
             ## Test PERMANOVA
             if (!input$use_ko_dist) {
                 if (input$use_pairwise) {
-                    qqcat("Pairwise mode enabled\n")
+                    cat_subtle("# Pairwise mode enabled\n")
                     wholeLevel <- unique(meta[[show_cv[[1]]]])
                     wholeLevel <- wholeLevel[!is.na(wholeLevel)]
-                    qqcat("@{length(wholeLevel)} level present\n")
+                    cat_subtle("# ", length(wholeLevel), " level present\n", sep="")
                     comps <- combn(wholeLevel, m=2)
                     aresall <- do.call(rbind, lapply(seq_len(ncol(comps)), function(l) {
                         levs <- comps[,l]
@@ -935,10 +946,11 @@ server <- function(input, output, session) {
                         
                         inc_samples <- row.names(subset(meta, meta[[show_cv[[1]]]] %in% levs))
                         ## Multiple subtree?
-                        subt <- castor::get_subtree_with_tips(tre, inc_samples)$subtree
-                        dist_mat <- as.dist(ape::cophenetic.phylo(subt))
+                        # subt <- castor::get_subtree_with_tips(tre, inc_samples)$subtree
+                        dist_mat <- as.dist(ape::cophenetic.phylo(tre))
+                        dist_mat <- as.dist(as.matrix(dist_mat)[inc_samples, inc_samples])
                         subset_meta2 <- subset(meta, meta[[show_cv[[1]]]] %in% levs)
-                        subset_meta2 <- subset_meta2[subt$tip.label, ]
+                        subset_meta2 <- subset_meta2[inc_samples, ]
                         
                         if ((subset_meta2[[show_cv[1]]] |> na.omit() |> unique() |> length()) != 1) {
                             adonis_res <- vegan::adonis2(as.formula(paste0("dist_mat ~ ", show_cv[[1]])),
@@ -950,12 +962,12 @@ server <- function(input, output, session) {
                         ado_df[["comparison"]] <- paste0(show_cv[[1]],":",levs1,"_vs_",levs2)
                         return(ado_df)
                     }))
-                    qqcat("adonis finished\n")
+                    cat_subtle("# adonis finished\n")
                     if (!is.null(aresall)) {
                         ado_df <- data.frame(aresall, check.names=F)
                         output$adonis <- DT::renderDataTable(ado_df)
                     } else {
-                        qqcat("No adonis results produced\n")
+                        cat_subtle("# No adonis results produced\n")
                     }
                 } else { ## End of pairwise
                     dist_mat <- as.dist(ape::cophenetic.phylo(tre))
@@ -1034,8 +1046,8 @@ server <- function(input, output, session) {
                     }
                 }
             } else {
-                meta$label <- NULL
-                meta <- cbind(meta[, 1], meta)
+                # meta$label <- NULL
+                # meta <- cbind(meta[, 1], meta)
                 p <- ggtree(tre, layout=input$layout, branch.length=branch.length) %<+% meta +
                     geom_tippoint(aes_string(color=show_cv[1]), size=input$size)
                 if (is.numeric(meta[[show_cv[1]]])) {
@@ -1096,7 +1108,7 @@ server <- function(input, output, session) {
 
 
         if (is.na(meta[[show_cv]]) |> sum() == dim(meta)[1]) {
-            qqcat("Covariates are all NA\n")
+            cat_subtle("Covariates are all NA\n")
             updateLog("Covariates are all NA, exiting");
             waiter_hide()
             return(1)
@@ -1130,10 +1142,10 @@ server <- function(input, output, session) {
                 spl <- change_dic[colnames(ko_df_filt)] |> na.omit()
             } else {
                 ## We divide numeric by median
-                qqcat("Dividing by median ... ")
+                cat_subtle("# Dividing by median ... ")
                 med_val <- median(gene_meta[[show_cv]], na.rm=TRUE) ## although already removed
 
-                qqcat("@{med_val} in @{dim(gene_meta)[1]}\n")
+                cat_subtle("# ", med_val, " in ", dim(gene_meta)[1],"\n", sep="")
                 change_dic <- gene_meta[[show_cv]] > med_val
                 change_dic <- ifelse(change_dic, "High","Low") |>
                     setNames(gene_meta[,1])
@@ -1169,12 +1181,12 @@ server <- function(input, output, session) {
             if (length(bb)==0) {waiter_hide();return(1)}
 
             if (!input$gsea) {
-                qqcat("Calculating Wilcoxon rank-sum tests\n")
+                cat_subtle("# Calculating Wilcoxon rank-sum tests\n")
                 pvalAdjustMethod <- ifelse(input$pvalAdjustMethod, "BH", "none")
                 apvs <- p.adjust(apply(ko_df_filt, 1, function(x) {
                     wt <- exactRankTests::wilcox.exact(x[aa], x[bb]); wt$p.value}),
                     pvalAdjustMethod)
-                qqcat("Significant KOs: @{length(apvs[apvs<0.05])}\n")
+                cat_subtle("# Significant KOs: ", length(apvs[apvs<0.05]), "\n", sep="")
                 if (length(apvs[apvs<0.05])==0) {
                     waiter_hide()
                     reset_enr(output)
@@ -1209,7 +1221,7 @@ server <- function(input, output, session) {
                 } else {
                     candint <- intersect(names(ko_sum[ko_sum<0]), names(apvs[apvs < 0.05]))
                 }
-                qqcat("Length of candint: @{length(candint)}\n")
+                cat_subtle("Length of candint: ", length(candint), "\n", sep="")
                 if (length(candint)==0) {waiter_hide();return(1);}
                 
                 enr <- fgsea::fora(nl, candint, universe=names(ko_sum))
@@ -1221,18 +1233,18 @@ server <- function(input, output, session) {
             comp_label <- paste0("Sum of all samples")
             ## Sum values for all the variables
             ko_sum <- apply(ko_df_filt, 1, sum)
-            top50 <- names(ko_sum[order(ko_sum, decreasing=TRUE)]) |>
-                strsplit(":") |> sapply("[", 2)
+            top50 <- names(ko_sum[order(ko_sum, decreasing=TRUE)])
             ## Performing ORA on all KOs
-            qqcat("Performing EA\n")
-            enr <- fgsea::fora(nl, top50, names(ko_sum))
+            cat_subtle("# Performing EA (for all the KOs)\n")
+            enr <- fgsea::fora(nl, top50, universe=names(ko_sum))
             res <- data.frame(enr)
         }
 
-        qqcat("Inserting named vector of values to reactive\n")
+        cat_subtle("# Inserting named vector of values to reactive\n")
 
         pnames <- nmls$V2 |> setNames(nmls$V1)
         enr$Description <- pnames[enr$pathway]
+        enr <- enr %>% relocate(Description)
 
         values$lfc <- ko_sum
         values$enr <- enr
@@ -1243,6 +1255,17 @@ server <- function(input, output, session) {
 
         ## Visualize heatmap
         ## K-means for wordclouds
+
+        ## Reduce plot (variable features)
+        if (input$reduce!=0) {
+          if (input$reduce<100) {red <- 100} else {red <- input$reduce}
+          top100 <- matrixStats::rowVars(ko_df_filt) %>% 
+            sort(decreasing=TRUE) %>% 
+            head(red) %>% names()
+          
+          ko_df_filt <- ko_df_filt[top100, ]
+        }
+        
         km = kmeans(ko_df_filt, centers = input$kmeans)$cluster
         gene_list <- split(row.names(ko_df_filt), km)
         gene_list <- lapply(gene_list, function(x) {
@@ -1276,6 +1299,7 @@ server <- function(input, output, session) {
                         "signaling",
                         "biosynthesis",
                         "degradation"),
+                    fontsize_range=c(10,20),
                     max_words = 30)
             )
         output$showGenePlot <- renderPlot({hm},
@@ -1336,7 +1360,7 @@ server <- function(input, output, session) {
                 }
 
                 if (is.na(meta[[show_cv]]) |> sum() == dim(meta)[1]) {
-                    qqcat("Covariates are all NA\n")
+                    cat_subtle("Covariates are all NA\n")
                     updateLog("Covariates are all NA, exiting");
                     # waiter_hide()
                     next
@@ -1371,10 +1395,10 @@ server <- function(input, output, session) {
                         spl <- change_dic[colnames(ko_df_filt)] |> na.omit()
                     } else {
                         ## We divide numeric by median
-                        qqcat("Dividing by median ... ")
+                        cat_subtle("# Dividing by median ... ")
                         med_val <- median(gene_meta[[show_cv]], na.rm=TRUE) ## although already removed
 
-                        qqcat("@{med_val} in @{dim(gene_meta)[1]}\n")
+                        cat_subtle("# ", med_val, " in ", dim(gene_meta)[1], "\n", sep="")
                         change_dic <- gene_meta[[show_cv]] > med_val
                         change_dic <- ifelse(change_dic, "High","Low") |>
                             setNames(gene_meta[,1])
@@ -1425,7 +1449,7 @@ server <- function(input, output, session) {
                     ko_sum <- ko_sum[order(ko_sum, decreasing=TRUE)]
                     # top50 <- names(abs(ko_sum)[order(abs(ko_sum), decreasing=TRUE)]) |> strsplit(":") |> sapply("[",2)
                     updateLog(paste0("Performing GSEA for ", sp_id))
-                    qqcat("GSEAMat: Cleared the threshold (@{curthre}), performing GSEA for @{sp_id} (@{labnum})\n")
+                    cat_subtle("# GSEAMat: Cleared the threshold (", curthre, "), performing GSEA for ", sp_id, " (", labnum, "\n", sep="")
                 
 
                     if (length(ko_sum)==0) {next;}
@@ -1452,7 +1476,7 @@ server <- function(input, output, session) {
                 }
                 list_of_gsea[[sp]] <- enr
             } else {
-                qqcat("GSEAMat: Not cleared the threshold (@{curthre}), @{sp_id} (@{labnum})\n")
+                cat_subtle("# GSEAMat: Not cleared the threshold (", curthre, "), ", sp_id," (", labnum, "\n", sep="")
             }
         }
         ## allgsea plot
@@ -1485,12 +1509,12 @@ server <- function(input, output, session) {
 
     ## Plotting KEGG
     observeEvent(input$kegg,{
-        qqcat("KEGG mode started ...\n")
+        cat_subtle("# KEGG mode started ...\n")
         if (is.null(values$enr)) {return(1)}
         waiter_show(html = spin_3(), color = "white")
         updateTabsetPanel(session, "main_tab",
                           selected = "KEGG PATHWAY")
-        qqcat(" @{input$path_selector}")
+        cat_subtle("# ", input$path_selector, "\n", sep="")
         enr_res <- values$enr
         if (startsWith(enr_res$pathway[1], "ko")) {
             enr_res$pathway <- gsub("ko","map",enr_res$pathway)
