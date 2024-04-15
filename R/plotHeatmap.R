@@ -1,9 +1,10 @@
 
 
 #' plotHeatmap
-#' 
-#' plot a heatmap with functional annotation by simplifyEnrichment
-#' Typically, MIDAS and MIDAS2 output are used
+#' @description Plot a heatmap of gene copy number.
+#' @details Plot a heatmap with functional annotation by simplifyEnrichment.
+#' The annotations are provided by `eggNOG` slot or `map` slot. If loaded type is MIDAS,
+#' The function automatically fetches the functional annotation from PATRIC server.
 #' @param stana stana object
 #' @param sp candidate species
 #' @param cl grouping named list
@@ -19,14 +20,15 @@
 #' @param filter_zero_frac genes with zero abundance over fraction of samples as this value
 #' are removed before sample filtering. As typically gene matrix is large, for further filtering, please use `mat` option
 #' @param filter_max_frac remove genes with values below `filter_max_value` in this fraction of sample
-#' @param filter_max_value max value for copy numbers
+#' @param filter_max_value max value for copy numbers (default to 50), coupled with filter_max_frac
+#' @param variable If specified other than 0, subset to top-{variable} variation gene numbers.
 #' @importFrom ComplexHeatmap Heatmap
 #' @export
 #' 
 plotHeatmap <- function(stana, sp, cl=NULL, k=10, mat=NULL, seed=1,
-	geneID=NULL,
+	geneID=NULL, variable=0,
 	fnc="KEGG_Pathway", removeHigh=TRUE, removeAdditional=NULL, max_words=10,
-    filter_zero_frac=0.8, filter_max_frac=Inf, filter_max_value=5) {
+    filter_zero_frac=0.8, filter_max_frac=0, filter_max_value=50) {
 	set.seed(seed)
 
 	if (!is.null(mat)) {
@@ -35,11 +37,12 @@ plotHeatmap <- function(stana, sp, cl=NULL, k=10, mat=NULL, seed=1,
 		df <- stana@genes[[sp]]
         ## Filter
     	if (!is.null(geneID)) {
+            cat_subtle("# Ignoring filtering options\n")
 			df <- df[intersect(row.names(df), geneID), ]
 		} else {
-	        df <- df[!rowSums(df == 0) > ncol(df) * filter_zero_frac,]
-	        df <- df[!rowSums(df > filter_max_value) > ncol(df) * filter_max_frac,]			
-		}
+            df <- df[!rowSums(df == 0) > ncol(df) * filter_zero_frac,]
+            df <- df[!rowSums(df > filter_max_value) > ncol(df) * filter_max_frac,]                     
+        }
 	}
 
 
@@ -58,6 +61,12 @@ plotHeatmap <- function(stana, sp, cl=NULL, k=10, mat=NULL, seed=1,
 	    ord <- c(ord, inc)
 	    spl <- c(spl, rep(nm, length(inc)))
 	}
+    
+    if (variable!=0) {
+        tmpvar <- matrixStats::rowVars(expr %>% as.matrix()) %>% sort(decreasing=TRUE) %>%
+            head(variable) %>% names()
+        expr <- expr[tmpvar, ]
+    }
 
 	km = kmeans(expr, centers = k)$cluster
 
@@ -71,7 +80,7 @@ plotHeatmap <- function(stana, sp, cl=NULL, k=10, mat=NULL, seed=1,
 			    keywords = stana::anno_PATRIC_keywords(split = km,
 			      genes = rownames(expr), fnc="pathway_name",
 			      removeHigh=removeHigh,  removeAdditional=removeAdditional,
-			      argList=list(max_words = max_words))
+			      argList=list(max_words = max_words, fontsize_range=c(10,20)))
 			)
 		return(hm)		
 	} else {
@@ -96,7 +105,7 @@ plotHeatmap <- function(stana, sp, cl=NULL, k=10, mat=NULL, seed=1,
 			    keywords = stana::anno_eggNOG_keywords(split = km,
 			      genes = rownames(expr), tib=tib,
 			      removeHigh=removeHigh,  removeAdditional=removeAdditional,
-			      argList=list(max_words = max_words))
+			      argList=list(max_words = max_words, fontsize_range=c(10,20)))
 			)
 		return(hm)
 	}

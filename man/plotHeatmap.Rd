@@ -12,13 +12,14 @@ plotHeatmap(
   mat = NULL,
   seed = 1,
   geneID = NULL,
+  variable = 0,
   fnc = "KEGG_Pathway",
   removeHigh = TRUE,
   removeAdditional = NULL,
   max_words = 10,
   filter_zero_frac = 0.8,
-  filter_max_frac = Inf,
-  filter_max_value = 5
+  filter_max_frac = 0,
+  filter_max_value = 50
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ and column sample names}
 
 \item{geneID}{gene id to subset}
 
+\item{variable}{If specified other than 0, subset to top-{variable} variation gene numbers.}
+
 \item{fnc}{One of `KEGG_Pathway` or `KEGG_Module`, when eggNOG annotation is used}
 
 \item{removeHigh}{remove high frequent words (preset)}
@@ -50,9 +53,13 @@ are removed before sample filtering. As typically gene matrix is large, for furt
 
 \item{filter_max_frac}{remove genes with values below `filter_max_value` in this fraction of sample}
 
-\item{filter_max_value}{max value for copy numbers}
+\item{filter_max_value}{max value for copy numbers (default to 50), coupled with filter_max_frac}
 }
 \description{
-plot a heatmap with functional annotation by simplifyEnrichment
-Typically, MIDAS and MIDAS2 output are used
+Plot a heatmap of gene copy number.
+}
+\details{
+Plot a heatmap with functional annotation by simplifyEnrichment.
+The annotations are provided by `eggNOG` slot or `map` slot. If loaded type is MIDAS,
+The function automatically fetches the functional annotation from PATRIC server.
 }
