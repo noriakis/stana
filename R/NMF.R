@@ -56,8 +56,8 @@ NMF <- function(stana, species, rank=3, target="kos", seed=53, method="snmf/r",
            cat_subtle("# After filtering `-1`, position numbers: ",dim(mat)[1],"\n")
         } else {
            mat[ mat == -1 ] <- NA
-           if (!nnlm_flag) cat_subtle("# Changing to NNLM\n")
-           nnlm_flag <- TRUE
+           # if (!nnlm_flag) cat_subtle("# Changing to NNLM\n")
+           # nnlm_flag <- TRUE
         }
     }
     
@@ -113,8 +113,18 @@ NMF <- function(stana, species, rank=3, target="kos", seed=53, method="snmf/r",
 			return(err)
     	} else {
     		## Following the cophenetic correlation coefficient drop procedure
-	    	test <- nmfEstimateRank(as.matrix(mat),
-	    		range=estimate_range, method=method)
+            if (any(is.na(mat))) {
+                ## If NA included, use ls-nmf with weight
+                w <- matrix(1, nrow(mat), ncol(mat))
+                w[ is.na(mat) ] <- 0
+                mat[is.na(mat)] <- 123456789
+                test <- nmfEstimateRank(as.matrix(mat),
+                    range=estimate_range, method="ls-nmf",
+                    weight=w)
+            } else {
+                test <- nmfEstimateRank(as.matrix(mat),
+                    range=estimate_range, method=method)
+            }
 	    	val <- test$measures[, "cophenetic"]
 	        b <- -1
 			for (i in seq_along(val)) {
@@ -129,7 +139,7 @@ NMF <- function(stana, species, rank=3, target="kos", seed=53, method="snmf/r",
 			  }
 			}
 		    rank <- estimate_range[i]
-			cat("Chosen rank:", rank, "\n")    		
+			cat_subtle("# Chosen rank:", rank, "\n")    		
     	}
     }
     

@@ -245,13 +245,22 @@ setGeneric("filter", function(x, ids, target="snps") standardGeneric("filter"))
 #' @export
 setMethod("filter", "stana",
     function(x, ids, target) {
+        ids <- intersect(x@ids, ids)
     	if (target=="snps") {
-    		stana@snps <- stana@snps[ids]
+            ls <- x@snps[ids]
+            ls <- ls[lapply(ls, function(x) !is.null(x)) %>% unlist()]
+    		x@snps <- ls
+            x@ids <- ids
+            x@names <- x@names[ids]
     	}
     	if (target=="genes") {
-    		stana@genes <- stana@genes[ids]    		
+            ls <- x@genes[ids]
+            ls <- ls[lapply(ls, function(x) !is.null(x)) %>% unlist()]
+            x@genes <- ls
+            x@ids <- ids
+            x@names <- x@names[ids]
     	}
-    	return(stana)
+    	return(x)
     })
 
 
