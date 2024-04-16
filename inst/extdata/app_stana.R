@@ -1287,7 +1287,6 @@ server <- function(input, output, session) {
             show_column_names = FALSE,
             border=TRUE,
             name="Copy number",
-            # column_title=NULL,
             show_row_names = FALSE,
             show_row_dend = FALSE) +
             rowAnnotation(
@@ -1302,7 +1301,7 @@ server <- function(input, output, session) {
                     fontsize_range=c(10,20),
                     max_words = 30)
             )
-        output$showGenePlot <- renderPlot({hm},
+        output$showGenePlot <- renderPlot({draw(hm, column_title=show_cv)},
             bg = 'white',
             res=72,
             height=input$height,

@@ -11,8 +11,8 @@
 Metagenotyping analysis in R. Import and analyse, visualize the
 metagenotyping output of the software like
 [MIDAS](https://github.com/snayfach/MIDAS),
-[MIDAS2](https://github.com/czbiohub/MIDAS2), [metaSNV v1, metaSNV
-v2](https://github.com/metasnv-tool/metaSNV) and
+[MIDAS2](https://github.com/czbiohub/MIDAS2), [metaSNV v1 and metaSNV
+v2](https://github.com/metasnv-tool/metaSNV), and
 [inStrain](https://github.com/MrOlm/inStrain). In general the
 metagenotyping software produces the allelic count information and gene
 copy number tables and the package utilizes these information to analyze

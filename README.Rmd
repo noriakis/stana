@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/noriakis/stana/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/noriakis/stana/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-Metagenotyping analysis in R. Import and analyse, visualize the metagenotyping output of the software like [MIDAS](https://github.com/snayfach/MIDAS), [MIDAS2](https://github.com/czbiohub/MIDAS2), [metaSNV v1, metaSNV v2](https://github.com/metasnv-tool/metaSNV) and [inStrain](https://github.com/MrOlm/inStrain). In general the metagenotyping software produces the allelic count information and gene copy number tables and the package utilizes these information to analyze the intra-species diversity.
+Metagenotyping analysis in R. Import and analyse, visualize the metagenotyping output of the software like [MIDAS](https://github.com/snayfach/MIDAS), [MIDAS2](https://github.com/czbiohub/MIDAS2), [metaSNV and metaSNV v2](https://github.com/metasnv-tool/metaSNV), and [inStrain](https://github.com/MrOlm/inStrain). In general the metagenotyping software produces the allelic count information and gene copy number tables and the package utilizes these information to analyze the intra-species diversity.
 
 The detailed usage is available at [https://noriakis.github.io/software/stana](https://noriakis.github.io/software/stana), using `bookdown`.
 
