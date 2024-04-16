@@ -105,6 +105,7 @@ exportInteractive <- function(stana, out=".", db="uhgg", calcko=FALSE,
 		stana@genes <- list()
 		stana@snps <- list()
 		stana@snpsInfo <- list()
+        stana@treePlotList <- list()
 	}
 	save(file=paste0(out, "/data/", dataset_name,".rda"), stana, compress="xz")
     ## Copy the main script and run the app
