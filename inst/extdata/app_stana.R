@@ -605,9 +605,8 @@ server <- function(input, output, session) {
                 values$mat <- FMat
                 FHeatmap <- Heatmap(FMat,
                                     name=HMNAME, border=FALSE,
-                                    rect_gp = gpar(col = "white", lwd = 2),
+                                    rect_gp = gpar(col = "grey20", lwd = 2),
                                     column_names_side="top",
-                                    col = colorRampPalette(c("navy", "white", "firebrick3"))(50),
                                     row_names_max_width = unit(10, "cm"))
                 values$heatmap <- FHeatmap
                 tryCatch(
