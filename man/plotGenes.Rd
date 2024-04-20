@@ -4,7 +4,14 @@
 \alias{plotGenes}
 \title{plotGenes}
 \usage{
-plotGenes(stana, species, geneID, target = "genes", cl = NULL)
+plotGenes(
+  stana,
+  species,
+  geneID,
+  target = "genes",
+  cl = NULL,
+  return_df = FALSE
+)
 }
 \arguments{
 \item{stana}{stana object}
@@ -16,6 +23,8 @@ plotGenes(stana, species, geneID, target = "genes", cl = NULL)
 \item{target}{genes or KOs (gene families)}
 
 \item{cl}{named list of clusters}
+
+\item{return_df}{return data only}
 }
 \value{
 ggplot

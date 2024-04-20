@@ -280,8 +280,8 @@ calcGF <- function(stana, candSp=NULL, how=sum, annot="eggNOG", column="KEGG_ko"
 #' @export
 reverseAnnot <- function(stana, candSp, candidate, col="KEGG_ko") {
     annot <- checkEGGNOG(annot_file=stana@eggNOG[[candSp]], col)
-    annot %>% filter(.data[["value"]] %in% candidate) %>%
-        pull(ID) %>% unique()
+    annot %>% dplyr::filter(.data[["value"]] %in% candidate) %>%
+        dplyr::pull(ID) %>% unique()
 }
 
 

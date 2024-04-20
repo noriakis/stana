@@ -8,11 +8,12 @@
 #' @param geneID gene ID to be plotted
 #' @param cl named list of clusters
 #' @param target genes or KOs (gene families)
+#' @param return_df return data only
 #' @import ggplot2
 #' @export
 #' @return ggplot
 #' 
-plotGenes <- function(stana, species, geneID, target="genes", cl=NULL) {
+plotGenes <- function(stana, species, geneID, target="genes", cl=NULL, return_df=FALSE) {
 	if (is.null(cl)) { cl <- stana@cl}
 	if (target=="genes") {
     	geneDf <- stana@genes[[species]]
@@ -27,6 +28,10 @@ plotGenes <- function(stana, species, geneID, target="genes", cl=NULL) {
 	geneDf$geneID <- row.names(geneDf)
 	df <- geneDf |> tidyr::pivot_longer(1:ncol(geneDf)-1)
 	df$group <- listToNV(stana@cl)[df$name]
+    
+    if (return_df){
+        return(df)
+    }
 
 	ggplot(df, aes(x=group, y=value,
 		fill=group)) +
