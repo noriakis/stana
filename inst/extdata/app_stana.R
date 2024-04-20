@@ -143,7 +143,7 @@ ui <-  fluidPage(
                 ),
 
                 column(3, align="center",
-                    selectizeInput('cv', "Clinical variables",
+                    selectInput('cv', "Clinical variables",
                         choices = NULL, multiple=TRUE),
                     uiOutput("col")
                 ),
@@ -307,9 +307,9 @@ server <- function(input, output, session) {
         ## Load metadata onto reactive
         values$meta <- meta
 
-        updateSelectizeInput(session, 'cv',
+        updateSelectInput(session, 'cv',
             choices = colnames(meta),
-            server = TRUE,
+            # server = TRUE,
             selected = first_choice[input$site])
     })
 
