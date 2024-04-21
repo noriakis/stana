@@ -10,7 +10,8 @@ plotGenes(
   geneID,
   target = "genes",
   cl = NULL,
-  return_df = FALSE
+  return_df = FALSE,
+  geom = geom_violin
 )
 }
 \arguments{
@@ -25,10 +26,16 @@ plotGenes(
 \item{cl}{named list of clusters}
 
 \item{return_df}{return data only}
+
+\item{geom}{default to geom_violin, can be changed to the geom like `geom_boxplot`}
 }
 \value{
 ggplot
 }
 \description{
-plot the violin plot for specific genes
+Plot the plot for specific genes
+}
+\details{
+Plot the gene copy number between groups based on the specified geom.
+The default is to use gene copy number, but gene family abundance can also be specified.
 }
