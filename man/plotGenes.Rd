@@ -11,7 +11,7 @@ plotGenes(
   target = "genes",
   cl = NULL,
   return_df = FALSE,
-  geom = geom_violin
+  geom = geom_violin()
 )
 }
 \arguments{
