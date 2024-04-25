@@ -214,6 +214,7 @@ addGeneAbundance <- function(stana, candSp, IDs,
 #' @param l2 level2
 #' @param method gmean, amean, or t
 #' @param eps pseudocount added when calculating log
+#' @return named vector of statistical values
 #' @noRd
 L2FC <- function(mat, l1, l2, method="t", eps=0) {
     if (method == "gmean") {
