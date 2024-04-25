@@ -13,7 +13,7 @@
 #' @param statHow how to aggregate the multiple statistical values
 #' @export
 rankComponents <- function(stana, pid, candSp=NULL, cl=NULL, eps=1e-2, how=sum,
-    zeroPerc=0, rankMethod="modt", statHow=mean) {
+    rankMethod="modt", statHow=mean) {
     if (is.null(candSp)) {candSp <- stana@ids[1]}
     if (is.null(cl)) {cl <- stana@cl}
     if (length(cl)!=2) {stop("Only the two group is supported")}

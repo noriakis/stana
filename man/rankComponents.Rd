@@ -11,7 +11,6 @@ rankComponents(
   cl = NULL,
   eps = 0.01,
   how = sum,
-  zeroPerc = 0,
   rankMethod = "modt",
   statHow = mean
 )
