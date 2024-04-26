@@ -31,17 +31,22 @@ plotGenes <- function(stana, species, geneID, target="genes", cl=NULL, return_df
 	}
 	geneDf$geneID <- row.names(geneDf)
 	df <- geneDf |> tidyr::pivot_longer(1:ncol(geneDf)-1)
-	df$group <- listToNV(stana@cl)[df$name]
+	df$group <- listToNV(cl)[df$name]
     
     if (return_df){
         return(df)
     }
-
+    if (length(cl)==length(stana@colors)) {
+        cols <- stana@colors
+    } else {
+        cols <- RColorBrewer::brewer.pal(length(cl), "RdBu")
+    }
+    print(cols)
 	ggplot(df, aes(x=group, y=value,
 		fill=group)) +
 	geom+
 	geom_jitter(shape=21, size=2)+
-	scale_fill_manual(values=stana@colors)+
+	scale_fill_manual(values=cols)+
 	facet_wrap(.~geneID)+
 	cowplot::theme_cowplot()+
     cowplot::panel_border()
