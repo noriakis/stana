@@ -19,7 +19,7 @@ inferAndPlotTree(
   branch.length = "none",
   point_size = 2,
   subset_samples = NULL,
-  deleteZeroDepth = TRUE,
+  deleteZeroDepth = FALSE,
   treeFun = "upgma",
   tree_only = FALSE
 )

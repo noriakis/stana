@@ -190,6 +190,25 @@ setMethod("siteFilter", "stana",
 })
 
 
+#' setSNVID
+#' @param x stana object
+#' @param sp species ID
+#' @param IDs SNV ID
+#' @export
+setGeneric("setSNVID", function(x, sp, IDs) standardGeneric("setSNVID"))
+
+#' setSNVID
+#' @param x stana object
+#' @param sp species ID
+#' @param IDs SNV ID
+#' @export
+setMethod("setSNVID", "stana",
+    function(x, sp, IDs) {
+    x@includeSNVID[[sp]] <- IDs
+    x
+})
+
+
 
 #' check
 #' check and output statistics based on conditional formulas for summary

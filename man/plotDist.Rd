@@ -12,7 +12,8 @@ plotDist(
   AAargs = list(),
   target = "snps",
   distMethod = "manhattan",
-  distArg = list()
+  distArg = list(),
+  candidate = NULL
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ plotDist(
 \item{distMethod}{distance method passed to dist() (default, manhattan)}
 
 \item{distArg}{passed to `dist()}
+
+\item{candidate}{list of IDs included for the calculation (like SNV IDs)}
 }
 \description{
 Perform distance calculation based on the matrix

@@ -174,15 +174,18 @@ plotGSEA <- function(stana, dataset_names=NULL, padjThreshold=0.05,
 #' @param discNumeric convert discrete value to numeric
 #' @param disc discretize the abundance by the threshold. function for calculating
 #' threshold, like {median}
+#' @param convert conversion such as log10
 #' @export
 #' @return stana
 addGeneAbundance <- function(stana, candSp, IDs,
     target="KO", how=sum, newCol="gene",
-    disc=NULL, discNumeric=TRUE) {
+    disc=NULL, discNumeric=TRUE, convert=NULL) {
     if (target=="KO") {
-        subMat <- stana@kos[[candSp]][IDs, ]
+        ints <- intersect(row.names(stana@kos[[candSp]]), IDs)
+        subMat <- stana@kos[[candSp]][ints, ]
     } else {
-        subMat <- stana@genes[[candSp]][IDs, ]
+        ints <- intersect(row.names(stana@genes[[candSp]]), IDs)
+        subMat <- stana@genes[[candSp]][ints, ]
     }
     if (length(IDs)>1) {
         adda <- apply(subMat, 2, how)    
@@ -200,6 +203,9 @@ addGeneAbundance <- function(stana, candSp, IDs,
         names(adda) <- nm
     }
     meta <- stana@meta
+    if (!is.null(convert)) {
+        adda <- do.call(convert, list(x=adda))
+    }
     meta[[newCol]] <- adda[row.names(stana@meta)]
     stana@meta <- meta
     return(stana)

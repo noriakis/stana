@@ -22,6 +22,7 @@
 #' @param deleteZeroDepth delete zero depth snvs (denoted as `-1`)
 #' Otherwise the cell is treated as NA
 #' @param distArg passed to `dist()`
+#' @param useMeta use metadata slot, not cl slot
 #' @param pcoa if TRUE, performs ape::pcoa on dist and plot them
 #' @importFrom vegan adonis2
 #' @importFrom stats as.formula dist
@@ -32,6 +33,7 @@ doAdonis <- function(stana, specs, cl=NULL,
     distMethod="manhattan", pcoa=FALSE,
     AAfunc=dist.ml, AAargs=list(),
     maj=FALSE, deleteZeroDepth=FALSE,
+    useMeta=FALSE,
     argList=list(), distArg=list()) {
       if (is.null(cl)) {cl <- stana@cl}
       if (pcoa) {pcoaList<-list()}
@@ -133,7 +135,15 @@ doAdonis <- function(stana, specs, cl=NULL,
             pr <- FALSE
         }
         argList[["formula"]] <- formulaPass
-        argList[["data"]] <- met
+        if (useMeta) {
+          ## Assuming all the samples are in the metadata
+          argList[["data"]] <- stana@meta[sn,]
+          if (is.null(formula)) {
+            stop("Please specify formula when using metadata slot")
+          }
+        } else {
+          argList[["data"]] <- met
+        }
 
         adores <- do.call("adonis2", argList)
         
@@ -142,6 +152,9 @@ doAdonis <- function(stana, specs, cl=NULL,
             pr <- pr[!is.na(pr)]
             r2 <- adores$R2[1]
             cat_subtle("#  F: ",adores$F[1],", R2: ",r2,", Pr: ",pr,"\n",sep="")
+        } else {
+          cat_subtle("# Printing raw adonis results ...\n")
+          print(adores)
         }
         stana@adonisList[[sp]] <- adores
         

@@ -13,9 +13,10 @@
 #' @param AAargs provided to `AAfunc`
 #' @param distMethod distance method passed to dist() (default, manhattan)
 #' @param distArg passed to `dist()
+#' @param candidate list of IDs included for the calculation (like SNV IDs)
 #' @export
 plotDist <- function(stana, sp, cl=NULL, AAfunc=dist.ml, AAargs=list(),
-    target="snps", distMethod="manhattan", distArg=list()) {
+    target="snps", distMethod="manhattan", distArg=list(), candidate=NULL) {
       if (is.null(cl)) {cl <- stana@cl}
       if (length(sp)>1) {stop("Please specify one species")}
         cat_subtle("# Performing dist in ", sp, " target is ", target, "\n", sep="")
@@ -45,6 +46,12 @@ plotDist <- function(stana, sp, cl=NULL, AAfunc=dist.ml, AAargs=list(),
         } else {
             snps <- stana@genes[[sp]]
         }
+        if (!is.null(candidate)) {
+            cat_subtle("# Subset for candidate IDs\n")
+            snps <- snps[intersect(row.names(snps),candidate), ]
+        }
+        ## Make sure positions are not all NA
+        snps <- snps[,colSums(is.na(snps))!=nrow(snps)]
 
         if (!(target %in% c("tree","fasta"))) {
           distArg[["x"]] <- t(snps)

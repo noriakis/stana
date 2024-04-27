@@ -16,6 +16,7 @@ doAdonis(
   AAargs = list(),
   maj = FALSE,
   deleteZeroDepth = FALSE,
+  useMeta = FALSE,
   argList = list(),
   distArg = list()
 )
@@ -43,6 +44,8 @@ doAdonis(
 
 \item{deleteZeroDepth}{delete zero depth snvs (denoted as `-1`)
 Otherwise the cell is treated as NA}
+
+\item{useMeta}{use metadata slot, not cl slot}
 
 \item{argList}{parameters passed to adonis2}
 

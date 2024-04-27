@@ -40,7 +40,7 @@ inferAndPlotTree <- function(stana, species=NULL, cl=NULL,
 	target="fasta", IDs=NULL, use_point=FALSE, branch_col="black",
 	tree_args=list(), branch.length="none", point_size=2,
     subset_samples=NULL,
-    deleteZeroDepth=TRUE, treeFun="upgma", tree_only=FALSE) {
+    deleteZeroDepth=FALSE, treeFun="upgma", tree_only=FALSE) {
 	if (is.null(cl)) {cl <- stana@cl}
 	if (!is.null(meta)) {
 		meta <- checkMeta(stana, meta)
@@ -107,24 +107,27 @@ inferAndPlotTree <- function(stana, species=NULL, cl=NULL,
         	fa <- stana@fastaList[[sp]]
         	nam <- paste0(sp, "_consensus_MSA_stana_tmp.fa")
         	if (file.exists(nam)) {
-        		cat("File already exists!\n")
+        		cat_subtle("# File already exists! Removing the file ...\n")
+        		unlink(nam)
+	        	write.phyDat(fa, nam, format="fasta")
         	} else {
 	        	write.phyDat(fa, nam, format="fasta")    		
         	}
         	trenam <- paste0(sp, "_consensus_tree_stana_tmp.tree")
         	if (file.exists(trenam)) {
-        		cat("Tree file already exists!\n")
+        		cat_subtle("# Tree file already exists! Overwriting ...\n")
         	}
             system2("FastTree", args=c("-out", trenam, "-nt", nam),
                 stdout=TRUE, stderr=TRUE)
             tre <- read.tree(trenam)
         	## Call FastTree
         	## Read tree and save
-        }
-        if (treeFun=="upgma") {
+        } else if (treeFun=="upgma") {
             tre <- upgma(dm)   
-        } else {
+        } else if (treeFun=="NJ") {
             tre <- NJ(dm)
+        } else {
+        	stop("Please specify NJ, upgma, or FastTree")
         }
         if (tree_only) {
             return(tre)

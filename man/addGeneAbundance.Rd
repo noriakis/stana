@@ -12,7 +12,8 @@ addGeneAbundance(
   how = sum,
   newCol = "gene",
   disc = NULL,
-  discNumeric = TRUE
+  discNumeric = TRUE,
+  convert = NULL
 )
 }
 \arguments{
@@ -32,6 +33,8 @@ addGeneAbundance(
 threshold, like {median}}
 
 \item{discNumeric}{convert discrete value to numeric}
+
+\item{convert}{conversion such as log10}
 }
 \value{
 stana
