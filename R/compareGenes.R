@@ -31,7 +31,7 @@ compareGenes <- function(stana, species=NULL, geneID=NULL, cl=NULL, argList=list
 	}
 	if (length(names(cl))!=2) {stop("Only two grouping is allowed")}
 	resList <- list()
-	qqcat("Testing total of @{nrow(geneDf)}\n")
+	cat_subtle("# Testing total of ", nrow(geneDf), "\n", sep="")
 	for (i in row.names(geneDf)) {
 		x <- geneDf[i, intersect(colnames(geneDf), cl[[1]])] |> as.numeric()
 		y <- geneDf[i, intersect(colnames(geneDf), cl[[2]])] |> as.numeric()
