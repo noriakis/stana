@@ -9,6 +9,7 @@
 #' @param species species vectors
 #' @param argList parameters, passed to corresponding functions
 #' @export
+#' @rdname consensusseq
 #'
 consensusSeq <- function(stana,
 	species=NULL, argList=list()){

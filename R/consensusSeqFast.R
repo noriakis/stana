@@ -1,14 +1,7 @@
 
 #' consensusSeqGeneral
-#' @param stana stana obj
-#' @param species candidate species vector
-#' @param cl cluster, if plot cladogram
-#' @param keep_samples the samples to keep
-#' @param tree if TRUE, perform tree inference
-#' @param verbose output current status
-#' @param output_seq whether to output actual FASTA file
-#' @param return_mat return matrix of characters
 #' @param allele_columns columns specifying major and minor allele
+#' @rdname consensusseq
 #' @export
 consensusSeqGeneral <- function(
 	stana,
@@ -116,27 +109,33 @@ consensusSeqGeneral <- function(
 
 
 #' consensusSeqMIDAS2Fast
-#' @param stana stana obj
+#' @param stana stana object
 #' @param species candidate species vector
-#' @param mean_depth parameter for filtering
-#' @param fract_cov parameter for filtering
-#' @param site_depth parameter for filtering
-#' @param site_ratio parameter for filtering
-#' @param site_maf parameter for filtering
-#' @param allele_support parameter for filtering
-#' @param site_prev parameter for filtering
+#' @param mean_depth parameter for sample filtering
+#' mean coverage across the sample
+#' @param fract_cov parameter for sample filtering
+#' fraction of coverage per sample
+#' @param site_depth parameter for site filtering
+#' minimum site depth
+#' @param site_ratio parameter for site filtering
+#' depth divided by mean coverage
+#' @param site_maf parameter for site filtering
+#' the minimum maf to be included
+#' @param site_prev parameter for site filtering
+#' site prevalence across samples
+#' @param allele_support parameter for site filtering
 #' @param cl cluster, if plot cladogram
-#' @param max_sites default to Inf
-#' @param keep_samples currently not implemented
-#' @param exclude_samples currently not implemented
-#' @param rand_samples currently not implemented
-#' @param tree if perform tree inference
-#' @param max_samples currently not implemented
+#' @param max_sites default to Inf, max sites to be retained
+#' @param keep_samples samples to kept in inference
+#' @param tree whether or not to perform tree inference using dist.ml()
+#' and NJ() in default parameters
 #' @param verbose output current status
 #' @param output_seq whether to output actual FASTA file
 #' @param locus_type locus type to be included, default to CDS
 #' @param site_list site list to be included
 #' @param return_mat return matrix of characters
+#' @param output_seq whether to output actual FASTA file
+#' @rdname consensusseq
 #' @export
 consensusSeqMIDAS2 <- function(
 	stana,
@@ -154,10 +153,7 @@ consensusSeqMIDAS2 <- function(
 	cl=NULL,
 	max_sites=Inf,
 	tree=FALSE,
-    max_samples=Inf,
     keep_samples=NULL,
-    exclude_samples=NULL,
-    rand_samples=NULL,
     return_mat=FALSE,
     verbose=FALSE) {
     
@@ -390,32 +386,10 @@ consensusSeqMIDAS2 <- function(
 
 
 #' consensusSeqMIDAS1
-#' 
-#' @param stana stana obj
-#' @param species candidate species vector
-#' @param mean_depth parameter for filtering
-#' @param fract_cov parameter for filtering
-#' @param site_depth parameter for filtering
-#' @param site_ratio parameter for filtering
-#' @param site_maf parameter for filtering
-#' @param allele_support parameter for filtering
-#' @param site_prev parameter for filtering
-#' @param cl cluster, if plot cladogram
-#' @param max_sites currently not implemented
-#' @param keep_samples currently not implemented
-#' @param exclude_samples currently not implemented
-#' @param rand_samples currently not implemented
-#' @param tree if perform tree inference using dist.ml()
-#' and NJ() in default parameters
-#' @param max_samples currently not implemented
-#' @param verbose print output
-#' @param output_seq output the FASTA file
-#' @param return_mat return character matrix
-#' @param locus_type locus type to be included
-#' @param site_list site list to be included
 #' @importFrom phangorn read.phyDat dist.ml NJ
 #' @import ggtree ggplot2
 #' @importFrom phangorn read.phyDat
+#' @rdname consensusseq
 #' @export
 consensusSeqMIDAS1 <- function(
 	stana,
@@ -431,10 +405,7 @@ consensusSeqMIDAS1 <- function(
 	max_sites=Inf,
 	tree=FALSE,
 	locus_type="CDS",
-    max_samples=Inf,
     keep_samples=NULL,
-    exclude_samples=NULL,
-    rand_samples=NULL,
     verbose=FALSE,
     site_list=NULL,
     return_mat=FALSE,

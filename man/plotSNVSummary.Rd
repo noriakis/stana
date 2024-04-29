@@ -4,7 +4,7 @@
 \alias{plotSNVSummary}
 \title{plotSNVSummary}
 \usage{
-plotSNVSummary(stana, sp, param = "mean_coverage")
+plotSNVSummary(stana, sp, param = "mean_coverage", perSample = FALSE)
 }
 \arguments{
 \item{stana}{stana object}
@@ -12,6 +12,8 @@ plotSNVSummary(stana, sp, param = "mean_coverage")
 \item{sp}{species_id}
 
 \item{param}{parameter to plot}
+
+\item{perSample}{plot using no sample information}
 }
 \value{
 ggplot object

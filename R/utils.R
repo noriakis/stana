@@ -89,18 +89,42 @@ plotSNVInfo <- function(stana, sp) {
 #' @param stana stana object
 #' @param sp species_id
 #' @param param parameter to plot
+#' @param perSample plot using no sample information
 #' @export 
 #' @return ggplot object
-plotSNVSummary <- function(stana, sp, param="mean_coverage") {
+plotSNVSummary <- function(stana, sp, param="mean_coverage", perSample=FALSE) {
     df <- stana@snpsSummary
     if (dim(df)[1]==0) {stop("SNV summary not available")}
     df <- df %>% dplyr::filter(species_id == sp)
-    if (length(stana@cl)!=0) {
-        df[["group"]] <- listToNV(stana@cl)[df$sample_name]
-        ggplot(df, aes(x=group, y=.data[[param]])) +
-            geom_boxplot() + cowplot::theme_cowplot()
+    if (perSample) {
+        med <- df[[param]] %>% median(na.rm=TRUE)
+        if (length(stana@cl)!=0) {
+            df[["group"]] <- listToNV(stana@cl)[df$sample_name]
+            ggplot(df, aes(x=sample_name, y=.data[[param]])) +
+                geom_col(aes(fill=group)) +
+                scale_fill_manual(values=stana@colors)+
+                scale_y_continuous(expand = expansion(mult = c(0, 0.05)))+
+                cowplot::theme_cowplot()+
+                theme(axis.text.x = element_blank())+
+                geom_hline(yintercept = med, lty=2)
+        } else {
+            ggplot(df, aes(x=sample_name, y=.data[[param]])) +
+                geom_col() +
+                scale_y_continuous(expand = expansion(mult = c(0, 0.05)))+
+                cowplot::theme_cowplot()+
+                theme(axis.text.x = element_blank())+
+                geom_hline(yintercept = med, lty=2)
+        }           
     } else {
-        ggplot(df, aes(y=.data[[param]])) +
-            geom_boxplot() + cowplot::theme_cowplot()
+        if (length(stana@cl)!=0) {
+            df[["group"]] <- listToNV(stana@cl)[df$sample_name]
+            ggplot(df, aes(x=group, y=.data[[param]])) +
+                geom_boxplot(aes(fill=stana@colors), alpha=0.5) + 
+                cowplot::theme_cowplot()
+        } else {
+            ggplot(df, aes(y=.data[[param]])) +
+                geom_boxplot() + cowplot::theme_cowplot()
+        }        
     }
+
 }
