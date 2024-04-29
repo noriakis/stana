@@ -119,7 +119,8 @@ plotSNVSummary <- function(stana, sp, param="mean_coverage", perSample=FALSE) {
         if (length(stana@cl)!=0) {
             df[["group"]] <- listToNV(stana@cl)[df$sample_name]
             ggplot(df, aes(x=group, y=.data[[param]])) +
-                geom_boxplot(aes(fill=stana@colors), alpha=0.5) + 
+                geom_boxplot(aes(fill=.data[[param]]), alpha=0.5) +
+                scale_fill_manual(values=stana@colors)+
                 cowplot::theme_cowplot()
         } else {
             ggplot(df, aes(y=.data[[param]])) +
