@@ -146,6 +146,10 @@ loadInStrain <- function(compare_out_dir,
         snps[[candidate_species]] <- snvDf
         stana@snps <- snps
         stana@snpsInfo <- snpsInfoList
+        ## Later usage
+        stana@snpsInfo[[candidate_species]]$major_allele <- stana@snpsInfo[[candidate_species]]$con_base
+        stana@snpsInfo[[candidate_species]]$minor_allele <- stana@snpsInfo[[candidate_species]]$var_base
+
         stana <- initializeStana(stana,cl)
     } else {
         qqcat("No pooled results present\n")
