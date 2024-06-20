@@ -4,7 +4,13 @@
 \alias{combineSeqs}
 \title{combineSeqs}
 \usage{
-combineSeqs(stana_list, species, argList = list(), output_seq = FALSE)
+combineSeqs(
+  stana_list,
+  species,
+  argList = list(),
+  output_seq = FALSE,
+  minor_align = FALSE
+)
 }
 \arguments{
 \item{stana_list}{stana list}
@@ -14,6 +20,8 @@ combineSeqs(stana_list, species, argList = list(), output_seq = FALSE)
 \item{argList}{args to passed to consensusSeq}
 
 \item{output_seq}{output just the sequence}
+
+\item{minor_align}{minor allele alignment}
 }
 \value{
 new stana object

@@ -7,16 +7,28 @@
 #' @param species species ID
 #' @param argList args to passed to consensusSeq
 #' @param output_seq output just the sequence
+#' @param minor_align minor allele alignment
 #' @export
 #' @return new stana object
-combineSeqs <- function(stana_list, species, argList=list(), output_seq=FALSE) {
+combineSeqs <- function(stana_list, species, argList=list(), output_seq=FALSE,
+    minor_align=FALSE) {
   if (!is.list(stana_list)) {stop("Please provide list of stana object")}
-  each_ID <- lapply(stana_list, function(x) x@snpsInfo[[species]] |> row.names())
+  each_ID <- lapply(stana_list, function(x) {
+    if (minor_align) {
+        ids <- paste0(row.names(x@snpsInfo[[species]]), ":minor", x@snpsInfo[[species]]$minor_allele)
+    } else {
+        ids <- x@snpsInfo[[species]] |> row.names()    
+    }
+    return(ids)
+  })
   intersected <- Reduce(intersect, each_ID)
   if (length(intersected)==0) {stop("No common SNVs")}
   
   qqcat("Common SNVs: @{length(intersected)}\n")
   argList[["return_mat"]] <- TRUE
+  if (minor_align) {
+      intersected <- strsplit(intersected, ":minor") %>% lapply("[", 1) %>% unlist()
+  }
   argList[["site_list"]] <- intersected
   
   passList <- list()
