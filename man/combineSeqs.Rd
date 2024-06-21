@@ -9,7 +9,7 @@ combineSeqs(
   species,
   argList = list(),
   output_seq = FALSE,
-  minor_align = FALSE
+  align = FALSE
 )
 }
 \arguments{
@@ -21,7 +21,7 @@ combineSeqs(
 
 \item{output_seq}{output just the sequence}
 
-\item{minor_align}{minor allele alignment}
+\item{align}{major and minor allele alignment}
 }
 \value{
 new stana object
