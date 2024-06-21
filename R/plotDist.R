@@ -60,8 +60,11 @@ plotDist <- function(stana, sp, cl=NULL, AAfunc=dist.ml, AAargs=list(),
           sn <- attr(d, "Labels")      
         }
         if (length(cl)!=0) {
-	        met <- data.frame(listToNV(cl))
-	        met <- data.frame(met[sn, ]) %>% `row.names<-`(sn) %>% `colnames<-`(c("group"))
+	        met <- listToNV(cl)[sn]
+	        met <- data.frame(met) %>% `row.names<-`(sn) %>% `colnames<-`(c("group"))
+            gr <- met$group
+            gr[is.na(gr)] <- "No group"
+            met$group <- gr
 	        pheatmap(d, annotation_row=met)        	
         } else {
         	pheatmap(d)
