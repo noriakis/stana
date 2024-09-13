@@ -1,5 +1,10 @@
 
-#' consensusSeqGeneral
+#' @title consensusSeqGeneral
+#' @description Perform consensus sequence calling using MAF table.
+#' The function does not filter the sites or samples, so the prefiltering based on 
+#' depth or samples profiled is needed. The function assumes non-profiled site value coded as -1.
+#' 
+#' @param stana stana object
 #' @param allele_columns columns specifying major and minor allele
 #' @rdname consensusseq
 #' @export
@@ -29,7 +34,7 @@ consensusSeqGeneral <- function(
 		}
 		
 		siteNum <- dim(SPECIES[["freqs"]])[1]
-		qqcat("  Site number: @{siteNum}\n")
+		cat_subtle("  Site number: ", siteNum, "\n")
 		
 		
 		if (is.null(stana@snpsInfo[[sp]])) {
@@ -77,7 +82,7 @@ consensusSeqGeneral <- function(
         setNames(colnames(SPECIES[["freqs"]]))
         faName <- paste0(sp,"_consensus.fasta")
         if (output_seq) {
-            qqcat("  Outputting consensus sequence to @{faName}\n")    	
+            cat_subtle("  Outputting consensus sequence to ",faName, "\n")    	
         }
         
         fileConn<-file(faName, open="w")
@@ -108,7 +113,7 @@ consensusSeqGeneral <- function(
 }
 
 
-#' consensusSeqMIDAS2Fast
+#' consensusSeqMIDAS2
 #' @param stana stana object
 #' @param species candidate species vector
 #' @param mean_depth parameter for sample filtering
@@ -176,7 +181,7 @@ consensusSeqMIDAS2 <- function(
 		if (is.null(stana@snpsInfo[[sp]])) {
 			file <- "info"
 			if (verbose) {
-				qqcat("  Loading @{file]\n")
+				cat_subtle("# Loading ",file,"\n")
 			}
 			filePath <- paste0(midas_merge_dir,"/snps/",sp,"/",sp,".snps_",file,".tsv.lz4")
             filePathUn <- gsub(".lz4","",filePath)
@@ -184,7 +189,7 @@ consensusSeqMIDAS2 <- function(
 	                                paste0(getwd(),"/",filePath),
 	                                paste0(getwd(),"/",filePathUn)),
 	                  stdout=FALSE, stderr=FALSE)
-			SPECIES[[file]] <- read.table(filePathUn, row.names=1, header=1)
+			SPECIES[[file]] <- fread(filePathUn)
 	        unlink(paste0(getwd(),"/",filePathUn))
 		} else {
 			SPECIES[["info"]] <- stana@snpsInfo[[sp]]
@@ -193,7 +198,7 @@ consensusSeqMIDAS2 <- function(
 			if (is.null(stana@snpsDepth[[sp]])) {
 				file <- "depth"
 				if (verbose) {
-					qqcat("  Loading @{file]\n")
+					cat_subtle("# Loading ",file,"\n")
 				}
 				filePath <- paste0(midas_merge_dir,"/snps/",sp,"/",sp,".snps_",file,".tsv.lz4")
 	            filePathUn <- gsub(".lz4","",filePath)
@@ -201,7 +206,7 @@ consensusSeqMIDAS2 <- function(
 		                                paste0(getwd(),"/",filePath),
 		                                paste0(getwd(),"/",filePathUn)),
 		                  stdout=FALSE, stderr=FALSE)
-				SPECIES[[file]] <- read.table(filePathUn, row.names=1, header=1)
+				SPECIES[[file]] <- fread(filePathUn)
 		        unlink(paste0(getwd(),"/",filePathUn))
 			} else {
 				SPECIES[["depth"]] <- stana@snpsDepth[[sp]]
@@ -214,7 +219,7 @@ consensusSeqMIDAS2 <- function(
 		if (stana@type=="MIDAS2") {
 			if (dim(stana@snpsSummary)[1]==0) {
 				filePath <- paste0(midas_merge_dir,"/snps/snps_summary.tsv")
-				snpsSummary <- read.table(filePath, header=1)
+				snpsSummary <- fread(filePath)
 		        SPECIES[["summary"]] <- subset(snpsSummary, snpsSummary$species_id==sp)			
 			} else {
 				SPECIES[["summary"]] <- subset(stana@snpsSummary, stana@snpsSummary$species_id==sp)
@@ -234,7 +239,7 @@ consensusSeqMIDAS2 <- function(
         		return(NULL)
         	} else {
         		if (verbose) {
-	        		qqcat("  @{x} ... included, mean_coverage: @{info$mean_coverage}, fraction_covered: @{info$fraction_covered}\n")
+	        		cat_subtle("  ",x," ... included, mean_coverage: ",info$mean_coverage,", fraction_covered:", info$fraction_covered,"\n")
         		}
 	        	return(list(mean_depth=info$mean_coverage,
 	        		fract_cov=info$fraction_covered))
@@ -246,19 +251,20 @@ consensusSeqMIDAS2 <- function(
         cat_subtle("#  Included samples: ", length(SAMPLES), "\n", sep="")
         
         if (verbose) {
-            qqcat("Beginning site-wise filtering\n")
+            cat_subtle("# Beginning site-wise filtering\n")
         }
         site_filters <- lapply(names(SAMPLES), function(sample) {
-        	freqs <- SPECIES[["freqs"]][sample][,1] |> as.numeric()
-        	depths <- SPECIES[["depth"]][sample][,1] |> as.numeric()
+        	freqs <- SPECIES[["freqs"]][, ..sample]
+        	depths <- SPECIES[["depth"]][, ..sample]
         	site_depth_filter <- depths >= site_depth
         	depth_ratio_filter <- (depths / SAMPLES[[sample]]$mean_depth) <= site_ratio
         	## freqs == -1 in allele_support        	        	
         	allele_support <- apply(cbind(freqs, 1-freqs), 1, max) >= allele_support ## BOTTLENECK [1]
         	allele_support[which(freqs==-1)] <- FALSE
         	summed <- site_depth_filter + depth_ratio_filter + allele_support
-        	list(freqs, depths, site_depth_filter, depth_ratio_filter, allele_support, summed) |>
-        	setNames(c("freqs","depths","site_depth","depth_ratio","allele_support","flag"))
+
+        	list(freqs, depths, site_depth_filter, depth_ratio_filter, allele_support, summed) %>%
+            	setNames(c("freqs","depths","site_depth","depth_ratio","allele_support","flag"))
         })
         names(site_filters) <- names(SAMPLES)
 
@@ -353,7 +359,7 @@ consensusSeqMIDAS2 <- function(
         setNames(names(site_filters))
         faName <- paste0(sp,"_consensus.fasta")
         if (output_seq) {
-            qqcat("  Outputting consensus sequence to @{faName}\n")    	
+            cat_subtle("  Outputting consensus sequence to ",faName,"\n")    	
         }
         
         fileConn<-file(faName, open="w")

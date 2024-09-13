@@ -17,7 +17,6 @@ drawEGGNOG <- function(annot_file, geneIDs, candPlot) {
   egng <- checkEGGNOG(annot_file,"all", geneIDs)
   # delete map* entry (in KEGG)
   egng <- egng[!grepl("map",egng$value),]
-  print(egng)
   ap <- NULL
   for (i in geneIDs) {
     tmp <- egng[egng$ID == i,]
@@ -212,16 +211,17 @@ checkEGGNOG <- function(annot_file, ret="all", checkIDs=NULL, fill=TRUE) {
 #' 
 summariseAbundance <- function(stana, sp, anno, how=sum, verbose=FALSE) {
   geneDf <- stana@genes[[sp]]
-  annoval <- anno$value |> unique()
+  annoval <- anno$value %>% unique()
   merged <-  lapply(annoval, function(i) {
-    candID <- (anno |> dplyr::filter(anno$value==i))$ID
-    ints <- intersect(row.names(geneDf), candID)
+    candID <- (anno %>% dplyr::filter(anno$value==i))$ID
+    ints <- intersect(geneDf$gene_id, candID)
     if (length(ints)>0) {
-      return(apply(geneDf[ints,], 2, how))
+      return(apply(geneDf[gene_id %in% ints, !c("gene_id")], 2, how))
     } else {
       return(NULL)
     }
   })
   names(merged) <- annoval
+  # data.table::rbindlist(merged, idcol=TRUE)
   do.call(rbind, merged)
 }

@@ -88,7 +88,7 @@ doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=sum,
     }
     
     gseaArgs[["geneList"]] <- ko_sum
-    enr <- do.call(GSEA, gseaArgs)
+    enr <- do.call(clusterProfiler::GSEA, gseaArgs)
 
     if (!is.null(stana@gsea[[candSp]])) {
         cat_subtle("# Overriding previous GSEA result\n")
@@ -272,16 +272,17 @@ calcGF <- function(stana, candSp=NULL, how=sum, annot="eggNOG", column="KEGG_ko"
     }
     if (annot=="eggNOG") {
 	    if (is.null(stana@eggNOG[[candSp]])) {stop("Please provide list of path to annotation file by `setAnnotation` function.")}
+        cat_subtle("# Using eggNOG slot\n")
 	    ko_df_filt <- summariseAbundance(stana, sp = candSp,
 	        checkEGGNOG(annot_file=stana@eggNOG[[candSp]], column),
-	        how=how)    	
+	        how=how)  	
     } else {
     	if (is.null(stana@map[[candSp]])) {stop("Please set mapping data.frame in map slot using `setMap`.")}
+        cat_subtle("# Using map slot\n")
 	    ko_df_filt <- summariseAbundance(stana, sp = candSp,
 	        stana@map[[candSp]],
 	        how=how)
     }
-
     stana@kos[[candSp]] <- ko_df_filt
     stana
 }

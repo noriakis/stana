@@ -19,6 +19,7 @@
 #' @param loadDepth default to FALSE, load depth information.
 #' @param only_stat only samples per species is returned (snpStat and geneStat)
 #' @importFrom dplyr mutate
+#' @importFrom data.table fread
 #' @export
 #' 
 loadMIDAS2 <- function(midas_merge_dir,
@@ -54,10 +55,12 @@ loadMIDAS2 <- function(midas_merge_dir,
     ## Probably filter based on these summaries, but what if 
     ## These files are not available and only species directories are present?
     filePath <- paste0(midas_merge_dir,"/snps/snps_summary.tsv")
-    snpsSummary <- read.table(filePath, header=1)
+    snpsSummary <- fread(filePath)
+    # snpsSummary <- read.table(filePath, header=1)
     stana@snpsSummary <- snpsSummary
+
     filePath <- paste0(midas_merge_dir,"/genes/genes_summary.tsv")
-    genesSummary <- read.table(filePath, header=1)
+    genesSummary <- fread(filePath)
     stana@genesSummary <- genesSummary
 
     if (is.null(cl)) {
@@ -148,9 +151,9 @@ loadMIDAS2 <- function(midas_merge_dir,
                                 paste0(getwd(),"/",cnc),
                                 paste0(getwd(),"/",cnd)),
                     stdout=FALSE, stderr=FALSE)
-            df <- read.table(cnd, row.names=1, header=1)
+            df <- fread(cnd)
             qqcat("    Number of snps: @{dim(df)[1]}\n")
-            qqcat("    Number of samples: @{dim(df)[2]}\n")
+            qqcat("    Number of samples: @{dim(df)[2] - 1}\n")
             unlink(paste0(getwd(),"/",cnd))
             return(df)
         }
@@ -165,7 +168,7 @@ loadMIDAS2 <- function(midas_merge_dir,
                             paste0(getwd(),"/",cnc),
                             paste0(getwd(),"/",cnd)),
                 stdout=FALSE, stderr=FALSE)
-            info <- read.table(cnd, row.names=1, header=1)
+            info <- fread(cnd)
             unlink(paste0(getwd(),"/",cnd))
             return(info)
         }) %>% setNames(specNames)
@@ -180,7 +183,7 @@ loadMIDAS2 <- function(midas_merge_dir,
                     paste0(getwd(),"/",cnc),
                     paste0(getwd(),"/",cnd)),
                     stdout=FALSE, stderr=FALSE)
-            depth <- read.table(cnd, row.names=1, header=1)
+            depth <- fread(cnd)
             unlink(paste0(getwd(),"/",cnd))
             return(depth)            
         }) %>% setNames(specNames)
@@ -204,9 +207,9 @@ loadMIDAS2 <- function(midas_merge_dir,
                                 paste0(getwd(),"/",cnc),
                                 paste0(getwd(),"/",cnd)),
                     stdout=FALSE, stderr=FALSE)
-            df <- read.table(cnd, row.names=1, header=1)
+            df <- fread(cnd)
             qqcat("    Number of genes: @{dim(df)[1]}\n")
-            qqcat("    Number of samples: @{dim(df)[2]}\n")
+            qqcat("    Number of samples: @{dim(df)[2] - 1}\n")
             unlink(paste0(getwd(),"/",cnd))
             df
         }

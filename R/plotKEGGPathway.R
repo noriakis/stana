@@ -53,7 +53,7 @@ plotKEGGPathway <- function(stana, species, pathway_id,
     if (length(color_list[[1]])<length(species)) stop("not sufficient color list")
     if (sum(species %in% names(stana@genes))!=length(species)) {stop("Not all the species are available in genes slot")}
     if (is.null(cl)) cl <- stana@cl
-    if (length(names(cl))>2) {GetoptLong::qqcat("Group number above two, changing to sum value\n");
+    if (length(names(cl))>2) {cat_subtle("Group number above two, changing to sum value\n");
         sum_flag <- TRUE}
     if (eggnog) {
         if (sum(species %in% names(stana@eggNOG))!=length(species)) stop("Not all the annotation for species are available")
@@ -67,9 +67,9 @@ plotKEGGPathway <- function(stana, species, pathway_id,
             ko_tbl <- summariseAbundance(stana,sp = sp,
                         checkEGGNOG(annot_file=stana@eggNOG[[sp]], "KEGG_ko"),
                         how=how)
-            stana@kos[[sp]] <- ko_tbl      
+            stana@kos[[sp]] <- ko_tbl
         } else {
-            qqcat("Using pre-computed KO table\n")
+            cat_subtle("Using pre-computed KO table\n")
         }
     }
 
@@ -85,7 +85,7 @@ plotKEGGPathway <- function(stana, species, pathway_id,
         if (sum_flag) {
           lfcs[["Sum"]] <- apply(ko_tbl, 1, sum)
         } else {
-            qqcat("@{sp}: @{names(cl)[1]} / @{names(cl)[2]}\n")
+            cat_subtle(sp," : ", names(cl)[1], "/", names(cl)[2],"\n")
             lfcs[[sp]] <- L2FC(ko_tbl, cl[[1]], cl[[2]], method=statMethod)
         }
     } else {
@@ -94,7 +94,7 @@ plotKEGGPathway <- function(stana, species, pathway_id,
             if (sum_flag) {
                 lfcs[[sp]] <- apply(ko_tbl, 1, sum)
             } else {
-                qqcat("@{sp}: @{names(cl)[1]} / @{names(cl)[2]}\n")
+                cat_subtle(sp," : ", names(cl)[1], "/", names(cl)[2],"\n")
                 lfcs[[sp]] <- L2FC(ko_tbl, cl[[1]], cl[[2]], method=statMethod)
             }
         }        
@@ -106,7 +106,7 @@ plotKEGGPathway <- function(stana, species, pathway_id,
     
     
     if (point_mode) {
-    	qqcat("Point mode enabled\n")
+    	cat_subtle("Point mode enabled\n")
         graphList <- list()
         for (pid in pathway_id) {
             g <- ggkegg::pathway(pid)

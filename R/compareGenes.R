@@ -1,7 +1,7 @@
 #'
-#' compareGenes
+#' @title compareGenes
 #' 
-#' compare the gene abundances by recursively performing Wilcoxon rank-sum tests
+#' @description Compare the gene abundances by recursively performing Wilcoxon rank-sum tests
 #' Use exactRankTests package, and multiple comparison adjustment is not performed
 #' 
 #' @param stana stana object
@@ -14,17 +14,21 @@
 #' @export
 #' @return ggplot
 #' 
-compareGenes <- function(stana, species=NULL, geneID=NULL, cl=NULL, argList=list(),
+compareGenes <- function(stana,
+	species=NULL, geneID=NULL,
+	cl=NULL, argList=list(),
 	verbose_zero=FALSE) {
+	
 	if (is.null(cl)) { cl <- stana@cl}
+	if (length(cl)>2) {stop("Two group is supported")}
 	if (is.null(species)) {species <- stana@clearGenes[1]}
 	midas_merge_dir <- stana@mergeDir
 	geneDf <- stana@genes[[species]]
 	incSamples <- intersect(colnames(geneDf), unlist(cl))
-	geneDf <- geneDf[, incSamples]
+	geneDf <- geneDf[, c("gene_id", ..incSamples)]
 	if (!is.null(geneID)) {
-		if (intersect(geneID,row.names(geneDf)) |> length() > 0) {
-			geneDf <- geneDf[intersect(geneID,row.names(geneDf)), ]
+		if (intersect(geneID, geneDf$gene_id) %>% length() > 0) {
+			geneDf <- geneDf[ gene_id %in% intersect(geneID, geneDf$gene_id), ]
 		} else {
 			stop("geneID not in data.frame")
 		}		
@@ -32,12 +36,12 @@ compareGenes <- function(stana, species=NULL, geneID=NULL, cl=NULL, argList=list
 	if (length(names(cl))!=2) {stop("Only two grouping is allowed")}
 	resList <- list()
 	cat_subtle("# Testing total of ", nrow(geneDf), "\n", sep="")
-	for (i in row.names(geneDf)) {
-		x <- geneDf[i, intersect(colnames(geneDf), cl[[1]])] |> as.numeric()
-		y <- geneDf[i, intersect(colnames(geneDf), cl[[2]])] |> as.numeric()
+	for (i in geneDf$gene_id) {
+		x <- geneDf[gene_id == i, intersect(colnames(geneDf), cl[[1]]), with=FALSE] %>% unlist() %>% as.numeric()
+		y <- geneDf[gene_id == i, intersect(colnames(geneDf), cl[[2]]), with=FALSE] %>% unlist() %>% as.numeric()
 		if (verbose_zero) {
-			if (sum(x)==0 ) {qqcat("  In @{i}, Group @{names(cl)[1]} all zero\n")}
-			if (sum(y)==0 ) {qqcat("  In @{i}, Group @{names(cl)[2]} all zero\n")}			
+			if (sum(x)==0 ) {cat_subtle("  In ",i, "Group ",names(cl)[1]," all zero\n")}
+			if (sum(y)==0 ) {cat_subtle("  In ",i, "Group ",names(cl)[2]," all zero\n")}			
 		}
 		argList[["x"]] <- x
 		argList[["y"]] <- y

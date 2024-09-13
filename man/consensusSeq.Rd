@@ -115,4 +115,8 @@ site prevalence across samples}
 Output consensus sequences from merged SNV output.
 Optionally, return phylogenetic tree inferred by `phangorn`.
 If specified cluster of samples, additionally returns plot by `ggtree`.
+
+Perform consensus sequence calling using MAF table.
+The function does not filter the sites or samples, so the prefiltering based on 
+depth or samples profiled is needed. The function assumes non-profiled site value coded as -1.
 }

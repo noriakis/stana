@@ -9,13 +9,14 @@
 #' @return new stana object
 combineGenes <- function(stana_list, species) {
   if (!is.list(stana_list)) {stop("Please provide list of stana object")}
-  each_ID <- lapply(stana_list, function(x) x@genes[[species]] |> row.names())
+  each_ID <- lapply(stana_list, function(x) x@genes[[species]]$gene_id)
   intersected <- Reduce(intersect, each_ID)
   if (length(intersected)==0) {stop("No common genes")}
   
-  qqcat("Common genes: @{length(intersected)}\n")
+  cat_subtle("# Common genes: ",length(intersected), "\n")
   
-  merged <- do.call(cbind, lapply(stana_list, function(x) x@genes[[species]][intersected,]))
+  merged <- do.call(cbind, lapply(stana_list, function(x) x@genes[[species]][gene_id %in% intersected,][order(gene_id),]))
+  merged <- merged[,which(duplicated(names(merged))) := NULL]
   
   ## Metadata
   new_stana <- new("stana")
@@ -25,7 +26,7 @@ combineGenes <- function(stana_list, species) {
   
   ## Warning if same label
   ovlgr <- length(Reduce(intersect, lapply(stana_list, function(x) names(x@cl))))
-  if (ovlgr>0) {qqcat("Duplicate label found in group\n")}
+  if (ovlgr>0) {cat_subtle("# Duplicate label found in group\n")}
 
   new_stana@ids <- species
   new_stana@type <- stana@type
