@@ -55,9 +55,8 @@ alleleStat <- function(stana, sp=NULL, cl=NULL, base="maj",
 	freqDf <- stana@snps[[sp]]
 	if (is.null(stana@snpsInfo[[sp]])) {
 		if (stana@type=="MIDAS1") {
-			info <- read.table(paste0(merge_dir,"/",sp,
-	                          "/snps_info.txt"),
-	                   row.names=1, header=1)
+			info <- fread(paste0(merge_dir,"/",sp,
+	                          "/snps_info.txt"))
 		} else if (stana@type=="MIDAS2") {
 			cnc <- paste0(merge_dir,"/snps/",sp,"/",sp,".snps_info.tsv.lz4")
 			cnd <- gsub(".lz4","",cnc)
@@ -65,20 +64,20 @@ alleleStat <- function(stana, sp=NULL, cl=NULL, base="maj",
 			                      paste0(getwd(),"/",cnc),
 			                      paste0(getwd(),"/",cnd)),
 			        stdout=FALSE, stderr=FALSE)
-			info <- read.table(cnd, row.names=1, header=1)
+			info <- fread(cnd)
 			unlink(paste0(getwd(),"/",cnd))
 			## Append ref_allele info if available (default database)
-			info$ref_allele <- sapply(strsplit(row.names(info), "\\|"), "[", 5)
+			info$ref_allele <- info[,1][,strsplit(site_id, "\\|") %>% sapply("[",5),]
 		} else {
 			stop("Currently, MIDAS1 and MIDAS2 is supported")
 		}		
 	} else {
 		info <- stana@snpsInfo[[sp]]
 	}
-	qqcat("Overall, @{dim(info)[1]} SNVs\n")
+	cat_subtle("Overall, ", dim(info)[1]," SNVs\n")
 	if (deleteZeroDepth) {
 		freqDf <- freqDf[rowSums(freqDf==-1)==0,]
-		qqcat("  After removal of -1, @{dim(freqDf)[1]} SNVs\n")
+		qqcat("  After removal of -1, ", dim(freqDf)[1], " SNVs remained\n")
 	}
 	if (base=="ref") {
 	  info$trans <- paste0(info$ref_allele,">",info$minor_allele)
@@ -92,16 +91,19 @@ alleleStat <- function(stana, sp=NULL, cl=NULL, base="maj",
 		freqs <- NULL
 		wholeFreqs <- NULL
 		for (cln in names(cl)) {
-		  tmp <- freqDf[,intersect(colnames(freqDf),cl[[cln]])]
-		  meanFreq <- apply(tmp, 1, mean)
-		  names(meanFreq) <- info[names(meanFreq),"trans"]
-		  meanTrans <- data.frame(tapply(meanFreq, names(meanFreq), mean))
-		  ord <- row.names(meanTrans)
-		  freqs <- cbind(freqs, meanTrans[ord,])
+			com <- intersect(colnames(freqDf),cl[[cln]])
+    		tmp <- freqDf[, ..com]
+		    meanFreq <- apply(tmp, 1, mean)
+		    names(meanFreq) <- freqDf[[1]]
+		    names(meanFreq) <- info[match(names(meanFreq), site_id), trans]
+		    meanTrans <- data.frame(tapply(meanFreq, names(meanFreq), mean))
+		    ord <- row.names(meanTrans)
+		    freqs <- cbind(freqs, meanTrans[ord,])
 		}
-		freqs <- data.frame(freqs) |>
-		  `colnames<-`(names(cl)) |>
-		  `row.names<-`(ord)
+		freqs <- data.frame(freqs) %>%
+		  `colnames<-`(names(cl)) %>%
+		  `row.names<-`(ord) %>%
+		   data.table::as.data.table(keep.rownames=".id")
 	    statList[["meanMafPerGroup"]] <- freqs		
 	}
 	return(statList)

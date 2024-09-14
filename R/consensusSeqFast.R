@@ -74,6 +74,7 @@ consensusSeqGeneral <- function(
         
         if (return_mat) {
         	mat <- do.call(cbind, allele_list)
+        	print(mat)
         	row.names(mat) <- names(site_filters)
 	        return(mat) 
         }
@@ -350,12 +351,13 @@ consensusSeqMIDAS2 <- function(
         
         if (return_mat) {
         	mat <- do.call(cbind, allele_list)
+        	print(mat)
         	row.names(mat) <- names(site_filters)
-        	colnames(mat) <- row.names(SPECIES[["info"]])[positions]
+        	colnames(mat) <- SPECIES[["info"]][[1]][positions]
 	        return(mat) 
         }
         
-        allele_list <- apply(do.call(cbind, allele_list), 1, function(x) paste0(x, collapse="")) |>
+        allele_list <- apply(do.call(cbind, allele_list), 1, function(x) paste0(x, collapse="")) %>%
         setNames(names(site_filters))
         faName <- paste0(sp,"_consensus.fasta")
         if (output_seq) {

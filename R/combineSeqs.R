@@ -15,18 +15,18 @@ combineSeqs <- function(stana_list, species, argList=list(), output_seq=FALSE,
   if (!is.list(stana_list)) {stop("Please provide list of stana object")}
   each_ID <- lapply(stana_list, function(x) {
     if (align) {
-        ids <- paste0(row.names(x@snpsInfo[[species]]),
+        ids <- paste0(x@snpsInfo[[species]][[1]],
           ":major", x@snpsInfo[[species]]$major_allele,
           ":minor", x@snpsInfo[[species]]$minor_allele)
     } else {
-        ids <- x@snpsInfo[[species]] |> row.names()    
+        ids <- x@snpsInfo[[species]][[1]]
     }
     return(ids)
   })
   intersected <- Reduce(intersect, each_ID)
   if (length(intersected)==0) {stop("No common SNVs")}
   
-  qqcat("Common SNVs: @{length(intersected)}\n")
+  cat_subtle("# Common SNVs: ", length(intersected), "\n")
   argList[["return_mat"]] <- TRUE
   if (align) {
       intersected <- strsplit(intersected, ":major") %>% lapply("[", 1) %>% unlist()
@@ -47,7 +47,7 @@ combineSeqs <- function(stana_list, species, argList=list(), output_seq=FALSE,
   if (output_seq) {return(allele_list)}
   faName <- paste0(species,"_consensus_merged.fasta")
   if (output_seq) {
-    qqcat("  Outputting consensus sequence to @{faName}\n")    	
+    cat_subtle("  Outputting consensus sequence to ", faName, "\n")    	
   }
   
   fileConn<-file(faName, open="w")

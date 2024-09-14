@@ -30,6 +30,6 @@ compareGenes(
 ggplot
 }
 \description{
-compare the gene abundances by recursively performing Wilcoxon rank-sum tests
+Compare the gene abundances by recursively performing Wilcoxon rank-sum tests
 Use exactRankTests package, and multiple comparison adjustment is not performed
 }

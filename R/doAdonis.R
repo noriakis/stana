@@ -43,9 +43,10 @@ doAdonis <- function(stana, specs, cl=NULL,
             snps <- stana@snps[[sp]]
 			if (!is.null(stana@includeSNVID[[sp]])) {
 				cat_subtle("# The set SNV ID information (", length(stana@includeSNVID[[sp]]), ") is used.\n")
-				snps <- snps[stana@includeSNVID[[sp]], ]
+				snps <- snps[match(stana@includeSNVID[[sp]], site_id), ]
 			}
             if (deleteZeroDepth) {
+              snps[,!site_id,]
               snps <- snps[rowSums(snps==-1)==0,]
               cat_subtle("After filtering `-1`, position numbers: ", dim(snps)[1], "\n", sep="")
             }
@@ -69,9 +70,8 @@ doAdonis <- function(stana, specs, cl=NULL,
 
         if (!(target %in% c("tree","fasta"))) {
           if (maj & target=="snps" & stana@type=="MIDAS1") {
-              chk <- read.table(paste0(stana@mergeDir,
-                "/",sp,"/snps_info.txt"),
-              header=1)
+              chk <- fread(paste0(stana@mergeDir,
+                "/",sp,"/snps_info.txt"))
               qqcat("  before filtering: @{dim(chk)[1]}\n")
               calcDif <- function(x){
                 if (x[14]=="bi") {
