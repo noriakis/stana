@@ -88,7 +88,7 @@ doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=sum,
     }
     
     gseaArgs[["geneList"]] <- ko_sum
-    enr <- do.call(GSEA, gseaArgs)
+    enr <- do.call(clusterProfiler::GSEA, gseaArgs)
 
     if (!is.null(stana@gsea[[candSp]])) {
         cat_subtle("# Overriding previous GSEA result\n")
@@ -218,73 +218,7 @@ addGeneAbundance <- function(stana, candSp, IDs,
     return(stana)
 }
 
-#' L2FC
-#' 
-#' Report various statistics for use in GSEA or visualization
-#' 
-#' @param mat row corresponds to gene, and column samples
-#' @param l1 level1
-#' @param l2 level2
-#' @param method gmean, amean, or t
-#' @param eps pseudocount added when calculating log
-#' @return named vector of statistical values
-#' @noRd
-L2FC <- function(mat, l1, l2, method="t", eps=0) {
-    if (method == "gmean") {
-        l1_mean <- apply(log2(mat[, intersect(colnames(mat), l1)] + eps), 1, mean)
-        l2_mean <- apply(log2(mat[, intersect(colnames(mat), l2)] + eps), 1, mean)
-        return(l1_mean - l2_mean)
-    } else if (method == "t") {
-        res <- lapply(row.names(mat), function(m) {
-            tres <- t.test(mat[m, intersect(colnames(mat), l1)],
-                mat[m, intersect(colnames(mat), l2)])
-            as.numeric(tres$statistic)
-        }) %>% unlist()
-        names(res) <- row.names(mat)
-        return(res)
-    } else if (method == "amean" ) {
-        l1_mean <- apply(mat[, intersect(colnames(mat), l1)], 1, mean)
-        l2_mean <- apply(mat[, intersect(colnames(mat), l2)], 1, mean)
-        return(log2((l1_mean+eps) / (l2_mean+eps)))
-    } else {
-    	## Moderated t.test (limma)
-    	ordered.mat <- mat[, c( intersect(colnames(mat), l1), intersect(colnames(mat), l2) )]
-    	gr <- c( rep("l1", length(intersect(colnames(mat), l1))), rep("l2", length(intersect(colnames(mat), l2))) )
-    	res <- MKmisc::mod.t.test(as.matrix(ordered.mat), gr)
-    	modt <- res$t
-    	names(modt) <- row.names(res)
-    	return(modt)
-    }
-}
 
-
-#' calcGF
-#' @param stana stana object
-#' @param candSp candidate species ID
-#' @param how how to summarize multiple gene CN assigned to the same KO
-#' @param annot eggNOG or manual
-#' @param column When eggNOG, which family to summarize, default to KEGG_ko
-#' @export
-calcGF <- function(stana, candSp=NULL, how=sum, annot="eggNOG", column="KEGG_ko") {
-	checkID(stana, candSp)
-    if (is.null(candSp)) {cat("Species not specified, the first ID will be used:", stana@ids[1]);
-        candSp <- stana@ids[1]
-    }
-    if (annot=="eggNOG") {
-	    if (is.null(stana@eggNOG[[candSp]])) {stop("Please provide list of path to annotation file by `setAnnotation` function.")}
-	    ko_df_filt <- summariseAbundance(stana, sp = candSp,
-	        checkEGGNOG(annot_file=stana@eggNOG[[candSp]], column),
-	        how=how)    	
-    } else {
-    	if (is.null(stana@map[[candSp]])) {stop("Please set mapping data.frame in map slot using `setMap`.")}
-	    ko_df_filt <- summariseAbundance(stana, sp = candSp,
-	        stana@map[[candSp]],
-	        how=how)
-    }
-
-    stana@kos[[candSp]] <- ko_df_filt
-    stana
-}
 
 #' reverse_annot
 #' @param stana stana object

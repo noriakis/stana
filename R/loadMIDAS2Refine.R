@@ -148,7 +148,10 @@ loadMIDAS2 <- function(midas_merge_dir,
                                 paste0(getwd(),"/",cnc),
                                 paste0(getwd(),"/",cnd)),
                     stdout=FALSE, stderr=FALSE)
-            df <- read.table(cnd, row.names=1, header=1)
+            # df <- read.table(cnd, row.names=1, header=1)
+            df <- data.frame(fread(cnd))
+            row.names(df) <- df$site_id
+            df$site_id <- NULL
             qqcat("    Number of snps: @{dim(df)[1]}\n")
             qqcat("    Number of samples: @{dim(df)[2]}\n")
             unlink(paste0(getwd(),"/",cnd))
@@ -204,7 +207,9 @@ loadMIDAS2 <- function(midas_merge_dir,
                                 paste0(getwd(),"/",cnc),
                                 paste0(getwd(),"/",cnd)),
                     stdout=FALSE, stderr=FALSE)
-            df <- read.table(cnd, row.names=1, header=1)
+            df <- data.frame(fread(cnd))
+            row.names(df) <- df$gene_id
+            df$gene_id <- NULL
             qqcat("    Number of genes: @{dim(df)[1]}\n")
             qqcat("    Number of samples: @{dim(df)[2]}\n")
             unlink(paste0(getwd(),"/",cnd))

@@ -103,7 +103,7 @@ setMethod("show",
     if (length(object@fastaList)!=0) {
       cat_subtle("# Inferred fasta: ", length(object@fastaList), " ID: ", paste0(names(object@fastaList)[1], collapse="/"), "\n", sep="")
     }
-    cat_subtle("# Size: ", object.size(object), " B\n", sep="")
+    cat_subtle("# Size: ", object.size(object) * 1e-6, " MB\n", sep="")
   })
 
 #' loadDic
