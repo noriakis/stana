@@ -1,12 +1,13 @@
 Package: stana
 Type: Package
-Title: Strain-level metagenomic analysis in R
+Title: Metagenotyping analysis in R
 Version: 0.99.0
 License: GPL-3
-Description: Analysis toolkit for intra-species diversity from metagenomics.
+Description: The package aims to analyze intra-species diversity from metagenomics. The package supports the loading functions for single nucleotide variants and copy number variant profiles, filtering, and statistical analysis.
 Authors@R: person("Noriaki", "Sato", email = "nori@hgc.jp", role = c("cre", "aut"))
 Depends: ggplot2, ggstar, ggraph, igraph
-Imports: GetoptLong, BiocFileCache, RCurl, vegan, methods, data.table, phangorn, RColorBrewer, ggtree, circlize, ComplexHeatmap, ggkegg, ape, dplyr, exactRankTests, ggblend, ggh4x, scales, tidygraph, ggplotify, ggtreeExtra, ggnewscale, scico, MKmisc, NMF, pillar, BiocStyle, cowplot, patchwork, reshape2, ggrepel, Boruta, tidyr, stringr
+Imports: GetoptLong, BiocFileCache, RCurl, vegan, methods, data.table, phangorn, RColorBrewer, ggtree, circlize, ComplexHeatmap, ggkegg, ape, dplyr, exactRankTests, ggblend, ggh4x, scales, tidygraph, ggplotify, ggtreeExtra, ggnewscale, scico, MKmisc, NMF, pillar, cowplot, patchwork, reshape2, Boruta, tidyr, stringr, clusterProfiler, grDevices, stats, utils
 Suggests: simplifyEnrichment, knitr, rmarkdown, NNLM, shiny, BiocStyle, matrixStats
 RoxygenNote: 7.3.2
+biocViews: Microbiome
 VignetteBuilder: knitr

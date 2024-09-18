@@ -230,6 +230,7 @@ plotStackedBarPlot <- function(stana, sp, by="NMF") {
 #' @param rank if NMF is not performed, this performs the NMF beforehand.
 #' rank can be specified here.
 #' @export
+#' @return vegan::diversity results
 alphaDiversityWithinSpecies <- function(stana, species, method="shannon", rank=5) {
     if (is.null(stana@NMF[[species]])) {
         stana <- NMF(stana, species, rank=rank)
@@ -261,6 +262,7 @@ alphaDiversityWithinSpecies <- function(stana, species, method="shannon", rank=5
 #' @param return_data return only the data, not plot
 #' @param by NMF or coef matrix set to `coefMat` slot
 #' @export
+#' @return ggplot object
 plotAbundanceWithinSpecies <- function(stana, species, tss=TRUE, return_data=FALSE, by="NMF") {
 	if (by=="NMF") {
 	    if (is.null(stana@NMF[[species]])) {

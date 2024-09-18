@@ -17,6 +17,9 @@ if `spc`, factor count will be returned.}
 \item{rank}{if NMF is not performed, this performs the NMF beforehand.
 rank can be specified here.}
 }
+\value{
+vegan::diversity results
+}
 \description{
 alphaDiversityWithinSpecies
 }

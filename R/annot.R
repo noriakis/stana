@@ -15,6 +15,7 @@
 #'        passed to anno_word_cloud
 #' @param argList will be passed to anno_word_cloud
 #' @export
+#' @return the results of anno_word_cloud
 anno_PATRIC_keywords <- function(split, genes, fnc="pathway_name",
   removeHigh=TRUE, removeAdditional=NULL, argList=list()) {
 

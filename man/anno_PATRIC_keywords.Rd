@@ -27,6 +27,9 @@ passed to anno_word_cloud}
 
 \item{argList}{will be passed to anno_word_cloud}
 }
+\value{
+the results of anno_word_cloud
+}
 \description{
 Annotate the heatmap using functional terms derived from PATRIC.
 The function is derived and modified from the example of 

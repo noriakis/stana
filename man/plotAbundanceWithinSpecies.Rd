@@ -23,6 +23,9 @@ plotAbundanceWithinSpecies(
 
 \item{by}{NMF or coef matrix set to `coefMat` slot}
 }
+\value{
+ggplot object
+}
 \description{
 plot abundances using factor to sample matrix produced by NMF.
 }

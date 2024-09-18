@@ -10,7 +10,6 @@ plotHeatmap(
   cl = NULL,
   k = 10,
   mat = NULL,
-  seed = 1,
   geneID = NULL,
   variable = 0,
   fnc = "KEGG_Pathway",
@@ -33,8 +32,6 @@ plotHeatmap(
 
 \item{mat}{if customized matrix is to be used. Row will be gene names
 and column sample names}
-
-\item{seed}{random seed}
 
 \item{geneID}{gene id to subset}
 

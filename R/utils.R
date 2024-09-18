@@ -15,7 +15,7 @@ cnDiscretize <- function(stana, species, cutoff=0.35) {
 #' @export
 #' @return stana
 setTree <- function(stana, species, tre) {
-	if (class(tre)!="phylo") {stop("Please provide phylo object")}
+	if (!is(tre, "phylo")) {stop("Please provide phylo object")}
 	stana@treeList[[species]] <- tre
 	return(stana)
 }

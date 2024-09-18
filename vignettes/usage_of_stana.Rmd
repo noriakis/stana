@@ -17,6 +17,7 @@ knitr::opts_chunk$set(echo = TRUE,
                       fig.height=5,
                       warning=FALSE,
                       message=FALSE)
+library(BiocStyle)
 ```
 
 # stana

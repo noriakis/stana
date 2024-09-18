@@ -16,7 +16,6 @@
 #' @param removeHigh remove high frequent words (preset)
 #' @param removeAdditional remove additional words specified
 #' @param max_words max words to plot
-#' @param seed random seed
 #' @param filter_zero_frac genes with zero abundance over fraction of samples as this value
 #' are removed before sample filtering. As typically gene matrix is large, for further filtering, please use `mat` option
 #' @param filter_max_frac remove genes with values below `filter_max_value` in this fraction of sample
@@ -25,11 +24,10 @@
 #' @importFrom ComplexHeatmap Heatmap
 #' @export
 #' 
-plotHeatmap <- function(stana, sp, cl=NULL, k=10, mat=NULL, seed=1,
+plotHeatmap <- function(stana, sp, cl=NULL, k=10, mat=NULL,
 	geneID=NULL, variable=0,
 	fnc="KEGG_Pathway", removeHigh=TRUE, removeAdditional=NULL, max_words=10,
     filter_zero_frac=0.8, filter_max_frac=0, filter_max_value=50) {
-	set.seed(seed)
 
 	if (!is.null(mat)) {
 		df <- mat

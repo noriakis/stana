@@ -107,6 +107,7 @@ doGSEA <- function(stana, candSp=NULL, cl=NULL, eps=1e-2, how=sum,
 #' @param return_graph return only the tbl_graph
 #' @param layout graph layout in ggraph
 #' @export
+#' @importFrom tidygraph %N>% %E>%
 #' @return ggplot object
 plotGSEA <- function(stana, dataset_names=NULL, padjThreshold=0.05,
     return_graph=FALSE, layout="kk") {

@@ -42,7 +42,7 @@ doBoruta <- function(stana, sp, cl=NULL, doFix=TRUE,
   }
   cat_subtle("# Feature number: ", dim(filtDf)[1], "\n", sep="")
   transDf <- data.frame(t(filtDf),
-                        check.names=F)
+                        check.names=FALSE)
   transDf <- transDf[intersect(row.names(transDf), cl |> unlist() |> unique()),]
   gr <- NULL
   for (cn in rownames(transDf)){
