@@ -34,6 +34,7 @@ consensusSeqMIDAS2(
   site_prev = 0.9,
   locus_type = "CDS",
   site_list = NULL,
+  site_type = c("1D", "2D", "3D", "4D"),
   cl = NULL,
   max_sites = Inf,
   tree = FALSE,
@@ -56,6 +57,7 @@ consensusSeqMIDAS1(
   max_sites = Inf,
   tree = FALSE,
   locus_type = "CDS",
+  site_type = c("1D", "2D", "3D", "4D"),
   keep_samples = NULL,
   verbose = FALSE,
   site_list = NULL,
@@ -109,7 +111,18 @@ site prevalence across samples}
 
 \item{site_list}{site list to be included}
 
+\item{site_type}{site types to be included}
+
 \item{max_sites}{default to Inf, max sites to be retained}
+}
+\value{
+stana object
+
+stana object
+
+stana object
+
+stana object
 }
 \description{
 Output consensus sequences from merged SNV output.

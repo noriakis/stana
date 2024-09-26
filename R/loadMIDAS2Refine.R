@@ -7,7 +7,7 @@
 #' 
 #' @param midas_merge_dir path to merged directory
 #' @param cl named list of category for samples
-#' @param filtBy filter by {snps} number or {genes} number (default to snps)
+#' @param filtBy filter by snps number or genes number (default to snps)
 #' @param filtNum the species with the samples above this number will be returned
 #' @param filtPer filter by fraction
 #' @param db data base that was used to profile, default to gtdb.
@@ -19,6 +19,7 @@
 #' @param loadDepth default to FALSE, load depth information.
 #' @param only_stat only samples per species is returned (snpStat and geneStat)
 #' @importFrom dplyr mutate
+#' @return stana object
 #' @export
 #' 
 loadMIDAS2 <- function(midas_merge_dir,

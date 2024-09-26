@@ -13,6 +13,9 @@ cnDiscretize(stana, species, cutoff = 0.35)
 
 \item{cutoff}{cutoff value, default to 0.35}
 }
+\value{
+discretized data.frame
+}
 \description{
 Discretize copy number matrix at specified cutoff
 }

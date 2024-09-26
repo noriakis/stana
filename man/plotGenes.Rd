@@ -30,7 +30,7 @@ plotGenes(
 \item{geom}{default to geom_violin, can be changed to the geom like `geom_boxplot`}
 }
 \value{
-ggplot
+ggplot2 object
 }
 \description{
 Plot the plot for specific genes

@@ -43,7 +43,7 @@ Default to zero, not recommended in GSEA}
 \item{gseaArgs}{list of argument passed to GSEA or fgsea function}
 }
 \value{
-GSEA results from clusterProfiler
+stana object with GSEA results from clusterProfiler
 }
 \description{
 Based on KEGG database, GSEA will be performed by the function.

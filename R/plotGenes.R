@@ -14,7 +14,7 @@
 #' @param geom default to geom_violin, can be changed to the geom like `geom_boxplot`
 #' @import ggplot2
 #' @export
-#' @return ggplot
+#' @return ggplot2 object
 #' 
 plotGenes <- function(stana, species, geneID, target="genes", cl=NULL, return_df=FALSE,
     geom=geom_violin()) {

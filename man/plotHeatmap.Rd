@@ -35,7 +35,7 @@ and column sample names}
 
 \item{geneID}{gene id to subset}
 
-\item{variable}{If specified other than 0, subset to top-{variable} variation gene numbers.}
+\item{variable}{If specified other than 0, subset to top-variable variation gene numbers.}
 
 \item{fnc}{One of `KEGG_Pathway` or `KEGG_Module`, when eggNOG annotation is used}
 
@@ -51,6 +51,9 @@ are removed before sample filtering. As typically gene matrix is large, for furt
 \item{filter_max_frac}{remove genes with values below `filter_max_value` in this fraction of sample}
 
 \item{filter_max_value}{max value for copy numbers (default to 50), coupled with filter_max_frac}
+}
+\value{
+ComplexHeatmap
 }
 \description{
 Plot a heatmap of gene copy number.

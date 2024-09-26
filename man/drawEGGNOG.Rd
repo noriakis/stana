@@ -17,6 +17,9 @@ drawEGGNOG(annot_file, geneIDs, candPlot)
 "KEGG_rclass"    "BRITE"          "KEGG_TC"        "CAZy"           "BiGG_Reaction" 
 "PFAMs"}
 }
+\value{
+list containing ggplot2 object and graph
+}
 \description{
 draw the graph representing the eggNOG annotation
 }

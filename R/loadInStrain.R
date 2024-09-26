@@ -16,7 +16,7 @@
 #' (needs pooled SNV data, otherwise use genome wide compraison table)
 #' @param fill_na fill NA in resulting data.frame by -1
 #' @param skip_pool skip pooled results loading
-#' 
+#' @return stana object
 #' @export
 loadInStrain <- function(compare_out_dir,
                          candidate_species,

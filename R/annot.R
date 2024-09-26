@@ -65,7 +65,7 @@ anno_eggNOG_keywords <- function(split, genes, tib,
   })
 
   lt <- lapply(gene_list, function(x) {
-    (tib |> dplyr::filter(ID %in% x))$V2
+    (tib |> dplyr::filter(.data$ID %in% x))$V2
   })
 
   names(lt) <- names(gene_list)

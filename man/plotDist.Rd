@@ -35,6 +35,9 @@ plotDist(
 
 \item{candidate}{list of IDs included for the calculation (like SNV IDs)}
 }
+\value{
+pheatmap object
+}
 \description{
 Perform distance calculation based on the matrix
 stored in stana, and plot the heatmap with grouping

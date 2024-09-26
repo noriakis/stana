@@ -34,6 +34,6 @@ otherwise the raw gene matrix is used.}
 L0Learn object
 }
 \description{
-feature selection of classification between category
-using snv frequency and gene matrix, based on L0Learn
+Feature selection of classification between category
+using snv frequency and gene copy number matrix, based on L0Learn
 }

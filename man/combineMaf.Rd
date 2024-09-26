@@ -10,6 +10,9 @@ combineMaf(mafs)
 \arguments{
 \item{mafs}{named list of the results of convertWideToMaf()}
 }
+\value{
+stana object
+}
 \description{
 combineMaf
 combine the maf table produced by convertWideToMaf()

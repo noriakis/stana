@@ -14,6 +14,7 @@
 #' @import igraph ggraph BiocFileCache RCurl ggplot2
 #' @importFrom data.table fread
 #' @export
+#' @return checkPATRIC results
 drawPATRIC <- function(genes,
                         whichToCount="ec_description",
                         delSize=0,
@@ -51,6 +52,7 @@ drawPATRIC <- function(genes,
 #' @param skipGraph skip graph plotting
 #' @import igraph ggraph BiocFileCache RCurl ggplot2
 #' @export
+#' @return list of annotations
 checkPATRIC <- function(genes,
                         whichToCount="ec_description",
                         delSize=0,

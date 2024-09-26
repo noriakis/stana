@@ -18,6 +18,7 @@
 #' @param loadDepth default to FALSE, load depth information.
 #' @param only_stat return stat for snp and gene only
 #' @import GetoptLong
+#' @return stana object
 #' @export
 loadMIDAS <- function(midas_merge_dir,
   cl=NULL, filtType="group", candSp=NULL,

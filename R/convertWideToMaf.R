@@ -34,7 +34,7 @@ convertWideToMaf <- function(df) {
     })
     sp <- unique(df$species_id)
     ret <- lapply(sp, function(s) {
-        tmp <- df %>% dplyr::filter(species_id == s)
+        tmp <- df %>% dplyr::filter(.data$species_id == s)
         tmp <- tmp[,c("snv_id", "maf")]
         row.names(tmp) <- tmp$snv_id
         tmp$snv_id <- NULL
@@ -43,7 +43,7 @@ convertWideToMaf <- function(df) {
     names(ret) <- sp
 
     summary <- lapply(sp, function(s) {
-        tmp <- df %>% dplyr::filter(species_id == s)
+        tmp <- df %>% dplyr::filter(.data$species_id == s)
         tmp <- tmp[,c("snv_id", "major", "minor")]
         row.names(tmp) <- tmp$snv_id
         tmp$snv_id <- NULL
@@ -62,6 +62,7 @@ convertWideToMaf <- function(df) {
 #' combine the maf table produced by convertWideToMaf()
 #' @param mafs named list of the results of convertWideToMaf()
 #' @export
+#' @return stana object
 combineMaf <- function(mafs) {
   if (is.null(names(mafs))) {stop("The list must be named")}
   sps <- do.call(union, lapply(names(mafs), function(s) {
@@ -77,9 +78,9 @@ combineMaf <- function(mafs) {
       return(tmp)
     }))
     tbl <- tidyr::pivot_wider(tmpdf,
-                       id_cols=snv_id,
-                       names_from=sample,
-                       values_from = maf)
+                       id_cols="snv_id",
+                       names_from="sample",
+                       values_from = "maf")
     tbl <- data.frame(tbl)
     row.names(tbl) <- tbl$snv_id
     tbl$snv_id <- NULL

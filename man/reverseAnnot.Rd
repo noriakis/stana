@@ -15,6 +15,9 @@ reverseAnnot(stana, candSp, candidate, col = "KEGG_ko")
 
 \item{col}{column to use in eggNOG mapper annotation}
 }
+\value{
+tibble containing gene to gene family information
+}
 \description{
 reverse_annot
 }

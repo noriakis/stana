@@ -35,6 +35,9 @@ plotPCA(
 
 \item{useBlend}{use ggblend for point}
 }
+\value{
+ggplot
+}
 \description{
 plot the PCA results from snp or gene table
 }

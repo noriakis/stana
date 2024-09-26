@@ -17,6 +17,9 @@ calcGF(stana, candSp = NULL, how = sum, annot = "eggNOG", column = "KEGG_ko")
 
 \item{column}{When eggNOG, which family to summarize, default to KEGG_ko}
 }
+\value{
+stana object
+}
 \description{
-calcGF
+Calculate gene family profile
 }

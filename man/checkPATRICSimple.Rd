@@ -11,6 +11,9 @@ checkPATRICSimple(genes, whichToCount = "ec_description")
 
 \item{whichToCount}{ec_description, ec_number, pathway_name, pathway_id}
 }
+\value{
+list of annotation
+}
 \description{
 Obtain gene information from PATRIC server.
 Input named list of genes, and returns named list of functions.

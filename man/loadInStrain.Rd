@@ -28,6 +28,9 @@ need `output` in the directory}
 
 \item{skip_pool}{skip pooled results loading}
 }
+\value{
+stana object
+}
 \description{
 For InStrain, you should provide `compare` output
 It can import outputs with --bams options implmented from version 1.6.

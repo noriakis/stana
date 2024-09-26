@@ -51,6 +51,9 @@ Otherwise the cell is treated as NA}
 
 \item{distArg}{passed to `dist()`}
 }
+\value{
+stana object
+}
 \description{
 Perform PERMANOVA on distance matrix based 
 on various distances based on such as SNV frequency or 

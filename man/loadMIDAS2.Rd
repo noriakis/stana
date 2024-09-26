@@ -31,7 +31,7 @@ loadMIDAS2(
 
 \item{only_stat}{only samples per species is returned (snpStat and geneStat)}
 
-\item{filtBy}{filter by {snps} number or {genes} number (default to snps)}
+\item{filtBy}{filter by snps number or genes number (default to snps)}
 
 \item{filtPer}{filter by fraction}
 
@@ -46,6 +46,9 @@ loadMIDAS2(
 \item{loadInfo}{default to FALSE, load info information.}
 
 \item{loadDepth}{default to FALSE, load depth information.}
+}
+\value{
+stana object
 }
 \description{
 load the MIDAS2 merge command output.

@@ -1,7 +1,7 @@
 #' doL0
 #' 
-#' feature selection of classification between category
-#' using snv frequency and gene matrix, based on L0Learn
+#' Feature selection of classification between category
+#' using snv frequency and gene copy number matrix, based on L0Learn
 #' 
 #' @param stana stana object
 #' @param species candidate species ID

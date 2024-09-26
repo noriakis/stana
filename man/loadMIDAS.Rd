@@ -42,6 +42,9 @@ for each category is returned}
 
 \item{geneType}{"presabs" or "copynum"}
 }
+\value{
+stana object
+}
 \description{
 Assess and store profile for species and return filtered species 
 based on the number of samples for each category or whole population.

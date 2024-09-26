@@ -12,7 +12,7 @@
 #' @param verbose_zero show zero abundance genes
 #' @import ggplot2
 #' @export
-#' @return ggplot
+#' @return list of statistical results from wilcox.exact
 #' 
 compareGenes <- function(stana, species=NULL, geneID=NULL, cl=NULL, argList=list(),
 	verbose_zero=FALSE) {

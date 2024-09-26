@@ -15,6 +15,7 @@
 #' @import ggplot2
 #' @importFrom stats prcomp
 #' @export
+#' @return ggplot
 #' 
 plotPCA <- function(stana, species, cl=NULL, target="snps",
 	ignoreZero=FALSE, replaceZero=FALSE,

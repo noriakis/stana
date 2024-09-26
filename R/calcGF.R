@@ -1,12 +1,14 @@
-
-
 #' calcGF
+#' 
+#' Calculate gene family profile
+#' 
 #' @param stana stana object
 #' @param candSp candidate species ID
 #' @param how how to summarize multiple gene CN assigned to the same KO
 #' @param annot eggNOG or manual
 #' @param column When eggNOG, which family to summarize, default to KEGG_ko
 #' @export
+#' @return stana object
 calcGF <- function(stana, candSp=NULL, how=sum, annot="eggNOG", column="KEGG_ko") {
 	checkID(stana, candSp)
     if (is.null(candSp)) {cat("Species not specified, the first ID will be used:", stana@ids[1]);

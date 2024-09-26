@@ -8,6 +8,7 @@
 #' @param whichToCount ec_description, ec_number, pathway_name, pathway_id
 #' @import BiocFileCache RCurl
 #' @export
+#' @return list of annotation
 checkPATRICSimple <- function(genes,
                         whichToCount="ec_description") {
   allGenes <- unlist(genes)

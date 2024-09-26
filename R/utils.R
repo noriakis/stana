@@ -2,6 +2,7 @@
 #' @param stana stana object
 #' @param species species id
 #' @param cutoff cutoff value, default to 0.35
+#' @return discretized data.frame
 #' @export
 cnDiscretize <- function(stana, species, cutoff=0.35) {
 	df <- stana@genes[[species]]

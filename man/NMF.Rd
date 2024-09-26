@@ -55,7 +55,10 @@ When estimate is TRUE, only the error matrix is returned.}
 \item{tss}{perform total sum scaling to the matrix}
 
 \item{remove_na_perc}{remove features with too many NA
-(features with NA below {remove_na_perc} * overall sample numbers will be retained)}
+(features with NA below remove_na_perc * overall sample numbers will be retained)}
+}
+\value{
+stana object
 }
 \description{
 decompose SNV, gene content, or gene family abundance to

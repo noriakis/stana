@@ -32,6 +32,9 @@ rankComponents(
 
 \item{statHow}{how to aggregate the multiple statistical values}
 }
+\value{
+tibble containing name and rank of components
+}
 \description{
 Returns the rank of the components in the graph
 based on the statistical values inside the graph.

@@ -66,6 +66,9 @@ In this case, FastTree should be in PATH.}
 
 \item{tree_only}{return tree only instead of stana object}
 }
+\value{
+stana object
+}
 \description{
 infer the tree and plot.
 If there is already a tree in the list from `treeList` slot, inferring will not be performed.

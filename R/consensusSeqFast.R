@@ -3,6 +3,7 @@
 #' @param allele_columns columns specifying major and minor allele
 #' @rdname consensusseq
 #' @export
+#' @return stana object
 consensusSeqGeneral <- function(
 	stana,
 	species=NULL,
@@ -69,7 +70,7 @@ consensusSeqGeneral <- function(
         
         if (return_mat) {
         	mat <- do.call(cbind, allele_list)
-        	row.names(mat) <- names(site_filters)
+        	# row.names(mat) <- names(site_filters)
 	        return(mat) 
         }
         
@@ -133,10 +134,12 @@ consensusSeqGeneral <- function(
 #' @param output_seq whether to output actual FASTA file
 #' @param locus_type locus type to be included, default to CDS
 #' @param site_list site list to be included
+#' @param site_type site types to be included
 #' @param return_mat return matrix of characters
 #' @param output_seq whether to output actual FASTA file
 #' @rdname consensusseq
 #' @export
+#' @return stana object
 consensusSeqMIDAS2 <- function(
 	stana,
 	species=NULL,
@@ -150,6 +153,7 @@ consensusSeqMIDAS2 <- function(
 	site_prev=0.9,
 	locus_type="CDS",
 	site_list=NULL,
+	site_type=c("1D","2D","3D","4D"),
 	cl=NULL,
 	max_sites=Inf,
 	tree=FALSE,
@@ -287,7 +291,7 @@ consensusSeqMIDAS2 <- function(
         	    sum(c(
         	    	(length(keep_samples) / length(names(SAMPLES))) >= max(c(1e-6, site_prev)),
         	        pooled_maf >= site_maf,
-	                sp_site_type[i] %in% c("1D","2D","3D","4D"),
+	                sp_site_type[i] %in% site_type,
 	                sp_locus_type[i] %in% locus_type))
 	        return(keep_site_filter)
         }) |> unlist()
@@ -391,6 +395,7 @@ consensusSeqMIDAS2 <- function(
 #' @importFrom phangorn read.phyDat
 #' @rdname consensusseq
 #' @export
+#' @return stana object
 consensusSeqMIDAS1 <- function(
 	stana,
 	species=NULL,
@@ -405,6 +410,7 @@ consensusSeqMIDAS1 <- function(
 	max_sites=Inf,
 	tree=FALSE,
 	locus_type="CDS",
+	site_type=c("1D","2D","3D","4D"),
     keep_samples=NULL,
     verbose=FALSE,
     site_list=NULL,
@@ -517,7 +523,7 @@ consensusSeqMIDAS1 <- function(
         	    	(length(keep_samples) / length(names(SAMPLES))) >= max(c(1e-6, site_prev)),
         	        pooled_maf >= site_maf,
         	        sp_ref_allele[i] %in% c("A","T","G","C"),
-	                sp_site_type[i] %in% c("1D","2D","3D","4D"),
+	                sp_site_type[i] %in% site_type,
 	                sp_locus_type[i] %in% locus_type))
 	        return(keep_site_filter)
         }) |> unlist()

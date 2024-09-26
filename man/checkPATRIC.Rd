@@ -35,6 +35,9 @@ checkPATRIC(
 
 \item{skipGraph}{skip graph plotting}
 }
+\value{
+list of annotations
+}
 \description{
 Obtain gene information from PATRIC server.
 Input named list of genes, and returns queried results,

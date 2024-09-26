@@ -15,6 +15,9 @@ loadmetaSNV(metasnv_out_dir, cl = NULL, just_species = FALSE, candSp = NULL)
 
 \item{candSp}{candidate species ID}
 }
+\value{
+stana object
+}
 \description{
 Assess and store profile for species for metaSNV.
 }

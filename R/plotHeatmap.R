@@ -20,10 +20,10 @@
 #' are removed before sample filtering. As typically gene matrix is large, for further filtering, please use `mat` option
 #' @param filter_max_frac remove genes with values below `filter_max_value` in this fraction of sample
 #' @param filter_max_value max value for copy numbers (default to 50), coupled with filter_max_frac
-#' @param variable If specified other than 0, subset to top-{variable} variation gene numbers.
+#' @param variable If specified other than 0, subset to top-variable variation gene numbers.
 #' @importFrom ComplexHeatmap Heatmap
 #' @export
-#' 
+#' @return ComplexHeatmap
 plotHeatmap <- function(stana, sp, cl=NULL, k=10, mat=NULL,
 	geneID=NULL, variable=0,
 	fnc="KEGG_Pathway", removeHigh=TRUE, removeAdditional=NULL, max_words=10,

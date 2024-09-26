@@ -10,6 +10,7 @@
 #' @param argList parameters, passed to corresponding functions
 #' @export
 #' @rdname consensusseq
+#' @return stana object
 #'
 consensusSeq <- function(stana,
 	species=NULL, argList=list()){

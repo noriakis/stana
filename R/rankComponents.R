@@ -12,6 +12,7 @@
 #' @param rankMethod how to rank genes
 #' @param statHow how to aggregate the multiple statistical values
 #' @export
+#' @return tibble containing name and rank of components
 rankComponents <- function(stana, pid, candSp=NULL, cl=NULL, eps=1e-2, how=sum,
     rankMethod="modt", statHow=mean) {
     if (is.null(candSp)) {candSp <- stana@ids[1]}

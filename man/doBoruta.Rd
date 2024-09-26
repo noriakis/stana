@@ -39,6 +39,8 @@ pass to checkPATRIC() (in MIDAS1)}
 }
 \value{
 list of Boruta object and plot
+
+list containing Boruta results
 }
 \description{
 feature selection of classification between category

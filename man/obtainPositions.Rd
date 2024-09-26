@@ -13,6 +13,9 @@ obtainPositions(stana, candSp, geneID)
 
 \item{geneID}{gene IDs}
 }
+\value{
+vector of gene position
+}
 \description{
 obtain_positions
 }

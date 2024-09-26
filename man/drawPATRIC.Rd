@@ -32,6 +32,9 @@ drawPATRIC(
 
 \item{nodeSize}{'count' or 'degree'}
 }
+\value{
+checkPATRIC results
+}
 \description{
 draw graph of ec and kegg pathway name
 using checkPATRIC().

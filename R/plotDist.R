@@ -15,6 +15,7 @@
 #' @param distArg passed to `dist()
 #' @param candidate list of IDs included for the calculation (like SNV IDs)
 #' @export
+#' @return pheatmap object
 plotDist <- function(stana, sp, cl=NULL, AAfunc=dist.ml, AAargs=list(),
     target="snps", distMethod="manhattan", distArg=list(), candidate=NULL) {
       if (is.null(cl)) {cl <- stana@cl}

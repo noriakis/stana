@@ -28,6 +28,7 @@
 #' @importFrom stats as.formula dist
 #' @importFrom utils read.table
 #' @export
+#' @return stana object
 doAdonis <- function(stana, specs, cl=NULL,
     target="snps", formula=NULL,
     distMethod="manhattan", pcoa=FALSE,
@@ -144,7 +145,6 @@ doAdonis <- function(stana, specs, cl=NULL,
         } else {
           argList[["data"]] <- met
         }
-
         adores <- do.call("adonis2", argList)
         
         if (pr) {

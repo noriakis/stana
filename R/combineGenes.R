@@ -28,7 +28,7 @@ combineGenes <- function(stana_list, species) {
   if (ovlgr>0) {qqcat("Duplicate label found in group\n")}
 
   new_stana@ids <- species
-  new_stana@type <- stana@type
+  new_stana@type <- "Combined"
   new_stana@cl <- cls
   new_stana@colors <- getColors(cls)
 

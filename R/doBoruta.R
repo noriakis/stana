@@ -17,6 +17,7 @@
 #' @return list of Boruta object and plot
 #' @import ggplot2
 #' @export
+#' @return list containing Boruta results
 doBoruta <- function(stana, sp, cl=NULL, doFix=TRUE,
   target="genes", mat=NULL, whichToCount="ec_description", argList=list(),
   deleteZeroDepth=FALSE) {

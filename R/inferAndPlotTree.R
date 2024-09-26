@@ -33,7 +33,7 @@
 #' @importFrom ggnewscale new_scale_fill
 #' @importFrom ggstar geom_star
 #' @importFrom scico scale_fill_scico_d scale_fill_scico scale_color_scico scale_color_scico_d
-#' 
+#' @return stana object
 #' @export
 inferAndPlotTree <- function(stana, species=NULL, cl=NULL,
 	dist_method="dist.ml", meta=NULL, layout="circular",

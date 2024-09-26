@@ -11,13 +11,13 @@
 #' "KEGG_rclass"    "BRITE"          "KEGG_TC"        "CAZy"           "BiGG_Reaction" 
 #' "PFAMs"
 #' @export
+#' @return list containing ggplot2 object and graph
 #' 
 drawEGGNOG <- function(annot_file, geneIDs, candPlot) {
   retList <- list()
   egng <- checkEGGNOG(annot_file,"all", geneIDs)
   # delete map* entry (in KEGG)
   egng <- egng[!grepl("map",egng$value),]
-  print(egng)
   ap <- NULL
   for (i in geneIDs) {
     tmp <- egng[egng$ID == i,]
@@ -87,15 +87,15 @@ checkEGGNOG <- function(annot_file, ret="all", checkIDs=NULL, fill=TRUE) {
   if (ret!="all") {
     parsed <- ann[,c("#query",ret), with=FALSE] |>
       tidyr::pivot_longer(-1) |>
-      dplyr::filter(value!="-") |>
-      dplyr::mutate(value = strsplit(as.character(value), ",")) |>
-      tidyr::unnest(value)
+      dplyr::filter(.data$value!="-") |>
+      dplyr::mutate(value = strsplit(as.character(.data$value), ",")) |>
+      tidyr::unnest(.data$value)
   } else {
     parsed <- ann[, !c("evalue","score"), with=FALSE] |>
       tidyr::pivot_longer(-1) |>
-      dplyr::filter(value!="-") |>
-      dplyr::mutate(value = strsplit(as.character(value), ",")) |>
-      tidyr::unnest(value)
+      dplyr::filter(.data$value!="-") |>
+      dplyr::mutate(value = strsplit(as.character(.data$value), ",")) |>
+      tidyr::unnest(.data$value)
   }
   parsed <- parsed |> `colnames<-`(c("ID","name","value"))
   if (!is.null(checkIDs)) {

@@ -22,9 +22,10 @@
 #' @param nnlm_na_perc NA frequency when the cross-validation is performed.
 #' @param tss perform total sum scaling to the matrix
 #' @param remove_na_perc remove features with too many NA
-#' (features with NA below {remove_na_perc} * overall sample numbers will be retained)
+#' (features with NA below remove_na_perc * overall sample numbers will be retained)
 #' @importFrom NMF nmf nmfEstimateRank
 #' @export
+#' @return stana object
 NMF <- function(stana, species, rank=3, target="kos", seed=53, method="snmf/r",
     deleteZeroDepth=FALSE, beta=0.01, estimate=FALSE, estimate_range=1:6, nnlm_flag=FALSE,
     nnlm_args=list(), nnlm_na_perc=0.3, tss=FALSE, remove_na_perc=NULL) {
@@ -106,7 +107,7 @@ NMF <- function(stana, species, rank=3, target="kos", seed=53, method="snmf/r",
 
 			err <- sapply(X = estimate_range,
 			              FUN = function(k) {
-			                z <- nnmf(A2, k);
+			                z <- NNLM::nnmf(A2, k);
 			                c(mean((with(z, W %*% H)[ind] - A[ind])^2), tail(z$mse, 1));
 			              }
 			);
@@ -158,7 +159,7 @@ NMF <- function(stana, species, rank=3, target="kos", seed=53, method="snmf/r",
 	        res <- NMF::nmf(mat, rank = rank, seed = seed, method=method)
 	    }
 	    coefMat <- coef(res)
-        basisMat <- basis(res) 	
+        basisMat <- NMF::basis(res) 	
     }
 
     stana@coefMat[[species]] <- data.frame(coefMat)
@@ -207,7 +208,7 @@ plotStackedBarPlot <- function(stana, sp, by="NMF") {
 	    ## Not showing sample label, instead facet by group
 		ggplot(melted, aes(fill=variable, y=value, x=sample)) + 
 		    geom_col(position="fill")+
-		    facet_grid(. ~ group, scale="free")+
+		    facet_grid(. ~ group, scales="free")+
             scale_y_continuous(expand = expansion(mult = c(0, 0.05)))+
             cowplot::theme_cowplot()+ cowplot::panel_border()+
 		    theme(axis.text.x = element_blank())

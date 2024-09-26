@@ -27,7 +27,7 @@ compareGenes(
 \item{verbose_zero}{show zero abundance genes}
 }
 \value{
-ggplot
+list of statistical results from wilcox.exact
 }
 \description{
 compare the gene abundances by recursively performing Wilcoxon rank-sum tests

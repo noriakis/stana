@@ -842,13 +842,13 @@ server <- function(input, output, session) {
                     melted <- reshape2::melt(stb, measure.vars=as.character(seq_len(rank)))
                     panelShow <- ggplot(melted, aes(x=group, y=value)) + 
                         geom_point()+
-                        facet_grid(. ~ variable, scale="free")+
+                        facet_grid(. ~ variable, scales="free")+
                         cowplot::theme_cowplot()+ cowplot::panel_border()
                 } else {
                     melted <- reshape2::melt(stb)
                     panelShow <- ggplot(melted, aes(fill=variable, y=value, x=sample)) + 
                         geom_col(position="fill")+
-                        facet_grid(. ~ group, scale="free")+
+                        facet_grid(. ~ group, scales="free")+
                         cowplot::theme_cowplot()+ cowplot::panel_border()+
                         theme(axis.text.x = element_blank())                    
                 }

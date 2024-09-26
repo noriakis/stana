@@ -16,7 +16,7 @@ plotCoverage(stana, species, cl = NULL, pointSize = 5)
 \item{pointSize}{scatter point size}
 }
 \value{
-ggplot
+ggplot2 object
 }
 \description{
 plot the scatters of mean coverage across groups

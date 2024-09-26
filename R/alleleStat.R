@@ -1,4 +1,3 @@
-
 #' @noRd
 alleleStat_metaSNV <- function(stana, sp, cl, deleteZeroDepth) {
 	statList <- list()
@@ -43,7 +42,6 @@ alleleStat_metaSNV <- function(stana, sp, cl, deleteZeroDepth) {
 #' @param deleteZeroDepth delete snvs with zero depth
 #' @export
 #' @return list of statistical values
-#' 
 alleleStat <- function(stana, sp=NULL, cl=NULL, base="maj",
 	deleteZeroDepth=FALSE) {
 	if (is.null(sp)) {sp <- stana@ids[1]}

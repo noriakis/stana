@@ -10,7 +10,7 @@
 #' @param pointSize scatter point size
 #' @import ggplot2
 #' @export
-#' @return ggplot
+#' @return ggplot2 object
 #' 
 plotCoverage <- function(stana, species, cl=NULL,
 	pointSize=5) {

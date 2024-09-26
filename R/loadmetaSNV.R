@@ -10,6 +10,7 @@
 #' @param just_species just return species id
 #' @param candSp candidate species ID
 #' @import GetoptLong
+#' @return stana object
 #' @export
 loadmetaSNV <- function(metasnv_out_dir, cl=NULL,
                         just_species=FALSE, candSp=NULL) {
