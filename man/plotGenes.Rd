@@ -11,8 +11,10 @@ plotGenes(
   target = "genes",
   cl = NULL,
   return_df = FALSE,
-  geom = geom_violin(),
-  scales = "free"
+  geom = geom_violin,
+  geomArgs = list(),
+  scales = "free",
+  jitter = TRUE
 )
 }
 \arguments{
@@ -30,7 +32,11 @@ plotGenes(
 
 \item{geom}{default to geom_violin, can be changed to the geom like `geom_boxplot`}
 
+\item{geomArgs}{geom arguments}
+
 \item{scales}{facet_wrap parameter}
+
+\item{jitter}{show geom_jitter}
 }
 \value{
 ggplot2 object
