@@ -11,7 +11,8 @@ plotGenes(
   target = "genes",
   cl = NULL,
   return_df = FALSE,
-  geom = geom_violin()
+  geom = geom_violin(),
+  scales = "free"
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ plotGenes(
 \item{return_df}{return data only}
 
 \item{geom}{default to geom_violin, can be changed to the geom like `geom_boxplot`}
+
+\item{scales}{facet_wrap parameter}
 }
 \value{
 ggplot2 object
