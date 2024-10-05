@@ -13,12 +13,14 @@
 #' @param return_df return data only
 #' @param geom default to geom_violin, can be changed to the geom like `geom_boxplot`
 #' @param scales facet_wrap parameter
+#' @param geomArgs geom arguments
+#' @param jitter show geom_jitter
 #' @import ggplot2
 #' @export
 #' @return ggplot2 object
 #' 
 plotGenes <- function(stana, species, geneID, target="genes", cl=NULL, return_df=FALSE,
-    geom=geom_violin(), scales="free") {
+    geom=geom_violin, geomArgs=list(), scales="free", jitter=TRUE) {
 	if (is.null(cl)) { cl <- stana@cl}
 	if (target=="genes") {
     	geneDf <- stana@genes[[species]]
@@ -42,12 +44,15 @@ plotGenes <- function(stana, species, geneID, target="genes", cl=NULL, return_df
     } else {
         cols <- RColorBrewer::brewer.pal(length(cl), "RdBu")
     }
-	ggplot(df, aes(x=group, y=value,
+	plt <- ggplot(df, aes(x=group, y=value,
 		fill=group)) +
-	geom+
-	geom_jitter(shape=21, size=2)+
+	do.call(geom, geomArgs)+
 	scale_fill_manual(values=cols)+
 	facet_wrap(.~geneID, scales=scales)+
 	cowplot::theme_cowplot()+
     cowplot::panel_border()
+    if (jitter) {
+    	plt <- plt + 	geom_jitter(shape=21, size=2)
+    }
+    plt
 }
