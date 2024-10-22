@@ -158,10 +158,10 @@ NMF <- function(stana, species, rank=3, target="kos", seed=53, method="snmf/r",
 	    } else {
 	        res <- NMF::nmf(mat, rank = rank, seed = seed, method=method)
 	    }
-	    coefMat <- coef(res)
-        basisMat <- NMF::basis(res) 	
+	    coefMat <- NMF::coef(res)
+        basisMat <- NMF::basis(res)
     }
-
+    print(res)
     stana@coefMat[[species]] <- data.frame(coefMat)
     ## Plot by default
     relab <- apply(coefMat, 2, function(x) x / sum(x))
