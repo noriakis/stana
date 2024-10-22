@@ -33,6 +33,27 @@ setGroup <- function(stana, cl) {
 }
 
 
+
+#' @noRd
+scaler.NNLM <- function(nmf, target="coef") {
+    if (target=="basis") {
+        scaledW <- apply(nmf$W, 2, function(x) x / sum(x))
+        Sii <- apply(nmf$W, 2, function(x) sum(x))
+        scaledH <- apply(nmf$H, 2, function(x) {
+            x * Sii
+        })
+        list("W"=scaledW, "H"=scaledH)        
+    } else {
+        scaledH <- apply(nmf$H, 1, function(x) x / sum(x)) %>% t()
+        Sii <- apply(nmf$H, 1, function(x) sum(x))
+        scaledW <- apply(nmf$W, 1, function(x) {
+            x * Sii
+        }) %>% t()
+        list("W"=scaledW, "H"=scaledH)
+    }
+
+}
+
 #' returnGenes
 #' return corresponding genes queried by  SNV position
 #' @param stana stana object
