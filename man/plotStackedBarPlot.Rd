@@ -4,14 +4,16 @@
 \alias{plotStackedBarPlot}
 \title{plotStackedBarPlot}
 \usage{
-plotStackedBarPlot(stana, sp, by = "NMF")
+plotStackedBarPlot(stana, sp, by = "NMF", mat = NULL)
 }
 \arguments{
 \item{stana}{stana boject}
 
 \item{sp}{species}
 
-\item{by}{"NMF" or "coef"}
+\item{by}{"NMF", "manual", or "coef"}
+
+\item{mat}{manual matrix}
 }
 \value{
 ggplot

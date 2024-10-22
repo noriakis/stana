@@ -33,8 +33,11 @@ setGroup <- function(stana, cl) {
 }
 
 
-
-#' @noRd
+#' scaler.NNLM
+#' @param nmf NNLM object
+#' @param target coef or basis
+#' @export
+#' @return list
 scaler.NNLM <- function(nmf, target="coef") {
     if (target=="basis") {
         scaledW <- apply(nmf$W, 2, function(x) x / sum(x))

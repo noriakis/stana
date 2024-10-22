@@ -9,7 +9,8 @@ plotAbundanceWithinSpecies(
   species,
   tss = TRUE,
   return_data = FALSE,
-  by = "NMF"
+  by = "NMF",
+  mat = NULL
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ plotAbundanceWithinSpecies(
 \item{return_data}{return only the data, not plot}
 
 \item{by}{NMF or coef matrix set to `coefMat` slot}
+
+\item{mat}{matrix (row factor column sample) of H}
 }
 \value{
 ggplot object

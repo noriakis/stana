@@ -181,10 +181,11 @@ NMF <- function(stana, species, rank=3, target="kos", seed=53, method="snmf/r",
 #' 
 #' @param stana stana boject
 #' @param sp species
-#' @param by "NMF" or "coef"
+#' @param by "NMF", "manual", or "coef"
+#' @param mat manual matrix
 #' @return ggplot
 #' @export
-plotStackedBarPlot <- function(stana, sp, by="NMF") {
+plotStackedBarPlot <- function(stana, sp, by="NMF", mat=NULL) {
 	if (is.null(stana@NMF[[sp]]) & is.null(stana@coefMat[[sp]])) {
 		stop("NMF results or coefficient matrix should be set")
 	}
@@ -193,7 +194,9 @@ plotStackedBarPlot <- function(stana, sp, by="NMF") {
         coefMat <- coef(res)	
 	} else if (by=="coef") {
 		coefMat <- stana@coefMat[[sp]]
-	} else {
+	} else if (by=="manual") {
+        coefMat <- mat
+    } else {
 		stop("NMF results or coefficient matrix should be set")
 	}
     relab <- apply(coefMat, 2, function(x) x / sum(x))
@@ -261,9 +264,10 @@ alphaDiversityWithinSpecies <- function(stana, species, method="shannon", rank=5
 #' @param tss perform total sum scaling
 #' @param return_data return only the data, not plot
 #' @param by NMF or coef matrix set to `coefMat` slot
+#' @param mat matrix (row factor column sample) of H
 #' @export
 #' @return ggplot object
-plotAbundanceWithinSpecies <- function(stana, species, tss=TRUE, return_data=FALSE, by="NMF") {
+plotAbundanceWithinSpecies <- function(stana, species, tss=TRUE, return_data=FALSE, by="NMF", mat=NULL) {
 	if (by=="NMF") {
 	    if (is.null(stana@NMF[[species]])) {
 	        stana <- NMF(stana, species)
@@ -272,8 +276,10 @@ plotAbundanceWithinSpecies <- function(stana, species, tss=TRUE, return_data=FAL
         H <- coef(res)	
 	} else if (by=="coef") {
 		H <- stana@coefMat[[species]]
-	} else {
-		stop("NMF or coef should be specified in `by`")
+	} else if (by=="manual") {
+        H <- mat
+    } else {
+		stop("NMF, manual, or coef should be specified in `by`")
 	}
 
     if (tss) {
