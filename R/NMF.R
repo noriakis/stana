@@ -161,7 +161,6 @@ NMF <- function(stana, species, rank=3, target="kos", seed=53, method="snmf/r",
 	    coefMat <- NMF::coef(res)
         basisMat <- NMF::basis(res)
     }
-    print(res)
     stana@coefMat[[species]] <- data.frame(coefMat)
     ## Plot by default
     relab <- apply(coefMat, 2, function(x) x / sum(x))
@@ -306,12 +305,13 @@ plotAbundanceWithinSpecies <- function(stana, species, tss=TRUE, return_data=FAL
 #' @param stana stana boject
 #' @param species species ID
 #' @param tss perform total sum scaling to the resulting matrix
+#' @param tss_dir tss direction
 #' @param change_name change pathway names to description
 #' @param summarize summarizing function, default to base::sum
 #' @param mat other matrix than the basis of NMF
 #' @export
 pathwayWithFactor <- function(stana, species, tss=FALSE, change_name=FALSE,
-	summarize=sum, mat=NULL) {
+	summarize=sum, mat=NULL, tss_dir=1) {
 	if (!is.null(mat)) {
 		use_name <- TRUE
 		dat <- mat
@@ -350,7 +350,13 @@ pathwayWithFactor <- function(stana, species, tss=FALSE, change_name=FALSE,
   }
   pathdf <- dplyr::mutate_all(pathdf, as.numeric)  
   if (tss) {
-    pathdf <- apply(pathdf, 2, function(x) x / sum(x))
+    pathdf <- apply(pathdf, tss_dir, function(x) x / sum(x))
+    if (tss_dir==1) {
+        pathdf <- pathdf %>% t() %>% data.frame()
+        if (!use_name) {
+            colnames(pathdf) <- as.character(paste0("factor",seq_len(ncol(pathdf))))   
+        }
+    }
   }
   if (change_name) {
   	  url2 <- bfcrpath(bfc,"https://rest.kegg.jp/list/pathway")
