@@ -12,7 +12,8 @@ pathwayWithFactor(
   tss = FALSE,
   change_name = FALSE,
   summarize = sum,
-  mat = NULL
+  mat = NULL,
+  tss_dir = 1
 )
 }
 \arguments{
@@ -27,6 +28,8 @@ pathwayWithFactor(
 \item{summarize}{summarizing function, default to base::sum}
 
 \item{mat}{other matrix than the basis of NMF}
+
+\item{tss_dir}{tss direction}
 }
 \description{
 pathwayWithFactor
